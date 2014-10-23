@@ -2,6 +2,8 @@ GarageKit for Unity
 ===================
 You can start the project immediately in Unity using GaraegKit.
 
+![](http://media.tumblr.com/1ad50e485e709219816e2cc0057d65b1/tumblr_inline_ndw8fqGnIb1qzb8ql.png)
+
 ## What is it?
 
 GaraegKit is framework that uses the Unity C#. I provide the template scene and some manager scripts and utility scripts, directory structure.
