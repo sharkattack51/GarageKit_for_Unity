@@ -6,7 +6,7 @@ You can start the project immediately in Unity using GaraegKit.
 
 ## What is it?
 
-GaraegKit is framework that uses the Unity C#. I provide the template scene and some manager scripts and utility scripts, directory structure.
+GaraegKit is framework that uses the Unity C#. I provide the template scene, some manager scripts, utility scripts and directory structure.
 
 ## How to use?
 
