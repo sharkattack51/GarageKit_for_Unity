@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<data>
+
+	<!-- デバッグ -->
+	<item name="IsDebug" value="false"/>
+	<item name="UseDebugConsole" value="false"/>
+	<item name="DebugConsoleLogEnable" value="true"/>
+
+	<!-- 入力設定 -->
+	<item name="UseMouse" value="true"/>
+	
+	<!-- 音設定 -->
+	<item name="UseSE" value="true"/>
+	<item name="VolSE" value="1.0"/>
+	<item name="UseBGM" value="true"/>
+	<item name="VolBGM" value="1.0"/>
+	
+	<!-- ゲーム時間 -->
+	<item name="GameTime" value="10"/>
+	
+</data>

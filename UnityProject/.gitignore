@@ -1,0 +1,21 @@
+[Ll]ibrary
+[Tt]emp
+[Oo]bj
+
+Log/*.log
+
+# for Unity
+/*.unityproj
+/*.csproj
+/*.pidb
+/*.sln
+/*.userprefs
+
+/Assets/Require
+/Assets/__ProjectName__/Editor/EditorEnhancements
+
+# for Mac
+.DS_Store
+
+# for Win
+Thumb.db
