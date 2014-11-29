@@ -66,7 +66,8 @@ public class GrabMove : MonoBehaviour
 		//カメラ操作のアンロック
 		if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.UnlockInput(this.gameObject);
 		if(PinchZoomCamera.Instance != null) PinchZoomCamera.Instance.UnlockInput(this.gameObject);
-		
+		if(OrbitCamera.Instance != null) OrbitCamera.Instance.UnlockInput(this.gameObject);
+
 		//コンポーネントをON
 		foreach(MonoBehaviour component in disableComponents)
 		{
@@ -85,6 +86,7 @@ public class GrabMove : MonoBehaviour
 				//カメラ操作のロック
 				if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.LockInput(this.gameObject);
 				if(PinchZoomCamera.Instance != null) PinchZoomCamera.Instance.LockInput(this.gameObject);
+				if(OrbitCamera.Instance != null) OrbitCamera.Instance.LockInput(this.gameObject);
 				
 				//コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
@@ -111,6 +113,8 @@ public class GrabMove : MonoBehaviour
 			else
 				ResetInput();
 		}
+
+#if UNITY_STANDALONE_WIN
 		else if(Application.platform == RuntimePlatform.WindowsPlayer && win7touch)
 		{
 			if(W7TouchManager.GetTouchCount() >= grabTouchNum)
@@ -118,7 +122,8 @@ public class GrabMove : MonoBehaviour
 				//カメラ操作のロック
 				if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.LockInput(this.gameObject);
 				if(PinchZoomCamera.Instance != null) PinchZoomCamera.Instance.LockInput(this.gameObject);
-				
+				if(OrbitCamera.Instance != null) OrbitCamera.Instance.LockInput(this.gameObject);
+
 				//コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
 				{
@@ -144,7 +149,8 @@ public class GrabMove : MonoBehaviour
 			else
 				ResetInput();
 		}
-		
+#endif
+
 		//for Mouse
 		else
 		{
@@ -155,7 +161,8 @@ public class GrabMove : MonoBehaviour
 				//カメラ操作のロック
 				if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.LockInput(this.gameObject);
 				if(PinchZoomCamera.Instance != null) PinchZoomCamera.Instance.LockInput(this.gameObject);
-				
+				if(OrbitCamera.Instance != null) OrbitCamera.Instance.LockInput(this.gameObject);
+
 				//コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
 				{

@@ -157,6 +157,8 @@ public class FlyThroughCamera : MonoBehaviour
 			else
 				ResetInput();
 		}
+
+#if UNITY_STANDALONE_WIN
 		else if(Application.platform == RuntimePlatform.WindowsPlayer && win7touch)
 		{
 			if(W7TouchManager.GetTouchCount() == 1)
@@ -179,7 +181,8 @@ public class FlyThroughCamera : MonoBehaviour
 			else
 				ResetInput();
 		}
-		
+#endif
+
 		//for Mouse
 		else
 		{

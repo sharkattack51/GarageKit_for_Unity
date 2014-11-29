@@ -187,6 +187,7 @@ public class PinchZoomCamera : MonoBehaviour
 		
 		//カメラ操作のアンロック
 		if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.UnlockInput(this.gameObject);
+		if(OrbitCamera.Instance != null) OrbitCamera.Instance.UnlockInput(this.gameObject);
 		
 		//連携コンポーネントをON
 		foreach(MonoBehaviour component in disableComponents)
@@ -205,7 +206,8 @@ public class PinchZoomCamera : MonoBehaviour
 			{
 				//カメラ操作のロック
 				if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.LockInput(this.gameObject);
-				
+				if(OrbitCamera.Instance != null) OrbitCamera.Instance.LockInput(this.gameObject);
+
 				//連携コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
 				{
@@ -236,13 +238,16 @@ public class PinchZoomCamera : MonoBehaviour
 			else
 				ResetInput();
 		}
+
+#if UNITY_STANDALONE_WIN
 		else if(Application.platform == RuntimePlatform.WindowsPlayer && win7touch)
 		{
 			if(W7TouchManager.GetTouchCount() == 2)
 			{
 				//カメラ操作のロック
 				if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.LockInput(this.gameObject);
-				
+				if(OrbitCamera.Instance != null) OrbitCamera.Instance.LockInput(this.gameObject);
+
 				//連携コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
 				{
@@ -273,7 +278,8 @@ public class PinchZoomCamera : MonoBehaviour
 			else
 				ResetInput();
 		}
-		
+#endif
+
 		//for Mouse
 		else
 		{
@@ -281,6 +287,7 @@ public class PinchZoomCamera : MonoBehaviour
 			{
 				//カメラ操作のロック
 				if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.LockInput(this.gameObject);
+				if(OrbitCamera.Instance != null) OrbitCamera.Instance.LockInput(this.gameObject);
 				
 				//連携コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)

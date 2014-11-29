@@ -110,6 +110,8 @@ public class ObjectOrbit2 : MonoBehaviour
 			else
 				ResetInput();
 		}
+
+#if UNITY_STANDALONE_WIN
 		else if(Application.platform == RuntimePlatform.WindowsPlayer && win7touch)
 		{
 			if(W7TouchManager.GetTouchCount() > 0)
@@ -117,6 +119,7 @@ public class ObjectOrbit2 : MonoBehaviour
 			else
 				ResetInput();
 		}
+#endif
 		
 		//for Mouse
 		else
