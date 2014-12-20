@@ -64,7 +64,11 @@ https://gist.github.com/keijiro/947530
 - ChangeTextureImportSettings.cs
 - CreateCuntomPlane.cs
 
-/Scripts/Application
+/Scripts/Utils
+
+- Utils.cs
+
+/Scripts/Utils/Application
   
 - ApplicationSetting.cs
 - ExecuteArgs.cs
@@ -73,11 +77,11 @@ https://gist.github.com/keijiro/947530
 - SetAppResoution.cs
 - Unity4ResolutionHelper.cs
 
-/Scripts/Button
+/Scripts/Utils/Button
 
 - ButtonObjectBase.cs
 
-/Scripts/CameraControl
+/Scripts/Utils/CameraControl
 
 - CameraShfter.cs
 - FlyThroughCamera.cs
@@ -87,13 +91,13 @@ https://gist.github.com/keijiro/947530
 - OrbitCamera.cs
 - PinchZoomCamera.cs
 
-/Scripts/DataLoader
+/Scripts/Utils/DataLoader
 
 - ContentsDownLoader.cs
 - CsvLoader.cs
 - ImageLoader.cs
 
-/Scripts/Debug
+/Scripts/Utils/Debug
 
 - CameraGizmoDrawer.cs
 - EditorHide.cs
@@ -103,23 +107,27 @@ https://gist.github.com/keijiro/947530
 - VisibleByKeyInput.cs
 - VisibleMouseCursor.cs
 
-/Scripts/Envelope
+/Scripts/Utils/Envelope
 
 - AnimationCurveUtil.cs
 - Envelope.cs
 
-/Scripts/Event
+/Scripts/Utils/Event
 
 - AnimationEventDelegate.cs
 - TimerEvent.cs
 
-/Scripts/Network
+/Scripts/Utils/Input
+
+- VirtualInput.cs
+
+/Scripts/Utils/Network
 
 - SerialPortController.cs
 - UDPReciever.cs
 - UDPSender.cs
 
-/Scripts/Object
+/Scripts/Utils/Object
 
 - AutoBrink.cs
 - AutoRotate.cs
@@ -136,13 +144,13 @@ https://gist.github.com/keijiro/947530
 - TransformFollower.cs
 - WebCamPlateObject.cs
 
-/Scripts/Render
+/Scripts/Utils/Render
 
 - CompositLayer.cs
 - GlLineRenderer.cs
 - RenderScreenTexture.cs
 
-/Scripts/Texture
+/Scripts/Utils/Texture
 
 - NumberTexture.cs
 - SequenceTexture.cs
