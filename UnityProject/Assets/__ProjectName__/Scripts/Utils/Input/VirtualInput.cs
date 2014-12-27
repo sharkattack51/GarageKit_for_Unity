@@ -191,7 +191,7 @@ public class VirtualInput
 		Debug.Log("VirtualInput :: KeyDown [" + code + "]");
 	}
 
-	private void Click(int pos_x, int pos_y)
+	public static void Click(int pos_x, int pos_y)
 	{
 		// マウス操作実行用のデータ
 		const int num = 3;
