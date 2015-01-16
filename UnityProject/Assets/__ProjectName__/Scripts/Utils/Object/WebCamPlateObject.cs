@@ -7,20 +7,8 @@ using System;
  * 使用する前にWebカメラのドライバをインストールすること!
  */
 
-public class WebCamPlateObject : MonoBehaviour {
-	
-	private static WebCamPlateObject instance;
-	public static WebCamPlateObject Instance
-	{
-		get
-		{
-			if(instance == null)
-				instance = new WebCamPlateObject();
-			
-			return instance;
-		}
-	}
-	
+public class WebCamPlateObject : MonoBehaviour
+{
 	//デバイス設定
 	public string deviceName = "";
 	public int deviceIndex = 0;
@@ -48,7 +36,7 @@ public class WebCamPlateObject : MonoBehaviour {
 	
 	void Awake()
 	{
-		instance = this;
+	
 	}
 	
 	void Start()
