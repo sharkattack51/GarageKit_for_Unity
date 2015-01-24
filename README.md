@@ -8,6 +8,8 @@ You can start the project immediately in Unity using GarageKit.
 
 GaraegKit is framework that uses the Unity C#. I provide the template scene, some manager scripts, utility scripts and directory structure.
 
+http://debuglog.tumblr.com/post/100742681354/garagekit-for-unity
+
 ## How to use?
 
 1. open Main.unity
