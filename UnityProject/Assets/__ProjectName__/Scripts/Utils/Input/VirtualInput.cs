@@ -8,6 +8,8 @@ using System.Runtime.InteropServices;
 
 public class VirtualInput
 {
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+
 	//マウス操作やキーボード操作をシミュレーションするサンプル(C#.NET) 
 	//http://homepage2.nifty.com/nonnon/SoftSample/CS.NET/SampleSendInput.html
 
@@ -162,6 +164,8 @@ public class VirtualInput
 	private const int VK_F12 = 0x7B;
 
 
+#region Keyboard
+
 	// キーを押す
 	public static void KeyDown(int code)
 	{
@@ -189,6 +193,31 @@ public class VirtualInput
 		SendInput(num, ref inp[0], Marshal.SizeOf(inp[0]));
 
 		Debug.Log("VirtualInput :: KeyDown [" + code + "]");
+	}
+
+#endregion
+
+#region Mouse
+
+	public static void Move(int pos_x, int pos_y)
+	{
+		// マウス操作実行用のデータ
+		const int num = 1;
+		INPUT[] inp = new INPUT[num];
+		
+		// マウスカーソルを移動する
+		inp[0].type = INPUT_MOUSE;
+		inp[0].mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE;
+		inp[0].mi.dx = pos_x * (65535 / Screen.width);
+		inp[0].mi.dy = pos_y * (65535 / Screen.height);
+		inp[0].mi.mouseData = 0;
+		inp[0].mi.dwExtraInfo = 0;
+		inp[0].mi.time = 0;
+		
+		// マウス操作実行
+		SendInput(num, ref inp[0], Marshal.SizeOf(inp[0]));
+
+		Debug.Log("VirtualInput :: Mouse Move [ " + pos_x.ToString() + " , " + pos_y.ToString() + " ]");
 	}
 
 	public static void Click(int pos_x, int pos_y)
@@ -227,6 +256,169 @@ public class VirtualInput
 		// マウス操作実行
 		SendInput(num, ref inp[0], Marshal.SizeOf(inp[0]));
 
-		Debug.Log("VirtualInput :: Click [ " + pos_x.ToString() + " , " + pos_y.ToString() + " ]");
+		Debug.Log("VirtualInput :: Mouse Click [ " + pos_x.ToString() + " , " + pos_y.ToString() + " ]");
 	}
+
+	public static void DoubleClick(int pos_x, int pos_y)
+	{
+		// マウス操作実行用のデータ
+		const int num = 5;
+		INPUT[] inp = new INPUT[num];
+		
+		// マウスカーソルを移動する
+		inp[0].type = INPUT_MOUSE;
+		inp[0].mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE;
+		inp[0].mi.dx = pos_x * (65535 / Screen.width);
+		inp[0].mi.dy = pos_y * (65535 / Screen.height);
+		inp[0].mi.mouseData = 0;
+		inp[0].mi.dwExtraInfo = 0;
+		inp[0].mi.time = 0;
+		
+		// マウスの左ボタンを押す
+		inp[1].type = INPUT_MOUSE;
+		inp[1].mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
+		inp[1].mi.dx = 0;
+		inp[1].mi.dy = 0;
+		inp[1].mi.mouseData = 0;
+		inp[1].mi.dwExtraInfo = 0;
+		inp[1].mi.time = 0;
+		
+		// マウスの左ボタンを離す
+		inp[2].type = INPUT_MOUSE;
+		inp[2].mi.dwFlags = MOUSEEVENTF_LEFTUP;
+		inp[2].mi.dx = 0;
+		inp[2].mi.dy = 0;
+		inp[2].mi.mouseData = 0;
+		inp[2].mi.dwExtraInfo = 0;
+		inp[2].mi.time = 0;
+
+		// マウスの左ボタンを押す
+		inp[3].type = INPUT_MOUSE;
+		inp[3].mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
+		inp[3].mi.dx = 0;
+		inp[3].mi.dy = 0;
+		inp[3].mi.mouseData = 0;
+		inp[3].mi.dwExtraInfo = 0;
+		inp[3].mi.time = 0;
+		
+		// マウスの左ボタンを離す
+		inp[4].type = INPUT_MOUSE;
+		inp[4].mi.dwFlags = MOUSEEVENTF_LEFTUP;
+		inp[4].mi.dx = 0;
+		inp[4].mi.dy = 0;
+		inp[4].mi.mouseData = 0;
+		inp[4].mi.dwExtraInfo = 0;
+		inp[4].mi.time = 0;
+		
+		// マウス操作実行
+		SendInput(num, ref inp[0], Marshal.SizeOf(inp[0]));
+
+		Debug.Log("VirtualInput :: Mouse Double Click [ " + pos_x.ToString() + " , " + pos_y.ToString() + " ]");
+	}
+
+	public static void LeftDown(int pos_x, int pos_y)
+	{
+		// マウス操作実行用のデータ
+		const int num = 2;
+		INPUT[] inp = new INPUT[num];
+		
+		// マウスカーソルを移動する
+		inp[0].type = INPUT_MOUSE;
+		inp[0].mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE;
+		inp[0].mi.dx = pos_x * (65535 / Screen.width);
+		inp[0].mi.dy = pos_y * (65535 / Screen.height);
+		inp[0].mi.mouseData = 0;
+		inp[0].mi.dwExtraInfo = 0;
+		inp[0].mi.time = 0;
+		
+		// マウスの中ボタンを押す
+		inp[1].type = INPUT_MOUSE;
+		inp[1].mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
+		inp[1].mi.dx = 0;
+		inp[1].mi.dy = 0;
+		inp[1].mi.mouseData = 0;
+		inp[1].mi.dwExtraInfo = 0;
+		inp[1].mi.time = 0;
+		
+		// マウス操作実行
+		SendInput(num, ref inp[0], Marshal.SizeOf(inp[0]));
+
+		Debug.Log("VirtualInput :: Mouse Left Down [ " + pos_x.ToString() + " , " + pos_y.ToString() + " ]");
+	}
+
+	public static void LeftUp()
+	{
+		// マウス操作実行用のデータ
+		const int num = 1;
+		INPUT[] inp = new INPUT[num];
+		
+		// マウスの中ボタンを離す
+		inp[0].type = INPUT_MOUSE;
+		inp[0].mi.dwFlags = MOUSEEVENTF_LEFTUP;
+		inp[0].mi.dx = 0;
+		inp[0].mi.dy = 0;
+		inp[0].mi.mouseData = 0;
+		inp[0].mi.dwExtraInfo = 0;
+		inp[0].mi.time = 0;
+		
+		// マウス操作実行
+		SendInput(num, ref inp[0], Marshal.SizeOf(inp[0]));
+
+		Debug.Log("VirtualInput :: Mouse Left Up");
+	}
+
+	public static void MiddleDown(int pos_x, int pos_y)
+	{
+		// マウス操作実行用のデータ
+		const int num = 2;
+		INPUT[] inp = new INPUT[num];
+		
+		// マウスカーソルを移動する
+		inp[0].type = INPUT_MOUSE;
+		inp[0].mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE;
+		inp[0].mi.dx = pos_x * (65535 / Screen.width);
+		inp[0].mi.dy = pos_y * (65535 / Screen.height);
+		inp[0].mi.mouseData = 0;
+		inp[0].mi.dwExtraInfo = 0;
+		inp[0].mi.time = 0;
+		
+		// マウスの中ボタンを押す
+		inp[1].type = INPUT_MOUSE;
+		inp[1].mi.dwFlags = MOUSEEVENTF_MIDDLEDOWN;
+		inp[1].mi.dx = 0;
+		inp[1].mi.dy = 0;
+		inp[1].mi.mouseData = 0;
+		inp[1].mi.dwExtraInfo = 0;
+		inp[1].mi.time = 0;
+		
+		// マウス操作実行
+		SendInput(num, ref inp[0], Marshal.SizeOf(inp[0]));
+
+		Debug.Log("VirtualInput :: Mouse Middle Down [ " + pos_x.ToString() + " , " + pos_y.ToString() + " ]");
+	}
+
+	public static void MiddleUp()
+	{
+		// マウス操作実行用のデータ
+		const int num = 1;
+		INPUT[] inp = new INPUT[num];
+		
+		// マウスの中ボタンを離す
+		inp[0].type = INPUT_MOUSE;
+		inp[0].mi.dwFlags = MOUSEEVENTF_MIDDLEUP;
+		inp[0].mi.dx = 0;
+		inp[0].mi.dy = 0;
+		inp[0].mi.mouseData = 0;
+		inp[0].mi.dwExtraInfo = 0;
+		inp[0].mi.time = 0;
+		
+		// マウス操作実行
+		SendInput(num, ref inp[0], Marshal.SizeOf(inp[0]));
+
+		Debug.Log("VirtualInput :: Mouse Middle Up");
+	}
+
+#endregion
+
+#endif
 }
