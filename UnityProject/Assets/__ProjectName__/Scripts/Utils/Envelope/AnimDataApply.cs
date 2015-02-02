@@ -112,14 +112,11 @@ public class AnimDataApply : MonoBehaviour
 	public AnimationCurve GetCurve(AnimationTrack.TRACK_TYPE type)
 	{
 		AnimationCurve curve = null;
-		foreach(AnimationTrack track in animTracks)
-		{
-			if(track.type == type)
-			{
-				curve = track.curve;
-				break;
-			}
-		}
+		AnimationTrack track = Array.Find(animTracks, t => (t.type == type));
+
+		if(track != null)
+			curve = track.curve;
+
 		return curve;
 	}
 	
