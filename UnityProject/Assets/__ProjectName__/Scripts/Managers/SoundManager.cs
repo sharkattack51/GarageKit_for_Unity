@@ -45,16 +45,16 @@ public class SoundManager : MonoBehaviour
 	
 	void Start()
 	{
-		//設定値を取得
-		ApplicationSetting setting = ApplicationSetting.Instance;
-		if(setting.IsValid)
-		{
+	    //設定値を取得
+	    ApplicationSetting setting = ApplicationSetting.Instance;
+	    if(setting.IsValid)
+	    {
 			if(setting.Data.ContainsKey("UseBGM")) useBGM = bool.Parse(setting.Data["UseBGM"]);
 			if(setting.Data.ContainsKey("UseSE")) useSE = bool.Parse(setting.Data["UseSE"]);
 			if(setting.Data.ContainsKey("VolBGM")) volBGM = float.Parse(setting.Data["VolBGM"]);
 			if(setting.Data.ContainsKey("VolSE")) volSE = float.Parse(setting.Data["VolSE"]);
-		}
-		
+	    }
+    
 		//AudioSourceを設定
 		audioSource_SE = this.gameObject.AddComponent<AudioSource>();
 		audioSource_BGM = this.gameObject.AddComponent<AudioSource>();
@@ -64,9 +64,6 @@ public class SoundManager : MonoBehaviour
 	/// <summary>
 	/// SEの再生
 	/// </summary>
-	/// <param name="type">
-	/// A <see cref="SE"/>
-	/// </param>
 	public void PlaySE(SE type, bool overlap = false)
 	{
 		if(useSE)
@@ -95,7 +92,15 @@ public class SoundManager : MonoBehaviour
 			}
 		}
 	}
-	
+
+	/// <summary>
+	/// SEの停止
+	/// </summary>
+	public void StopSE()
+	{
+		if(audioSource_SE.isPlaying)
+			audioSource_SE.Stop();
+	}
 	
 	/// <summary>
 	/// BGMの再生
@@ -135,5 +140,14 @@ public class SoundManager : MonoBehaviour
 				default: break;
 			}
 		}
+	}
+
+	/// <summary>
+	/// BGMの停止
+	/// </summary>
+	public void StopBGM()
+	{
+		if(audioSource_BGM.isPlaying)
+			audioSource_BGM.Stop();
 	}
 }

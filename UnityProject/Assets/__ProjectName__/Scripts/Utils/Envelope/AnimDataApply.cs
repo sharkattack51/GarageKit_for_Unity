@@ -141,7 +141,7 @@ public class AnimDataApply : MonoBehaviour
 			case AnimationTrack.TRACK_TYPE.POS_Y: keyValue = keyValue / 100.0f; break;
 			case AnimationTrack.TRACK_TYPE.POS_Z: keyValue = keyValue / 100.0f * -1.0f; break;
 			case AnimationTrack.TRACK_TYPE.ROT_X: keyValue = keyValue * Mathf.Rad2Deg * -1.0f; break;
-			case AnimationTrack.TRACK_TYPE.ROT_Y: keyValue = 180.0f - (keyValue * Mathf.Rad2Deg); break;
+			case AnimationTrack.TRACK_TYPE.ROT_Y: keyValue = (keyValue < 0.0f) ? 180.0f - (keyValue * Mathf.Rad2Deg) : (keyValue * Mathf.Rad2Deg) + 180.0f; break;
 			case AnimationTrack.TRACK_TYPE.ROT_Z: keyValue = keyValue * Mathf.Rad2Deg * -1.0f; break;
 			default: break;
 		}
