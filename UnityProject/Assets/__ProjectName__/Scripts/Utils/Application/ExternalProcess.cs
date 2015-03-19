@@ -82,7 +82,7 @@ public class ExternalProcess : MonoBehaviour
 			if(fileInfo.Exists)
 			{
 				Process proc = new Process();
-				proc.StartInfo.FileName = procData.exePath;
+				proc.StartInfo.FileName = Path.GetFullPath(procData.exePath);
 				
 				//引数設定
 				if(procData.argument != "")
