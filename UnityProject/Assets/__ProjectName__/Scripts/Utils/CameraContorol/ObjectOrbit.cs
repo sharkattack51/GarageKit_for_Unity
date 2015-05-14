@@ -9,11 +9,7 @@ using System.Collections;
 public class ObjectOrbit : MonoBehaviour
 {
 	public static bool win7touch = false;
-	
-	//singleton
-	private static ObjectOrbit instance;
-	public static ObjectOrbit Instance { get{ return instance; } }
-	
+
 	public float sensitivity = 10.0f;
 	public float speed = 1.0f;
 	public float smoothTime = 0.5f;
@@ -43,7 +39,7 @@ public class ObjectOrbit : MonoBehaviour
 	
 	void Awake()
 	{
-		instance = this;
+
 	}
 	
 	void Start()

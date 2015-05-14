@@ -12,10 +12,6 @@ using System.Text;
 
 public class SerialPortController : MonoBehaviour
 {
-	//singleton
-	private static SerialPortController instance;
-	public static SerialPortController Instance { get{ return instance; } }
-	
 	/// <summary>
 	/// シリアルポートのインスタンス
 	/// </summary>
@@ -70,7 +66,7 @@ public class SerialPortController : MonoBehaviour
 	
 	void Awake()
 	{
-		instance = this;
+
 	}
 	
 	void Start()

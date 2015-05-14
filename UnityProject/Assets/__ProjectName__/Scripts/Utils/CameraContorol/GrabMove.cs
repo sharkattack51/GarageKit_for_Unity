@@ -10,15 +10,15 @@ public class GrabMove : MonoBehaviour
 {
 	public static bool win7touch = false;
 	
-	//singleton
-	private static GrabMove instance;
-	public static GrabMove Instance { get{ return instance; } }
-	
 	public Camera renderCamera;
 	public int grabTouchNum = 3;
 	public float moveBias = 1.0f;
 	public float smoothTime = 0.1f;
 	public MonoBehaviour[] disableComponents; //グラブムーブ操作時に動作をOFFにするコンポーネント
+
+	private FlyThroughCamera flyThroughCamera;
+	private PinchZoomCamera pinchZoomCamera;
+	private OrbitCamera orbitCamera;
 	
 	private bool inputLock;
 	public bool IsInputLock { get{ return inputLock; } }
@@ -34,12 +34,17 @@ public class GrabMove : MonoBehaviour
 	
 	void Awake()
 	{
-		instance = this;
+
 	}
 	
 	void Start()
 	{
 		inputLock = false;
+
+		//カメラコンポーネントの取得
+		flyThroughCamera = this.gameObject.GetComponent<FlyThroughCamera>();
+		pinchZoomCamera = this.gameObject.GetComponent<PinchZoomCamera>();
+		orbitCamera = this.gameObject.GetComponent<OrbitCamera>();
 		
 		//初期値を保存
 		defaultPos = this.gameObject.transform.position;
@@ -64,9 +69,9 @@ public class GrabMove : MonoBehaviour
 		dragDelta = Vector3.zero;
 		
 		//カメラ操作のアンロック
-		if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.UnlockInput(this.gameObject);
-		if(PinchZoomCamera.Instance != null) PinchZoomCamera.Instance.UnlockInput(this.gameObject);
-		if(OrbitCamera.Instance != null) OrbitCamera.Instance.UnlockInput(this.gameObject);
+		if(flyThroughCamera != null) flyThroughCamera.UnlockInput(this.gameObject);
+		if(pinchZoomCamera != null) pinchZoomCamera.UnlockInput(this.gameObject);
+		if(orbitCamera != null) orbitCamera.UnlockInput(this.gameObject);
 
 		//コンポーネントをON
 		foreach(MonoBehaviour component in disableComponents)
@@ -84,9 +89,9 @@ public class GrabMove : MonoBehaviour
 			if(Input.touchCount >= grabTouchNum)
 			{
 				//カメラ操作のロック
-				if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.LockInput(this.gameObject);
-				if(PinchZoomCamera.Instance != null) PinchZoomCamera.Instance.LockInput(this.gameObject);
-				if(OrbitCamera.Instance != null) OrbitCamera.Instance.LockInput(this.gameObject);
+				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
+				if(pinchZoomCamera != null) pinchZoomCamera.LockInput(this.gameObject);
+				if(orbitCamera != null) orbitCamera.LockInput(this.gameObject);
 				
 				//コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
@@ -120,9 +125,9 @@ public class GrabMove : MonoBehaviour
 			if(W7TouchManager.GetTouchCount() >= grabTouchNum)
 			{
 				//カメラ操作のロック
-				if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.LockInput(this.gameObject);
-				if(PinchZoomCamera.Instance != null) PinchZoomCamera.Instance.LockInput(this.gameObject);
-				if(OrbitCamera.Instance != null) OrbitCamera.Instance.LockInput(this.gameObject);
+				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
+				if(pinchZoomCamera != null) pinchZoomCamera.LockInput(this.gameObject);
+				if(orbitCamera != null) orbitCamera.LockInput(this.gameObject);
 
 				//コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
@@ -159,9 +164,9 @@ public class GrabMove : MonoBehaviour
 				&& (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
 			{
 				//カメラ操作のロック
-				if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.LockInput(this.gameObject);
-				if(PinchZoomCamera.Instance != null) PinchZoomCamera.Instance.LockInput(this.gameObject);
-				if(OrbitCamera.Instance != null) OrbitCamera.Instance.LockInput(this.gameObject);
+				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
+				if(pinchZoomCamera != null) pinchZoomCamera.LockInput(this.gameObject);
+				if(orbitCamera != null) orbitCamera.LockInput(this.gameObject);
 
 				//コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)

@@ -8,18 +8,12 @@ using System;
 
 public class ExcuteArgs : MonoBehaviour
 {	
-	private static ExcuteArgs instance;
-	public static ExcuteArgs Instance { get{ return instance; } }
-	
 	private string[] args;
 	public string[] Args { get{ return args; } }
 	
 	
 	void Awake()
 	{
-		//参照用のインスタンス設定
-		instance = this;
-		
 		//コマンドライン実行引数を取得する
 		if(Application.platform != RuntimePlatform.WindowsEditor)
 		{

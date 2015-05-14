@@ -10,11 +10,7 @@ using System.Collections;
 public class FlyThroughCamera : MonoBehaviour
 {
 	public static bool win7touch = false;
-	
-	//singleton
-	private static FlyThroughCamera instance;
-	public static FlyThroughCamera Instance { get{ return instance; } }
-	
+
 	//フライスルーのコントロールタイプ
 	public enum FLYTHROUGH_CONTROLL_TYPE
 	{
@@ -74,7 +70,7 @@ public class FlyThroughCamera : MonoBehaviour
 	
 	void Awake()
 	{
-		instance = this;
+
 	}
 	
 	void Start()

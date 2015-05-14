@@ -26,11 +26,7 @@ public class LimitValue
 public class PinchZoomCamera : MonoBehaviour
 {
 	public static bool win7touch = false;
-	
-	//singleton
-	private static PinchZoomCamera instance;
-	public static PinchZoomCamera Instance { get{ return instance; } }
-	
+
 	//カメラのズームタイプ
 	public enum PINCH_ZOOM_TYPE
 	{
@@ -51,7 +47,10 @@ public class PinchZoomCamera : MonoBehaviour
 	public bool zoomToPinchCenter = false;
 	
 	private GameObject pinchZoomRoot;
-	
+
+	private FlyThroughCamera flyThroughCamera;
+	private OrbitCamera orbitCamera;
+
 	private bool inputLock;
 	public bool IsInputLock { get{ return inputLock; } }
 	private object lockObject;
@@ -87,7 +86,7 @@ public class PinchZoomCamera : MonoBehaviour
 	
 	void Awake()
 	{
-		instance = this;
+
 	}
 	
 	void Start()
@@ -95,7 +94,11 @@ public class PinchZoomCamera : MonoBehaviour
 		//設定ファイルより入力タイプを取得
 		if(ApplicationSetting.Instance.Data["UseMouse"].ToLower() != "true")
 			win7touch = true;
-		
+
+		//カメラコンポーネントの取得
+		flyThroughCamera = this.gameObject.GetComponent<FlyThroughCamera>();
+		orbitCamera = this.gameObject.GetComponent<OrbitCamera>();
+
 		//ズーム位置のルートを設定する
 		pinchZoomRoot = new GameObject(this.gameObject.name + " PinchZoom Root");
 		pinchZoomRoot.transform.position = this.gameObject.transform.position;
@@ -103,7 +106,7 @@ public class PinchZoomCamera : MonoBehaviour
 		pinchZoomRoot.transform.localScale = this.gameObject.transform.localScale;
 		pinchZoomRoot.transform.parent = this.gameObject.transform.parent;
 		this.gameObject.transform.parent = pinchZoomRoot.transform;
-		
+
 		//初期値を保存
 		switch(zoomType)
 		{
@@ -158,16 +161,16 @@ public class PinchZoomCamera : MonoBehaviour
 		//ピンチセンターへのズーム設定をリセット
 		if(!isFirstTouch && zoomToPinchCenter)
 		{
-			if(FlyThroughCamera.Instance != null)
+			if(flyThroughCamera != null)
 			{
 				Ray ray = this.gameObject.camera.ScreenPointToRay(new Vector3(Screen.width / 2.0f, Screen.height / 2.0f, 0.0f));
 				RaycastHit hitInfo;
 				
-				if(FlyThroughCamera.Instance.groundCollider.Raycast(ray, out hitInfo, float.PositiveInfinity))
+				if(flyThroughCamera.groundCollider.Raycast(ray, out hitInfo, float.PositiveInfinity))
 				{
 					//カメラ位置
-					FlyThroughCamera.Instance.TranslateToFlyThrough(hitInfo.point - FlyThroughCamera.Instance.currentPos);
-					FlyThroughCamera.Instance.ShiftTransform.localPosition = Vector3.zero;
+					flyThroughCamera.TranslateToFlyThrough(hitInfo.point - flyThroughCamera.currentPos);
+					flyThroughCamera.ShiftTransform.localPosition = Vector3.zero;
 					
 					//カメラシフト
 					foreach(CameraShifter cameraShifter in cameraShifterListForZtoPC)
@@ -186,8 +189,8 @@ public class PinchZoomCamera : MonoBehaviour
 		pinchCenter = Vector2.zero;
 		
 		//カメラ操作のアンロック
-		if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.UnlockInput(this.gameObject);
-		if(OrbitCamera.Instance != null) OrbitCamera.Instance.UnlockInput(this.gameObject);
+		if(flyThroughCamera != null) flyThroughCamera.UnlockInput(this.gameObject);
+		if(orbitCamera != null) orbitCamera.UnlockInput(this.gameObject);
 		
 		//連携コンポーネントをON
 		foreach(MonoBehaviour component in disableComponents)
@@ -205,8 +208,8 @@ public class PinchZoomCamera : MonoBehaviour
 			if(Input.touchCount == 2)
 			{
 				//カメラ操作のロック
-				if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.LockInput(this.gameObject);
-				if(OrbitCamera.Instance != null) OrbitCamera.Instance.LockInput(this.gameObject);
+				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
+				if(orbitCamera != null) orbitCamera.LockInput(this.gameObject);
 
 				//連携コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
@@ -245,8 +248,8 @@ public class PinchZoomCamera : MonoBehaviour
 			if(W7TouchManager.GetTouchCount() == 2)
 			{
 				//カメラ操作のロック
-				if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.LockInput(this.gameObject);
-				if(OrbitCamera.Instance != null) OrbitCamera.Instance.LockInput(this.gameObject);
+				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
+				if(orbitCamera != null) orbitCamera.LockInput(this.gameObject);
 
 				//連携コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
@@ -286,8 +289,8 @@ public class PinchZoomCamera : MonoBehaviour
 			if(Input.GetMouseButton(0) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)))
 			{
 				//カメラ操作のロック
-				if(FlyThroughCamera.Instance != null) FlyThroughCamera.Instance.LockInput(this.gameObject);
-				if(OrbitCamera.Instance != null) OrbitCamera.Instance.LockInput(this.gameObject);
+				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
+				if(orbitCamera != null) orbitCamera.LockInput(this.gameObject);
 				
 				//連携コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
@@ -332,15 +335,15 @@ public class PinchZoomCamera : MonoBehaviour
 	/// </summary>
 	private void StartZoomToPinchCenter()
 	{
-		if(FlyThroughCamera.Instance != null)
+		if(flyThroughCamera != null)
 		{
 			Ray ray = this.camera.ScreenPointToRay(pinchCenter);
 			RaycastHit hitInfo;
-			if(FlyThroughCamera.Instance.groundCollider.Raycast(ray, out hitInfo, float.PositiveInfinity))
+			if(flyThroughCamera.groundCollider.Raycast(ray, out hitInfo, float.PositiveInfinity))
 			{
 				//カメラ位置
-				Vector3 shift = hitInfo.point - FlyThroughCamera.Instance.FlyThroughRoot.transform.position;
-				FlyThroughCamera.Instance.ShiftTransform.localPosition = shift;
+				Vector3 shift = hitInfo.point - flyThroughCamera.FlyThroughRoot.transform.position;
+				flyThroughCamera.ShiftTransform.localPosition = shift;
 				
 				//カメラシフト
 				foreach(CameraShifter cameraShifter in cameraShifterListForZtoPC)

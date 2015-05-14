@@ -9,11 +9,7 @@ using System.Collections;
 public class ObjectOrbit2 : MonoBehaviour
 {
 	public static bool win7touch = false;
-	
-	//singleton
-	private static ObjectOrbit2 instance;
-	public static ObjectOrbit2 Instance { get{ return instance; } }
-	
+
 	public Camera renderCam;
 	public float sensitivity = 1.0f;
 	public float smoothTime = 0.1f;
@@ -38,7 +34,7 @@ public class ObjectOrbit2 : MonoBehaviour
 	
 	void Awake()
 	{
-		instance = this;
+
 	}
 	
 	void Start()

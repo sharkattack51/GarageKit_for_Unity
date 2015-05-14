@@ -11,10 +11,6 @@ public class OrbitCamera : MonoBehaviour
 {
 	public static bool win7touch = false;
 
-	//singleton
-	private static OrbitCamera instance;
-	public static OrbitCamera Instance { get{ return instance; } }
-
 	public GameObject target;
 	public float sensitivity = 0.1f;
 	public float smoothTime = 2.0f;
@@ -40,7 +36,7 @@ public class OrbitCamera : MonoBehaviour
 	
 	void Awake()
 	{
-		instance = this;
+
 	}
 
 	void Start()

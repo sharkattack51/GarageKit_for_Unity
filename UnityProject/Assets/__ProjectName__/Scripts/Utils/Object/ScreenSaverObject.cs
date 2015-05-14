@@ -7,10 +7,6 @@ using System.Collections;
 
 public class ScreenSaverObject : MonoBehaviour
 {
-	//singleton
-	private static ScreenSaverObject instance;
-	public static ScreenSaverObject Instance { get{ return instance; } }
-	
 	/// <summary>
 	/// スクリーンセーバー終了イベント
 	/// </summary>
@@ -43,7 +39,7 @@ public class ScreenSaverObject : MonoBehaviour
 	
 	void Awake()
 	{
-		instance = this;
+
 	}
 	
 	void Start()

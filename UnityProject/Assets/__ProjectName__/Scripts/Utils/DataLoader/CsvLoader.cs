@@ -11,10 +11,6 @@ using System;
  
 public class CsvLoader : MonoBehaviour 
 {
-	//singleton
-	private static CsvLoader instance;
-	public static CsvLoader Instance { get{ return instance; } }
-	
 	private bool isVaild = false;
 	public bool IsVaild { get{ return isVaild; } }
 	
@@ -32,10 +28,7 @@ public class CsvLoader : MonoBehaviour
 	
 	
 	void Awake()
-	{
-		//データ取得用のインスタンス
-		instance = this;
-		
+	{		
 		//自動読み込み
 		if(autoLoad)
 			LoadCSV();

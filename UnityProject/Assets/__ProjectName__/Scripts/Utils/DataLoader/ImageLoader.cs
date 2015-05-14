@@ -10,10 +10,6 @@ using System.Text;
 
 public class ImageLoader : MonoBehaviour
 {
-	//singleton
-	private static ImageLoader instance;
-	public static ImageLoader Instance { get{ return instance; } }
-	
 	//読み込み対象のフォルダ
 	public string folderPath;
 	public bool absolute = false;
@@ -39,7 +35,7 @@ public class ImageLoader : MonoBehaviour
 	
 	void Awake()
 	{
-		instance = this;
+
 	}
 	
 	void Start()

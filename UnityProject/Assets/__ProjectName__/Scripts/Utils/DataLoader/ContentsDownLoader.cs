@@ -7,23 +7,7 @@ using System.IO;
  */
 
 public class ContentsDownLoader : MonoBehaviour
-{
-	//singleton
-	private static ContentsDownLoader instance;
-	public static ContentsDownLoader Instance
-	{
-		get
-		{
-			if(instance == null)
-			{
-				GameObject go = new GameObject("ContentsDownLoader");
-				instance = go.AddComponent<ContentsDownLoader>();
-			}
-			
-			return instance;
-		}
-	}
-	
+{	
 	//読み込み完了イベント
 	public delegate void OnLoadCompleteDelegate();
 	public event OnLoadCompleteDelegate OnLoadComplete;
@@ -53,7 +37,7 @@ public class ContentsDownLoader : MonoBehaviour
 	
 	void Awake()
 	{
-		instance = this;
+
 	}
 	
 	void Start()

@@ -24,10 +24,6 @@ public class ProcessData
 
 public class ExternalProcess : MonoBehaviour
 {
-	//singleton
-	private static ExternalProcess instance;
-	public static ExternalProcess Instance { get{ return instance; } }
-	
 	//プロセス情報リスト
 	public ProcessData[] processes;
 	
@@ -38,7 +34,7 @@ public class ExternalProcess : MonoBehaviour
 	
 	void Awake()
 	{
-		instance = this;
+
 	}
 	
 	void Start()
