@@ -2,24 +2,25 @@
 using System.Collections;
 using System;
 
-/// <summary>
-/// キーボード入力を管理する
-/// </summary>
-
-public class KeyInputManager : MonoBehaviour
+/*
+ * キーボード入力を管理する
+ */
+public class KeyInputManager : ManagerBase
 {
-	void Awake()
+	protected override void Awake()
 	{
-		
+		base.Awake();
 	}
 	
-	void Start()
+	protected override void Start()
 	{
-		
+		base.Start();
 	}
 	
-	void Update()
+	protected override void Update()
 	{
+		base.Update();
+
 		//ESC
 		if(Input.GetKeyDown(KeyCode.Escape))
 		{
@@ -40,8 +41,9 @@ public class KeyInputManager : MonoBehaviour
 			DebugConsole.Log("press key D : Visible Debug View");
 			
 			//デバッグ表示のトグル
-			DebugManager.Instance.IsDebug = !DebugManager.Instance.IsDebug;
-			DebugManager.Instance.ToggleShowDebugView();
+			DebugManager debugManager = AppMain.Instance.debugManager;
+			debugManager.IsDebug = !debugManager.IsDebug;
+			debugManager.ToggleShowDebugView();
 		}
 		
 		//C
@@ -97,20 +99,21 @@ public class KeyInputManager : MonoBehaviour
 			DebugConsole.Log("press key Space : Change Stage");
 			
 			//ステージの変更
-			if(StageManager.Instance.CurrentStage == StageManager.StageState.STARTUP)
-				StageManager.Instance.ChangeStage(StageManager.StageState.WAIT);
-			else if(StageManager.Instance.CurrentStage == StageManager.StageState.WAIT)
-				StageManager.Instance.ChangeStage(StageManager.StageState.PLAY);
-			else if(StageManager.Instance.CurrentStage == StageManager.StageState.PLAY)
-				TimeManager.Instance.GameTimer_Start();
-			else if(StageManager.Instance.CurrentStage == StageManager.StageState.RESULT)
-				StageManager.Instance.ChangeStage(StageManager.StageState.WAIT);
+			SceneStateManager sceneStateManager = AppMain.Instance.sceneStateManager;
+			if(sceneStateManager.CurrentState == SceneStateManager.SceneState.STARTUP)
+				sceneStateManager.ChangeState(SceneStateManager.SceneState.WAIT);
+			else if(sceneStateManager.CurrentState == SceneStateManager.SceneState.WAIT)
+				sceneStateManager.ChangeState(SceneStateManager.SceneState.PLAY);
+			else if(sceneStateManager.CurrentState == SceneStateManager.SceneState.PLAY)
+				AppMain.Instance.timeManager.gameTimer.Start();
+			else if(sceneStateManager.CurrentState == SceneStateManager.SceneState.RESULT)
+				sceneStateManager.ChangeState(SceneStateManager.SceneState.WAIT);
 		}
 	}
 	
 	void OnGUI()
 	{
-		if(DebugManager.Instance.IsDebug)
+		if(AppMain.Instance.debugManager.IsDebug)
 			GUI.Window(0, new Rect(0.0f, 0.0f, 250.0f, 200.0f), DrawWindow, "- DEBUG KEYS -");
 	}
 	

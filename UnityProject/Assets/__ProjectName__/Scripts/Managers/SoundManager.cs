@@ -3,7 +3,10 @@ using System.Collections;
 using System.IO;
 using System;
 
-public class SoundManager : MonoBehaviour
+/*
+ * 音声再生を管理する
+ */ 
+public class SoundManager : ManagerBase
 {
 	//SE選択用
 	public enum SE
@@ -18,11 +21,7 @@ public class SoundManager : MonoBehaviour
 		WAIT = 0,
 		PLAY
 	}
-	
-	//singleton
-	private static SoundManager instance;
-	public static SoundManager Instance { get{ return instance; } }
-	
+
 	public bool useBGM = true;
 	public bool useSE = true;
 	
@@ -38,26 +37,29 @@ public class SoundManager : MonoBehaviour
 	private AudioSource audioSource_SE;
 	
 	
-	void Awake()
+	protected override void Awake()
 	{
-		instance = this;
+		base.Awake();
 	}
 	
-	void Start()
+	protected override void Start()
 	{
-	    //設定値を取得
-	    ApplicationSetting setting = ApplicationSetting.Instance;
-	    if(setting.IsValid)
-	    {
-			if(setting.Data.ContainsKey("UseBGM")) useBGM = bool.Parse(setting.Data["UseBGM"]);
-			if(setting.Data.ContainsKey("UseSE")) useSE = bool.Parse(setting.Data["UseSE"]);
-			if(setting.Data.ContainsKey("VolBGM")) volBGM = float.Parse(setting.Data["VolBGM"]);
-			if(setting.Data.ContainsKey("VolSE")) volSE = float.Parse(setting.Data["VolSE"]);
-	    }
-    
+		base.Start();
+
+		//設定値を取得
+		useBGM = ApplicationSetting.Instance.GetBool("UseBGM");
+		useSE = ApplicationSetting.Instance.GetBool("UseSE");
+		volBGM = ApplicationSetting.Instance.GetFloat("VolBGM");
+		volSE = ApplicationSetting.Instance.GetFloat("VolSE");
+
 		//AudioSourceを設定
 		audioSource_SE = this.gameObject.AddComponent<AudioSource>();
 		audioSource_BGM = this.gameObject.AddComponent<AudioSource>();
+	}
+
+	protected override void Update()
+	{
+		base.Update();
 	}
 	
 	

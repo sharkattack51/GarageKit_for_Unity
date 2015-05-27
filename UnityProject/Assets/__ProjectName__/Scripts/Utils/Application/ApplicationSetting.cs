@@ -9,7 +9,6 @@ using System;
 /*
  * アプリケーション設定ファイルを読み込む
  */ 
-
 public class ApplicationSetting : MonoBehaviour
 {
 	//singleton
@@ -28,8 +27,8 @@ public class ApplicationSetting : MonoBehaviour
 	
 	//読み込み後展開されるアクセス可能なハッシュ
 	public Dictionary<string, string> Data { get{ return dataDict; } }
-	
-	
+
+
 	void Awake()
 	{
 		//データ取得用のインスタンス
@@ -39,11 +38,9 @@ public class ApplicationSetting : MonoBehaviour
 		LoadXML();
 	}
 	
-	
-	/*
-	 * 読み込み
-	 */
-	
+
+#region Load
+
 	public void LoadXML()
 	{
 		try
@@ -88,12 +85,11 @@ public class ApplicationSetting : MonoBehaviour
 			dataDict.Add(paramName, paramValue);
 		}
 	}
+
+#endregion
 	
-	
-	/*
-	 * 保存
-	 */
-	
+#region Save
+
 	public void SaveXML()
 	{
 		if(isValid)
@@ -130,4 +126,113 @@ public class ApplicationSetting : MonoBehaviour
 		
 		return buildStr;
 	}
+
+#endregion
+
+#region 型チェックしての取得
+
+	public string GetString(string key, string defaultValue = "")
+	{
+		if(dataDict.ContainsKey(key) && dataDict.ContainsKey(key))
+			return dataDict[key];
+		else
+			return defaultValue;
+	}
+
+	public bool GetBool(string key, bool defaultValue = false)
+	{
+		bool result;
+		if(dataDict.ContainsKey(key) && bool.TryParse(dataDict[key], out result))
+			return result;
+		else
+			return defaultValue;
+	}
+	
+	public int GetInt(string key, int defaultValue = 0)
+	{
+		int result;
+		if(dataDict.ContainsKey(key) && int.TryParse(dataDict[key], out result))
+			return result;
+		else
+			return defaultValue;
+	}
+	
+	public float GetFloat(string key, float defaultValue = 0.0f)
+	{
+		float result;
+		if(dataDict.ContainsKey(key) && float.TryParse(dataDict[key], out result))
+			return result;
+		else
+			return defaultValue;
+	}
+
+	public string[] GetStringArray(string key, string separator = ",")
+	{
+		if(dataDict.ContainsKey(key) && dataDict.ContainsKey(key))
+			return dataDict[key].Split(new string[]{ separator }, StringSplitOptions.None);
+		else
+			return new string[0];
+	}
+
+	public int[] GetIntArray(string key, string separator = ",", int defaultValue = 0)
+	{
+		if(dataDict.ContainsKey(key) && dataDict.ContainsKey(key))
+		{
+			string[] strs = dataDict[key].Split(new string[]{ separator }, StringSplitOptions.None);
+			List<int> list = new List<int>();
+			foreach(string str in strs)
+			{
+				int result;
+				if(int.TryParse(str, out result))
+					list.Add(result);
+				else
+					list.Add(defaultValue);
+			}
+			return list.ToArray();
+		}
+		else
+			return new int[0];
+	}
+
+	public float[] GetFloatArray(string key, string separator = ",", float defaultValue = 0.0f)
+	{
+		if(dataDict.ContainsKey(key) && dataDict.ContainsKey(key))
+		{
+			string[] strs = dataDict[key].Split(new string[]{ separator }, StringSplitOptions.None);
+			List<float> list = new List<float>();
+			foreach(string str in strs)
+			{
+				float result;
+				if(float.TryParse(str, out result))
+					list.Add(result);
+				else
+					list.Add(defaultValue);
+			}
+			return list.ToArray();
+		}
+		else
+			return new float[0];
+	}
+
+	public bool[] GetBoolArray(string key, string separator = ",", bool defaultValue = false)
+	{
+		if(dataDict.ContainsKey(key) && dataDict.ContainsKey(key))
+		{
+			string[] strs = dataDict[key].Split(new string[]{ separator }, StringSplitOptions.None);
+			List<bool> list = new List<bool>();
+			foreach(string str in strs)
+			{
+				bool result;
+				if(bool.TryParse(str, out result))
+					list.Add(result);
+				else
+					list.Add(defaultValue);
+			}
+			return list.ToArray();
+		}
+		else
+			return new bool[0];
+	}
+
+#endregion
 }

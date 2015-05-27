@@ -1,35 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/*
+ * デバッグ情報を管理する
+ */
 [RequireComponent(typeof(VisibleMouseCursor))]
 [RequireComponent(typeof(FrameRateUtil))]
 [RequireComponent(typeof(MemoryProfiler))]
-public class DebugManager : MonoBehaviour
-{	
-	//singleton
-	private static DebugManager instance;
-	public static DebugManager Instance { get{ return instance; } }
-	
+public class DebugManager : ManagerBase
+{
 	public bool IsDebug = true;
 	public bool UseDebugConsole = false;
 	public bool DebugConsoleLogEnable = true;
 	
 	
-	void Awake()
+	protected override void Awake()
 	{
-		instance = this;
+		base.Awake();
 	}
 	
-	void Start()
-	{		
+	protected override void Start()
+	{
+		base.Start();
+
 		//設定値を取得
-		IsDebug = bool.Parse(ApplicationSetting.Instance.Data["IsDebug"]);
+		IsDebug = ApplicationSetting.Instance.GetBool("IsDebug");
 		
 		//デバッグ用コンソール初期設定
-		UseDebugConsole = bool.Parse(ApplicationSetting.Instance.Data["UseDebugConsole"]);
+		UseDebugConsole = ApplicationSetting.Instance.GetBool("UseDebugConsole");
 		DebugConsole.IsOpen = UseDebugConsole;
 		
-		DebugConsoleLogEnable = bool.Parse(ApplicationSetting.Instance.Data["DebugConsoleLogEnable"]);
+		DebugConsoleLogEnable = ApplicationSetting.Instance.GetBool("DebugConsoleLogEnable");
 		DebugConsole.Instance._enable = DebugConsoleLogEnable;
 		
 		//FPS表示設定
@@ -42,14 +43,16 @@ public class DebugManager : MonoBehaviour
 		if(Application.platform == RuntimePlatform.WindowsEditor)
 			VisibleMouseCursor.showCursor = true;
 		else
-			VisibleMouseCursor.showCursor = bool.Parse(ApplicationSetting.Instance.Data["UseMouse"]);
+			VisibleMouseCursor.showCursor = ApplicationSetting.Instance.GetBool("UseMouse");
 	}
 
-	void Update()
+	protected override void Update()
 	{
-	
+		base.Update();
 	}
-	
+
+
+	//デバッグ情報のトグル
 	public void ToggleShowDebugView()
 	{
 		//デバッグコンソールの表示

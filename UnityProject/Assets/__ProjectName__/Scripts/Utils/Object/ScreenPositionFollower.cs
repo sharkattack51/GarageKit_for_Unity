@@ -7,7 +7,9 @@ using System.Collections;
 
 public class ScreenPositionFollower : MonoBehaviour
 {
-	public GameObject targetObject; 
+	public GameObject targetObject;
+	public int screenWidth = 1920;
+	public int screenHeight = 1080;
 	
 	private Camera renderCamera;
 	
@@ -36,9 +38,12 @@ public class ScreenPositionFollower : MonoBehaviour
 	{
 		if(targetObject != null)
 		{
-			Vector3 screenPosition = renderCamera.WorldToScreenPoint(targetObject.transform.position);
-			Vector3 halfScreen = new Vector3(1920 / 2.0f, 1080 / 2.0f, 0.0f);
-			this.gameObject.transform.localPosition = (screenPosition - halfScreen) / 100.0f;
+			Vector3 viewportPoint = renderCamera.WorldToViewportPoint(targetObject.transform.position);
+			Vector3 screenPosition = new Vector3(
+				screenWidth / 2.0f * (viewportPoint.x - 0.5f),
+				screenHeight / 2.0f * (viewportPoint.y - 0.5f),
+				0.0f);
+			this.gameObject.transform.localPosition = screenPosition / 100.0f;
 		}
 	}
 }
