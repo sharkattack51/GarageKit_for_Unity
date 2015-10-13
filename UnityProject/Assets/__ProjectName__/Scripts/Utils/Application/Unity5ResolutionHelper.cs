@@ -2,7 +2,7 @@
 using System.Collections;
 
 /*
- * Unity4の解像度設定の不具合を回避する。
+ * Unity5の解像度設定の不具合を回避する。
  * レジストリから該当keyを削除
  */
 
@@ -10,7 +10,7 @@ using System.Collections;
 using Microsoft.Win32;
 #endif
 
-public class Unity4ResolutionHelper : MonoBehaviour
+public class Unity5ResolutionHelper : MonoBehaviour
 {
 	/*
 	 * ビルド設定のPlayerSettingsよりCompanyNameを入力してください
@@ -36,6 +36,7 @@ public class Unity4ResolutionHelper : MonoBehaviour
 		key.DeleteValue("Screenmanager Resolution Height_h2627697771", false);
 		key.DeleteValue("Screenmanager Resolution Width_h182942802", false);
 		key.DeleteValue("UnityGraphicsQuality_h1669003810", false);
+		key.DeleteValue("UnitySelectMonitor_h17969598", false);
 		key.Close();
 	}
 #endif

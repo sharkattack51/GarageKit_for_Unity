@@ -18,7 +18,7 @@ public class VisibleByKeyInput : MonoBehaviour
 	void Start()
 	{
 		if(useIsDebug)
-			this.gameObject.renderer.enabled = bool.Parse(ApplicationSetting.Instance.Data["IsDebug"]);
+			this.gameObject.renderer.enabled = ApplicationSetting.Instance.GetBool("IsDebug");
 	}
 	
 	void Update()

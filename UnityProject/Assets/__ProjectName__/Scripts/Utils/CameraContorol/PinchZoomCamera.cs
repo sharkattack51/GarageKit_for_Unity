@@ -92,7 +92,7 @@ public class PinchZoomCamera : MonoBehaviour
 	void Start()
 	{
 		//設定ファイルより入力タイプを取得
-		if(ApplicationSetting.Instance.Data["UseMouse"].ToLower() != "true")
+		if(ApplicationSetting.Instance.GetBool("UseMouse"))
 			win7touch = true;
 
 		//カメラコンポーネントの取得

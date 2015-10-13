@@ -71,7 +71,7 @@ public class SerialPortController : MonoBehaviour
 	
 	void Start()
 	{
-		portName = ApplicationSetting.Instance.Data["SerialPortName"];
+		portName = ApplicationSetting.Instance.GetString("SerialPortName");
 		
 		//ポートを開く
         if(port == null)

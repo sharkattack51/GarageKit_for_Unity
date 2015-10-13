@@ -45,7 +45,7 @@ public class ScreenSaverObject : MonoBehaviour
 	void Start()
 	{
 		//設定ファイルから入力モードの取得
-		string mode = ApplicationSetting.Instance.Data["InputMode"].ToLower();
+		string mode = ApplicationSetting.Instance.GetString("InputMode").ToLower();
 		if(mode == "mouse")
 			inputType = INPUT_TYPE.MOUSE;
 		else if(mode == "touch")

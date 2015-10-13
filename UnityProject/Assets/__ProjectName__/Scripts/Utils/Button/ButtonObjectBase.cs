@@ -96,7 +96,7 @@ public class ButtonObjectBase : MonoBehaviour
 	protected virtual void Start()
 	{
 		//設定ファイルから入力モードの取得
-		if(ApplicationSetting.Instance.Data["InputMode"].ToLower() == "mouse")
+		if(ApplicationSetting.Instance.GetString("InputMode").ToLower() == "mouse")
 			inputType = INPUT_TYPE.MOUSE;
 		else
 			inputType = INPUT_TYPE.W7TOUCH;

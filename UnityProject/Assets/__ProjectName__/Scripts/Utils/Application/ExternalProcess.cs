@@ -85,7 +85,7 @@ public class ExternalProcess : MonoBehaviour
 					proc.StartInfo.Arguments = procData.argument;
 				
 				//ウィンドウスタイル設定
-				if(!bool.Parse(ApplicationSetting.Instance.Data["IsDebug"]))
+				if(!ApplicationSetting.Instance.GetBool("IsDebug"))
 					proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 				
 				try
