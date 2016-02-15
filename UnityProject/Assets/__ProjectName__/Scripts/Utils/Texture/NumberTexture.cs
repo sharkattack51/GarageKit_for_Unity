@@ -27,7 +27,7 @@ public class NumberTexture : MonoBehaviour
 		
 		for(int i=0; i<numString.Length; i++)
 		{
-			numPlates[numString.Length - 1 - i].renderer.material.mainTexture = numTextures[int.Parse(numString[i].ToString())];
+			numPlates[numString.Length - 1 - i].GetComponent<Renderer>().material.mainTexture = numTextures[int.Parse(numString[i].ToString())];
 		}
 	}
 }

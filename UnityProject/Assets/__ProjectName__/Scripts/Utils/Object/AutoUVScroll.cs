@@ -20,7 +20,7 @@ public class AutoUVScroll : MonoBehaviour
 	
 	void Start()
 	{
-		targetMat = this.renderer.materials[materialID];
+		targetMat = this.GetComponent<Renderer>().materials[materialID];
 		
 		iTween.ValueTo(
 			this.gameObject,

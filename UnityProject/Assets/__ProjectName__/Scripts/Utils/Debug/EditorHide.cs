@@ -11,6 +11,6 @@ public class EditorHide : MonoBehaviour
 	void Awake()
 	{	
 		//実行時に表示
-		this.renderer.enabled = true;
+		this.GetComponent<Renderer>().enabled = true;
 	}
 }

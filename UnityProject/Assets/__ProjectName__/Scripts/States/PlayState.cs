@@ -1,27 +1,33 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayState : IState
+public class PlayState : StateBase
 {
-	private GuiController gui;
-
-	public void StateStart()
-	{
-		gui = GameObject.FindObjectOfType<GuiController>();
-		gui.SetGUI(SceneStateManager.SceneState.PLAY);
-	}
+	public TextMesh sceneText;
+	public TextMesh messageText;
+	public TextMesh timerText;
 	
-	public void StateUpdate()
-	{
-		TimeManager timeManager = AppMain.Instance.timeManager;
-		if(timeManager.gameTimer.timer.IsRunning)
-			gui.guiTimerText.GetComponent<TextMesh>().text = timeManager.gameTimer.timer.CurrentTime.ToString();
-		else
-			gui.guiTimerText.GetComponent<TextMesh>().text = "";
-	}
 	
-	public void StateExit()
+	public override void StateStart()
 	{
+		base.StateStart();
 		
+		sceneText.text = "this is [Play] scene.";
+		messageText.text = "[Space] : timer start";
+	}
+	
+	public override void StateUpdate()
+	{
+		base.StateUpdate();
+		
+		if(AppMain.Instance.timeManager.gameTimer.timer.IsRunning)
+			timerText.text = AppMain.Instance.timeManager.gameTimer.timer.CurrentTime.ToString();
+		else
+			timerText.text = "";
+	}
+	
+	public override void StateExit()
+	{
+		base.StateExit();
 	}
 }

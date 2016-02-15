@@ -12,6 +12,6 @@ public class VisibleMouseCursor : MonoBehaviour
 	
 	void Update()
 	{
-		Screen.showCursor = showCursor;
+		Cursor.visible = showCursor;
 	}
 }

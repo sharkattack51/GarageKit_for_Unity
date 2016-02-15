@@ -10,6 +10,7 @@ using System.Collections;
 public class FlyThroughCamera : MonoBehaviour
 {
 	public static bool win7touch = false;
+	public static bool updateEnable = true;
 
 	//フライスルーのコントロールタイプ
 	public enum FLYTHROUGH_CONTROLL_TYPE
@@ -39,6 +40,7 @@ public class FlyThroughCamera : MonoBehaviour
 	public float rotateBias = 1.0f;
 	public float rotateSmoothTime = 0.1f;
 	public bool rotateInvert = false;
+	public OrbitCamera combinationOrbitCamera;
 	
 	private GameObject flyThroughRoot;
 	public GameObject FlyThroughRoot { get{ return flyThroughRoot; } }
@@ -119,6 +121,7 @@ public class FlyThroughCamera : MonoBehaviour
 			ResetInput();
 		
 		UpdateFlyThrough();
+		UpdateOrbitCombination();
 	}
 	
 	private void ResetInput()
@@ -230,6 +233,9 @@ public class FlyThroughCamera : MonoBehaviour
 	/// </summary>
 	private void UpdateFlyThrough()
 	{
+		if(!FlyThroughCamera.updateEnable)
+			return;	
+
 		//位置
 		float dragX = dragDelta.x * (dragInvertX ? -1.0f : 1.0f);
 		float dragY = dragDelta.y * (dragInvertY ? -1.0f : 1.0f);
@@ -272,6 +278,21 @@ public class FlyThroughCamera : MonoBehaviour
 		else if(moveType == FLYTHROUGH_MOVE_TYPE.XY)
 			flyThroughRoot.transform.Rotate(Vector3.forward, dampRotateDelta, Space.Self);
 		pushRotateDelta = 0.0f;
+	}
+
+	private void UpdateOrbitCombination()
+	{
+		//連携機能
+		if(combinationOrbitCamera != null)
+		{
+			Vector3 lookPoint = combinationOrbitCamera.OrbitRoot.transform.position;
+			Transform orbitParent = combinationOrbitCamera.OrbitRoot.transform.parent;
+			combinationOrbitCamera.OrbitRoot.transform.parent = null;
+			flyThroughRoot.transform.LookAt(lookPoint, Vector3.up);
+			flyThroughRoot.transform.rotation = Quaternion.Euler(
+				0.0f, flyThroughRoot.transform.rotation.eulerAngles.y + 180.0f, 0.0f);
+			combinationOrbitCamera.OrbitRoot.transform.parent = orbitParent;
+		}
 	}
 	
 	/// <summary>

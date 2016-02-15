@@ -26,6 +26,7 @@ public class LimitValue
 public class PinchZoomCamera : MonoBehaviour
 {
 	public static bool win7touch = false;
+	public static bool updateEnable = true;
 
 	//カメラのズームタイプ
 	public enum PINCH_ZOOM_TYPE
@@ -75,9 +76,9 @@ public class PinchZoomCamera : MonoBehaviour
 			if(zoomType == PINCH_ZOOM_TYPE.POSITION_Z)
 				return this.gameObject.transform.localPosition.z - defaultZoom;
 			else if(zoomType == PINCH_ZOOM_TYPE.FOV)
-				return this.gameObject.camera.fieldOfView;
+				return this.gameObject.GetComponent<Camera>().fieldOfView;
 			else if(zoomType == PINCH_ZOOM_TYPE.ORTHOSIZE)
-				return this.gameObject.camera.orthographicSize;
+				return this.gameObject.GetComponent<Camera>().orthographicSize;
 			else
 				return float.NegativeInfinity;
 		}
@@ -91,10 +92,6 @@ public class PinchZoomCamera : MonoBehaviour
 	
 	void Start()
 	{
-		//設定ファイルより入力タイプを取得
-		if(ApplicationSetting.Instance.GetBool("UseMouse"))
-			win7touch = true;
-
 		//カメラコンポーネントの取得
 		flyThroughCamera = this.gameObject.GetComponent<FlyThroughCamera>();
 		orbitCamera = this.gameObject.GetComponent<OrbitCamera>();
@@ -111,15 +108,15 @@ public class PinchZoomCamera : MonoBehaviour
 		switch(zoomType)
 		{
 			case PINCH_ZOOM_TYPE.POSITION_Z: defaultZoom = this.gameObject.transform.localPosition.z; break;
-			case PINCH_ZOOM_TYPE.FOV: defaultZoom = this.gameObject.camera.fieldOfView; break;
-			case PINCH_ZOOM_TYPE.ORTHOSIZE: defaultZoom = this.gameObject.camera.orthographicSize; break;
+			case PINCH_ZOOM_TYPE.FOV: defaultZoom = this.gameObject.GetComponent<Camera>().fieldOfView; break;
+			case PINCH_ZOOM_TYPE.ORTHOSIZE: defaultZoom = this.gameObject.GetComponent<Camera>().orthographicSize; break;
 			default: break;
 		}
 		
 		//ピンチセンターへのズーム設定
 		if(zoomToPinchCenter)
 		{
-			Camera[] cameras = this.gameObject.camera.GetComponentsInChildren<Camera>();
+			Camera[] cameras = this.gameObject.GetComponent<Camera>().GetComponentsInChildren<Camera>();
 			foreach(Camera cam in cameras)
 			{
 				CameraShifter cameraShifter = cam.gameObject.GetComponent<CameraShifter>();
@@ -147,6 +144,9 @@ public class PinchZoomCamera : MonoBehaviour
 	
 	private void UpdateZoom()
 	{
+		if(!updateEnable)
+			return;
+		
 		switch(zoomType)
 		{
 			case PINCH_ZOOM_TYPE.POSITION_Z: UpdatePinchZoomPositionZ(); break;
@@ -163,7 +163,7 @@ public class PinchZoomCamera : MonoBehaviour
 		{
 			if(flyThroughCamera != null)
 			{
-				Ray ray = this.gameObject.camera.ScreenPointToRay(new Vector3(Screen.width / 2.0f, Screen.height / 2.0f, 0.0f));
+				Ray ray = this.gameObject.GetComponent<Camera>().ScreenPointToRay(new Vector3(Screen.width / 2.0f, Screen.height / 2.0f, 0.0f));
 				RaycastHit hitInfo;
 				
 				if(flyThroughCamera.groundCollider.Raycast(ray, out hitInfo, float.PositiveInfinity))
@@ -186,6 +186,7 @@ public class PinchZoomCamera : MonoBehaviour
 		oldDistance = 0.0f;
 		currentDistance = 0.0f;
 		calcZoom = 0.0f;
+		dampZoomDelta = 0.0f;
 		pinchCenter = Vector2.zero;
 		
 		//カメラ操作のアンロック
@@ -337,7 +338,7 @@ public class PinchZoomCamera : MonoBehaviour
 	{
 		if(flyThroughCamera != null)
 		{
-			Ray ray = this.camera.ScreenPointToRay(pinchCenter);
+			Ray ray = this.GetComponent<Camera>().ScreenPointToRay(pinchCenter);
 			RaycastHit hitInfo;
 			if(flyThroughCamera.groundCollider.Raycast(ray, out hitInfo, float.PositiveInfinity))
 			{
@@ -404,13 +405,13 @@ public class PinchZoomCamera : MonoBehaviour
 	{
 		float zoomDelta = (calcZoom + pushZoomDelta) * (invertZoom ? -1.0f : 1.0f) * zoomBias;
 		dampZoomDelta = Mathf.SmoothDamp(dampZoomDelta, zoomDelta, ref velocitySmoothZoom, zoomSmoothTime);
-		this.gameObject.camera.fieldOfView += dampZoomDelta;
+		this.gameObject.GetComponent<Camera>().fieldOfView += dampZoomDelta;
 		
 		//画角制限
-		if(this.gameObject.camera.fieldOfView <= limitMinMaxForFOV.min)
-			this.gameObject.camera.fieldOfView = limitMinMaxForFOV.min;
-		if(this.gameObject.camera.fieldOfView >= limitMinMaxForFOV.max)
-			this.gameObject.camera.fieldOfView = limitMinMaxForFOV.max;
+		if(this.gameObject.GetComponent<Camera>().fieldOfView <= limitMinMaxForFOV.min)
+			this.gameObject.GetComponent<Camera>().fieldOfView = limitMinMaxForFOV.min;
+		if(this.gameObject.GetComponent<Camera>().fieldOfView >= limitMinMaxForFOV.max)
+			this.gameObject.GetComponent<Camera>().fieldOfView = limitMinMaxForFOV.max;
 		
 		pushZoomDelta = 0.0f;
 	}
@@ -422,13 +423,13 @@ public class PinchZoomCamera : MonoBehaviour
 	{
 		float zoomDelta = (calcZoom + pushZoomDelta) * (invertZoom ? -1.0f : 1.0f) * zoomBias;
 		dampZoomDelta = Mathf.SmoothDamp(dampZoomDelta, zoomDelta, ref velocitySmoothZoom, zoomSmoothTime);
-		this.gameObject.camera.orthographicSize += dampZoomDelta;
+		this.gameObject.GetComponent<Camera>().orthographicSize += dampZoomDelta;
 		
 		//Orthoサイズ制限
-		if(this.gameObject.camera.orthographicSize <= limitMinMaxForOrthoSize.min)
-			this.gameObject.camera.orthographicSize = limitMinMaxForOrthoSize.min;
-		if(this.gameObject.camera.orthographicSize >= limitMinMaxForOrthoSize.max)
-			this.gameObject.camera.orthographicSize = limitMinMaxForOrthoSize.max;
+		if(this.gameObject.GetComponent<Camera>().orthographicSize <= limitMinMaxForOrthoSize.min)
+			this.gameObject.GetComponent<Camera>().orthographicSize = limitMinMaxForOrthoSize.min;
+		if(this.gameObject.GetComponent<Camera>().orthographicSize >= limitMinMaxForOrthoSize.max)
+			this.gameObject.GetComponent<Camera>().orthographicSize = limitMinMaxForOrthoSize.max;
 		
 		pushZoomDelta = 0.0f;
 	}
@@ -477,7 +478,7 @@ public class PinchZoomCamera : MonoBehaviour
 			iTween.ValueTo(
 				this.gameObject,
 				iTween.Hash(
-					"from", this.gameObject.camera.fieldOfView,
+					"from", this.gameObject.GetComponent<Camera>().fieldOfView,
 					"to", zoom,
 					"time", time,
 					"easetype", iTween.EaseType.easeOutCubic,
@@ -496,7 +497,7 @@ public class PinchZoomCamera : MonoBehaviour
 			iTween.ValueTo(
 				this.gameObject,
 				iTween.Hash(
-					"from", this.gameObject.camera.orthographicSize,
+					"from", this.gameObject.GetComponent<Camera>().orthographicSize,
 					"to", zoom,
 					"time", time,
 					"easetype", iTween.EaseType.easeOutCubic,
@@ -508,12 +509,12 @@ public class PinchZoomCamera : MonoBehaviour
 	
 	private void updateFov(float fov)
 	{
-		this.gameObject.camera.fieldOfView = fov;
+		this.gameObject.GetComponent<Camera>().fieldOfView = fov;
 	}
 	
 	private void updateOrthosize(float size)
 	{
-		this.gameObject.camera.orthographicSize = size;
+		this.gameObject.GetComponent<Camera>().orthographicSize = size;
 	}
 	
 	/// <summary>

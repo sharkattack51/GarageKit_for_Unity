@@ -53,17 +53,17 @@ public class GizmoDrawer : MonoBehaviour
 		float centerZ;
 		
 		if(centerToCornerX)
-			centerX = this.transform.position.x + ((gizmoSize.x / 2.0f) * (invertCornerX ? -1.0f : 1.0f));
+			centerX = this.transform.position.x + ((gizmoSize.x / 2.0f * this.gameObject.transform.lossyScale.x) * (invertCornerX ? -1.0f : 1.0f));
 		else
 			centerX = this.transform.position.x;
 		
 		if(centerToCornerY)
-			centerY = this.transform.position.y + ((gizmoSize.y / 2.0f) * (invertCornerY ? -1.0f : 1.0f));
+			centerY = this.transform.position.y + ((gizmoSize.y / 2.0f * this.gameObject.transform.lossyScale.y) * (invertCornerY ? -1.0f : 1.0f));
 		else
 			centerY = this.transform.position.y;
 		
 		if(centerToCornerZ)
-			centerZ = this.transform.position.z - ((gizmoSize.z / 2.0f) * (invertCornerZ ? -1.0f : 1.0f));
+			centerZ = this.transform.position.z - ((gizmoSize.z / 2.0f * this.gameObject.transform.lossyScale.z) * (invertCornerZ ? -1.0f : 1.0f));
 		else
 			centerZ = this.transform.position.z;
 		
@@ -78,10 +78,13 @@ public class GizmoDrawer : MonoBehaviour
 		switch(gizmoType)
 		{
 			case GIZMO_TYPE.CUBE:
-				Gizmos.DrawWireCube(Vector3.zero, gizmoSize);
+			Gizmos.DrawWireCube(Vector3.zero, new Vector3(
+				gizmoSize.x * this.gameObject.transform.lossyScale.x,
+				gizmoSize.y * this.gameObject.transform.lossyScale.y,
+				gizmoSize.z * this.gameObject.transform.lossyScale.z));
 				break;
 			case GIZMO_TYPE.SPHERE:
-				Gizmos.DrawWireSphere(Vector3.zero, gizmoSize.x / 2.0f);
+				Gizmos.DrawWireSphere(Vector3.zero, gizmoSize.x / 2.0f * this.gameObject.transform.lossyScale.x);
 				break;
 			default: break;
 		}

@@ -10,6 +10,7 @@ using System.Collections;
 public class OrbitCamera : MonoBehaviour
 {
 	public static bool win7touch = false;
+	public static bool updateEnable = true;
 
 	public GameObject target;
 	public float sensitivity = 0.1f;
@@ -18,14 +19,16 @@ public class OrbitCamera : MonoBehaviour
 	public float clampRotationX_Max = 60.0f;
 	public bool invertDragX = false;
 	public bool invertDragY = true;
-	
+	public FlyThroughCamera combinationFlyThroughCamera;
+
 	private bool inputLock;
 	public bool IsInputLock { get{ return inputLock; } }
 	private object lockObject;
-	
-	private Vector3 moveVector;
-	
+
 	private GameObject orbitRoot;
+	public GameObject OrbitRoot { get{ return orbitRoot; } }
+
+	private Vector3 moveVector;
 	private Vector3 defaultPos;
 	private Quaternion defaultRot;
 	private float dampRotX = 0.0f;
@@ -44,7 +47,7 @@ public class OrbitCamera : MonoBehaviour
 		inputLock = false;
 
 		//OrbitRootを設定
-		orbitRoot = new GameObject("OrbitRoot");
+		orbitRoot = new GameObject(this.name + " Orbit Root");
 		orbitRoot.transform.parent = this.gameObject.transform.parent;
 		orbitRoot.transform.position = this.gameObject.transform.position;
 		orbitRoot.transform.rotation = this.gameObject.transform.rotation;
@@ -121,6 +124,12 @@ public class OrbitCamera : MonoBehaviour
 	
 	private void UpdateOrbit()
 	{
+		if(!OrbitCamera.updateEnable)
+			return;
+
+		if(combinationFlyThroughCamera != null && target == null)
+			target = combinationFlyThroughCamera.FlyThroughRoot;
+
 		if(target != null)
 		{
 			//回転を更新

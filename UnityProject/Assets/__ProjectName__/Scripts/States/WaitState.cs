@@ -1,23 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class WaitState : IState
+public class WaitState : StateBase
 {
-	private GuiController gui;
-
-	public void StateStart()
-	{
-		gui = GameObject.FindObjectOfType<GuiController>();
-		gui.SetGUI(SceneStateManager.SceneState.WAIT);
-	}
+	public TextMesh sceneText;
+	public TextMesh messageText;
+	public TextMesh timerText;
 	
-	public void StateUpdate()
-	{
-		gui.guiTimerText.GetComponent<TextMesh>().text = "";
-	}
 	
-	public void StateExit()
+	public override void StateStart()
 	{
+		base.StateStart();
 		
+		sceneText.text = "this is [Wait] scene.";
+		messageText.text = "[Space] : next scene";
+		timerText.text = "";
+	}
+	
+	public override void StateUpdate()
+	{
+		base.StateUpdate();
+	}
+	
+	public override void StateExit()
+	{
+		base.StateExit();
 	}
 }

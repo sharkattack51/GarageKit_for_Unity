@@ -33,7 +33,7 @@ public class RenderScreenTexture : MonoBehaviour
 		renderScreenTexture.wrapMode = TextureWrapMode.Clamp;
 		
 		//TargetTextureの設定
-		this.gameObject.camera.targetTexture = renderScreenTexture;
+		this.gameObject.GetComponent<Camera>().targetTexture = renderScreenTexture;
 	}
 	
 	void Update()
@@ -44,7 +44,7 @@ public class RenderScreenTexture : MonoBehaviour
 	void OnDisable()
 	{
 		//レンダーテクスチャをリリース
-		this.gameObject.camera.targetTexture = null;
+		this.gameObject.GetComponent<Camera>().targetTexture = null;
 		renderScreenTexture.Release();
 		RenderTexture.DestroyImmediate(renderScreenTexture);
 		renderScreenTexture = null;

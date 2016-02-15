@@ -36,7 +36,7 @@ public class CompositLayer : MonoBehaviour
 		{
 			foreach(LayerTexture layerTex in layerTextures)
 			{
-				this.gameObject.renderer.material.SetTexture(
+				this.gameObject.GetComponent<Renderer>().material.SetTexture(
 					layerTex.shaderTextureName,
 					layerTex.renderScreenTexture.GetRenderTexture());
 			}

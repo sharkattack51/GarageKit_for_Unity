@@ -381,7 +381,7 @@ namespace Utils
 		public static void CalcTextBox(TextMesh textMesh, float width = 1000.0f)
 		{
 			//既に収まっている場合
-			if(textMesh.renderer.bounds.size.x / textMesh.transform.lossyScale.x <= width)
+			if(textMesh.GetComponent<Renderer>().bounds.size.x / textMesh.transform.lossyScale.x <= width)
 				return;
 			
 			//スケール0は無効
@@ -416,7 +416,7 @@ namespace Utils
 					//midで文字幅を比較
 					textMesh.text = tempText.Substring(start, mid - start);
 					
-					float size = textMesh.renderer.bounds.size.x / textMesh.transform.lossyScale.x;
+					float size = textMesh.GetComponent<Renderer>().bounds.size.x / textMesh.transform.lossyScale.x;
 					if(size < width)
 					{
 						min = mid + 1;

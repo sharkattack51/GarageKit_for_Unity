@@ -1,26 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class StartupState : IState
+public class StartupState : StateBase
 {
-	private GuiController gui;
-
-	public void StateStart()
+	public override void StateStart()
 	{
-		gui = GameObject.FindObjectOfType<GuiController>();
-		gui.SetGUI(SceneStateManager.SceneState.STARTUP);
-
-		//StateをWAITに変更
+		base.StateStart();
+		
+		// StateをWAITに変更
 		AppMain.Instance.sceneStateManager.ChangeState(SceneStateManager.SceneState.WAIT);
 	}
-
-	public void StateUpdate()
+	
+	public override void StateUpdate()
 	{
-		gui.guiTimerText.GetComponent<TextMesh>().text = "";
+		base.StateUpdate();
 	}
 
-	public void StateExit()
+	public override void StateExit()
 	{
-
+		base.StateExit();
 	}
 }

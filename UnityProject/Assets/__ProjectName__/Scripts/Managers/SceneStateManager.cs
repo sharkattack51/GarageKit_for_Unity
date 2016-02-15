@@ -8,7 +8,7 @@ using System;
  */ 
 public class SceneStateManager : ManagerBase
 {
-	//State管理用
+	// State管理用
 	public enum SceneState
 	{
 		STARTUP = 0,
@@ -28,7 +28,13 @@ public class SceneStateManager : ManagerBase
 	private SceneState currentState;
 	public SceneState CurrentState { get{ return currentState; } }
 
-	private IState state = null;
+	private IState stateObj = null;
+	public IState CurrentStateObj { get{ return stateObj; } }
+
+	private bool stateChanging = false;
+	public bool StateChanging { get{ return stateChanging; } }
+
+	private bool isAsync = false;
 
 
 	protected override void Awake()
@@ -45,44 +51,68 @@ public class SceneStateManager : ManagerBase
 	{
 		base.Update();
 
-		//シーン名表示
+		// シーン名表示
 		this.gameObject.name = "SceneStateManager [" + currentState.ToString() + "]";
 
-		//Stateの更新処理
-		if(state != null)
-			state.StateUpdate();
+		// Stateの更新処理
+		if(stateObj != null)
+			stateObj.StateUpdate();
 	}
 	
 	
 #region Stageの管理
 
-	//アプリケーションをスタートする
+	// アプリケーションをスタートする
 	public void InitState()
 	{
-		//スタートアップシーン
+		// スタートアップシーン
 		ChangeState(SceneState.STARTUP);
 	}
-	
-	//Stateを変更する
+
+	// Stateを変更する
 	public void ChangeState(SceneState sceneState)
 	{
-		//前Stateの終了処理
-		if(state != null)
-			state.StateExit();
+		isAsync = false;
 
-		currentState = sceneState;
-
-		//新規Stateのセット
-		state = Activator.CreateInstance(stateTable[sceneState]) as IState;
-
-		//新規Stateの初期化処理
-		state.StateStart();
+		StartCoroutine(ChangeStateCoroutine(sceneState));
 	}
 
-	//Stateをリセットする
+	// Stateを変更する
+	public void ChangeAsyncState(SceneState sceneState)
+	{
+		if(!stateChanging)
+		{
+			isAsync = true;
+			stateChanging = true;
+
+			StartCoroutine(ChangeStateCoroutine(sceneState));
+		}
+	}
+
+	private IEnumerator ChangeStateCoroutine(SceneState sceneState)
+	{
+		// 前Stateの終了処理
+		if(stateObj != null)
+			stateObj.StateExit();
+		
+		while(isAsync)
+			yield return null;
+		
+		currentState = sceneState;
+
+		// 新規Stateのセット
+		stateObj = this.gameObject.GetComponentInChildren(stateTable[sceneState]) as IState;
+
+		// 新規Stateの初期化処理
+		stateObj.StateStart();
+
+		stateChanging = false;
+	}
+
+	// Stateをリセットする
 	public void ResetState()
 	{
-		//強制GC
+		// 強制GC
 		System.GC.Collect();
 		Resources.UnloadUnusedAssets();
 		
@@ -91,4 +121,11 @@ public class SceneStateManager : ManagerBase
 	}
 	
 #endregion
+
+
+	// 非同期でのステート変更用
+	public void SyncState()
+	{
+		isAsync = false;
+	}
 }

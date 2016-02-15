@@ -105,8 +105,8 @@ public class ButtonObjectBase : MonoBehaviour
 		rayCamera = Utils.CameraUtil.FindCameraForLayer(this.gameObject.layer);
 		
 		//ボタンテクスチャの設定
-		if(guiPlate != null && guiPlate.renderer != null)
-			defaultButtonColor = guiPlate.renderer.material.color;
+		if(guiPlate != null && guiPlate.GetComponent<Renderer>() != null)
+			defaultButtonColor = guiPlate.GetComponent<Renderer>().material.color;
 		ChangeTexture(false);
 	}
 	
@@ -268,7 +268,7 @@ public class ButtonObjectBase : MonoBehaviour
 		else
 		{
 			//重なりは無視してチェック
-			if(this.collider.Raycast(ray, out hit, Mathf.Infinity))
+			if(this.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
 				Hit();
 			else
 				Unhit();
@@ -436,13 +436,13 @@ public class ButtonObjectBase : MonoBehaviour
 	{
 		if(pressed)
 		{
-			if(guiPlate != null && guiPlate.renderer != null && onBtnTexture != null)
-				guiPlate.renderer.material.mainTexture = onBtnTexture;
+			if(guiPlate != null && guiPlate.GetComponent<Renderer>() != null && onBtnTexture != null)
+				guiPlate.GetComponent<Renderer>().material.mainTexture = onBtnTexture;
 		}
 		else
 		{
-			if(guiPlate != null && guiPlate.renderer != null && offBtnTexture != null)
-				guiPlate.renderer.material.mainTexture = offBtnTexture;
+			if(guiPlate != null && guiPlate.GetComponent<Renderer>() != null && offBtnTexture != null)
+				guiPlate.GetComponent<Renderer>().material.mainTexture = offBtnTexture;
 		}
 	}
 	
@@ -454,12 +454,12 @@ public class ButtonObjectBase : MonoBehaviour
 		isEnableButton = true;
 		
 		//マテリアル変更
-		if(guiPlate != null && guiPlate.renderer != null)
-			guiPlate.renderer.material.color = defaultButtonColor;
+		if(guiPlate != null && guiPlate.GetComponent<Renderer>() != null)
+			guiPlate.GetComponent<Renderer>().material.color = defaultButtonColor;
 		
 		//コライダをON
-		if(this.gameObject.collider != null)
-			this.gameObject.collider.enabled = true;
+		if(this.gameObject.GetComponent<Collider>() != null)
+			this.gameObject.GetComponent<Collider>().enabled = true;
 	}
 	
 	/// <summary>
@@ -470,12 +470,12 @@ public class ButtonObjectBase : MonoBehaviour
 		isEnableButton = false;
 		
 		//マテリアル変更
-		if(guiPlate != null && guiPlate.renderer != null)
-			guiPlate.renderer.material.color = disableButtonColor;
+		if(guiPlate != null && guiPlate.GetComponent<Renderer>() != null)
+			guiPlate.GetComponent<Renderer>().material.color = disableButtonColor;
 		
 		//コライダをOFF
-		if(this.gameObject.collider != null)
-			this.gameObject.collider.enabled = false;
+		if(this.gameObject.GetComponent<Collider>() != null)
+			this.gameObject.GetComponent<Collider>().enabled = false;
 	}
 	
 	/// <summary>

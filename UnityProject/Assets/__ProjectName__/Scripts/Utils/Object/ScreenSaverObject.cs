@@ -34,7 +34,7 @@ public class ScreenSaverObject : MonoBehaviour
 	private bool isValid = false;
 	public bool IsValid { get{ return isValid; } }
 	
-	private Color defaultFadeColor;
+	private Color defaultFadeColor = Color.white;
 	
 	
 	void Awake()
@@ -54,7 +54,7 @@ public class ScreenSaverObject : MonoBehaviour
 			inputType = INPUT_TYPE.KINECT;
 		
 		//初期非表示
-		fadePlane.gameObject.renderer.enabled = false;
+		fadePlane.gameObject.GetComponent<Renderer>().enabled = false;
 	}
 	
 	void Update()
@@ -107,7 +107,7 @@ public class ScreenSaverObject : MonoBehaviour
 	{
 		isValid = true;
 		
-		fadePlane.gameObject.renderer.enabled = true;
+		fadePlane.gameObject.GetComponent<Renderer>().enabled = true;
 		
 		//フェード
 		iTween.ColorTo(
@@ -136,6 +136,6 @@ public class ScreenSaverObject : MonoBehaviour
 	
 	private void faded()
 	{
-		fadePlane.gameObject.renderer.enabled = false;
+		fadePlane.gameObject.GetComponent<Renderer>().enabled = false;
 	}
 }

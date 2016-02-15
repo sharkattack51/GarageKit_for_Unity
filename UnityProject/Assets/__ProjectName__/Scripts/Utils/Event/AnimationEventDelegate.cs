@@ -28,9 +28,9 @@ public class AnimationEventDelegate : MonoBehaviour
 	{
 		//アニメーションイベントを設定
 		animEvent = new AnimationEvent();
-		animEvent.time = this.gameObject.animation.clip.length;
+		animEvent.time = this.gameObject.GetComponent<Animation>().clip.length;
 		animEvent.functionName = "AnimationEventFunction";
-		this.gameObject.animation.clip.AddEvent(animEvent);
+		this.gameObject.GetComponent<Animation>().clip.AddEvent(animEvent);
 	}
 
 	void Update()

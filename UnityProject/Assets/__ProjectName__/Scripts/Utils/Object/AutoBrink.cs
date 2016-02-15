@@ -20,8 +20,8 @@ public class AutoBrink : MonoBehaviour
 	
 	private void StartTween()
 	{
-		Color startColor = this.gameObject.renderer.material.color;
-		this.gameObject.renderer.material.color = new Color(startColor.r, startColor.g, startColor.b, startAlpha);
+		Color startColor = this.gameObject.GetComponent<Renderer>().material.color;
+		this.gameObject.GetComponent<Renderer>().material.color = new Color(startColor.r, startColor.g, startColor.b, startAlpha);
 		
 		iTween.LoopType loopType;
 		if(isPinpon)

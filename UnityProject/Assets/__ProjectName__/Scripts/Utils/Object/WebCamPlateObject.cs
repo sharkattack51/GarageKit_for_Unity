@@ -91,7 +91,7 @@ public class WebCamPlateObject : MonoBehaviour
 		}
 		
 		//テクスチャを適用
-		this.renderer.material.mainTexture = webCamTexture;
+		this.GetComponent<Renderer>().material.mainTexture = webCamTexture;
 		
 		//映像の更新を開始
 		webCamTexture.Play();

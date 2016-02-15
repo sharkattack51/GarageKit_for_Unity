@@ -23,7 +23,7 @@ public class SequenceTexture : MonoBehaviour
 		//スタートフレームを設定
 		if(textureParamName == "")
 			textureParamName = "_MainTex";
-		this.renderer.material.SetTexture(textureParamName, textures[0]);
+		this.GetComponent<Renderer>().material.SetTexture(textureParamName, textures[0]);
 		
 		//再生を開始する
 		counter = 0;
@@ -39,7 +39,7 @@ public class SequenceTexture : MonoBehaviour
 			
 			//テクスチャを更新
 			counter = (counter + 1) % textures.Length;
-			this.renderer.material.SetTexture(textureParamName, textures[counter]);
+			this.GetComponent<Renderer>().material.SetTexture(textureParamName, textures[counter]);
 			
 			//ループ設定
 			if(((counter + 1) == textures.Length) && !isLoop)

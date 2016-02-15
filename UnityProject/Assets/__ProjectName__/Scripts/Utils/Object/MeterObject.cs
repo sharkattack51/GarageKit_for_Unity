@@ -31,13 +31,13 @@ public class MeterObject : MonoBehaviour
 		//uvオフセットにメーター値を反映
 		if(invert)
 		{
-			this.renderer.material.mainTextureScale = new Vector2(1.0f, 1.0f);
-			this.renderer.material.mainTextureOffset = new Vector2(-fillAmount + 0.5f, 0.0f);
+			this.GetComponent<Renderer>().material.mainTextureScale = new Vector2(1.0f, 1.0f);
+			this.GetComponent<Renderer>().material.mainTextureOffset = new Vector2(-fillAmount + 0.5f, 0.0f);
 		}
 		else
 		{
-			this.renderer.material.mainTextureScale = new Vector2(-1.0f, 1.0f);
-			this.renderer.material.mainTextureOffset = new Vector2((1.0f - fillAmount) + 0.5f, 0.0f);
+			this.GetComponent<Renderer>().material.mainTextureScale = new Vector2(-1.0f, 1.0f);
+			this.GetComponent<Renderer>().material.mainTextureOffset = new Vector2((1.0f - fillAmount) + 0.5f, 0.0f);
 		}
 	}
 }

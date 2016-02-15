@@ -46,13 +46,13 @@ public class ObjectOrbit2 : MonoBehaviour
 			renderCam = Camera.main;
 		
 		//コライダを設定する
-		if(this.gameObject.collider == null)
+		if(this.gameObject.GetComponent<Collider>() == null)
 		{
 			this.gameObject.AddComponent<SphereCollider>();
 		}
-		else if(this.gameObject.collider.GetType() != typeof(SphereCollider))
+		else if(this.gameObject.GetComponent<Collider>().GetType() != typeof(SphereCollider))
 		{
-			Collider.Destroy(this.gameObject.collider);
+			Collider.Destroy(this.gameObject.GetComponent<Collider>());
 			this.gameObject.AddComponent<SphereCollider>();
 		}
 		
@@ -71,10 +71,10 @@ public class ObjectOrbit2 : MonoBehaviour
 			);
 		}
 		scaledRadius = collidRadius / scale;
-		(this.gameObject.collider as SphereCollider).radius = scaledRadius;
+		(this.gameObject.GetComponent<Collider>() as SphereCollider).radius = scaledRadius;
 		
 		//カメラ位置の警告
-		if(Vector3.Distance(renderCam.transform.position, this.gameObject.transform.position) < (this.gameObject.collider as SphereCollider).radius)
+		if(Vector3.Distance(renderCam.transform.position, this.gameObject.transform.position) < (this.gameObject.GetComponent<Collider>() as SphereCollider).radius)
 			Debug.LogWarning("ObjectOrbit2 :: RenderCam position is inside of the collision.");
 	}
 	
@@ -164,7 +164,7 @@ public class ObjectOrbit2 : MonoBehaviour
 			
 			Ray ray = renderCam.ScreenPointToRay(currentTouchScrPos);
 			RaycastHit hitInfo;
-			if(this.gameObject.collider.Raycast(ray, out hitInfo, float.PositiveInfinity))
+			if(this.gameObject.GetComponent<Collider>().Raycast(ray, out hitInfo, float.PositiveInfinity))
 			{
 				//Hit座標をローカル座標変換する
 				Vector3 localMatPt = this.gameObject.transform.worldToLocalMatrix.MultiplyPoint(hitInfo.point);

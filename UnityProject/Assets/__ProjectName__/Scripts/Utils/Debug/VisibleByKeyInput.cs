@@ -18,12 +18,12 @@ public class VisibleByKeyInput : MonoBehaviour
 	void Start()
 	{
 		if(useIsDebug)
-			this.gameObject.renderer.enabled = ApplicationSetting.Instance.GetBool("IsDebug");
+			this.gameObject.GetComponent<Renderer>().enabled = ApplicationSetting.Instance.GetBool("IsDebug");
 	}
 	
 	void Update()
 	{
 		if(Input.GetKeyDown(key))
-			this.renderer.enabled = !this.renderer.enabled;
+			this.GetComponent<Renderer>().enabled = !this.GetComponent<Renderer>().enabled;
 	}
 }
