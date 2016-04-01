@@ -15,6 +15,7 @@ public class ProcessData
 {
 	public bool use = true;
 	public string exePath = "";
+	public bool pathIsStreamingAssets = false;
 	public string argument = "";
 	public bool startupOnStart = true;
 	
@@ -74,6 +75,8 @@ public class ExternalProcess : MonoBehaviour
 	{
 		if(procData.use && !procData.IsRunning)
 		{
+			if(procData.pathIsStreamingAssets)
+				procData.exePath = Application.streamingAssetsPath + "/" + procData.exePath;
 			FileInfo fileInfo = new FileInfo(procData.exePath);
 			if(fileInfo.Exists)
 			{
