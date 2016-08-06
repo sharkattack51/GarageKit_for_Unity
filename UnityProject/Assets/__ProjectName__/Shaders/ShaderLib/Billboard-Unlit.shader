@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+
 Shader "Custom/ShaderLib/Billboard-Unlit"
 {
     /*
@@ -61,7 +63,7 @@ Shader "Custom/ShaderLib/Billboard-Unlit"
                     {
                         vertexOutput output;
 
-                        float2 billboardDirection_local_xy = normalize(_WorldSpaceCameraPos.xz - float2(_World2Object[1].w, _World2Object[2].w)); 
+                        float2 billboardDirection_local_xy = normalize(_WorldSpaceCameraPos.xz - float2(unity_WorldToObject[1].w, unity_WorldToObject[2].w)); 
 
                         float2x2 billboardRotation = float2x2(
                             billboardDirection_local_xy.y, 

@@ -49,4 +49,28 @@ public class UDPSender : MonoBehaviour
 			DebugConsole.Log("UDPSender :: " + e.Message);
 		}
 	}
+
+	//Broadcastで送信
+	public void Bradcast(string dataStr)
+	{
+		//ソケットの設定
+		Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+		socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, 16);
+		socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
+		IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Broadcast, port);
+
+		//byte配列に変換
+		byte[] data = Encoding.UTF8.GetBytes(dataStr);
+
+		//送信
+		try
+		{
+			socket.SendTo(data, 0, data.Length, SocketFlags.None, ipEndPoint);
+		}
+		catch(Exception e)
+		{
+			Debug.LogWarning("UDPSender :: " + e.Message);
+			DebugConsole.Log("UDPSender :: " + e.Message);
+		}
+	}
 }
