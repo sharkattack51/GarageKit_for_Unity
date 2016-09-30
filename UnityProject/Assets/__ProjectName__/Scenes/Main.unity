@@ -1356,7 +1356,7 @@ TextMesh:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1195768167}
-  m_Text: '[Space] : next scene'
+  m_Text: 'push [Space] : next scene'
   m_OffsetZ: 0
   m_CharacterSize: 0.15
   m_LineSpacing: 1
