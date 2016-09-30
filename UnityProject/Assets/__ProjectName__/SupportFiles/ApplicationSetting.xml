@@ -16,6 +16,6 @@
 	<item name="VolBGM" value="1.0"/>
 	
 	<!-- ゲーム時間 -->
-	<item name="GameTime" value="10"/>
+	<item name="GameTime" value="5"/>
 	
 </data>

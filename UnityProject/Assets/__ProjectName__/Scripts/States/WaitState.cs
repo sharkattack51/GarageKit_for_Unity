@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class WaitState : StateBase
+public class WaitState : AsyncStateBase
 {
 	public TextMesh sceneText;
 	public TextMesh messageText;
@@ -13,7 +13,7 @@ public class WaitState : StateBase
 		base.StateStart(context);
 		
 		sceneText.text = "this is [Wait] scene.";
-		messageText.text = "[Space] : next scene";
+		messageText.text = "push [Space] : next scene";
 		timerText.text = "";
 	}
 	
@@ -24,6 +24,9 @@ public class WaitState : StateBase
 	
 	public override void StateExit()
 	{
+		// フェード機能をOFF
+		Fader.DisableFade();
+
 		base.StateExit();
 	}
 }

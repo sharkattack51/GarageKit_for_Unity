@@ -13,7 +13,7 @@ public class PlayState : StateBase
 		base.StateStart(context);
 		
 		sceneText.text = "this is [Play] scene.";
-		messageText.text = "[Space] : timer start";
+		messageText.text = "push [Space] : timer start";
 	}
 	
 	public override void StateUpdate()

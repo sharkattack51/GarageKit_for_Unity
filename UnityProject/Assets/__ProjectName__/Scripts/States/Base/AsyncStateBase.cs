@@ -1,15 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class AsyncStateBase : MonoBehaviour, IState
 {
-	public FaderObject fader;
+	private float fadeTime = 1.0f;
 	
 	
 	public virtual void StateStart(object context)
 	{
 		// フェードINを開始
-		fader.FadeStart(FaderObject.FADE_TYPE.FADE_IN, 1.0f, 0.0f);
+		if(Fader.UseFade)
+			Fader.StartFadeAll(fadeTime, Fader.FADE_TYPE.FADE_IN);
 	}
 
 	public virtual void StateUpdate()
@@ -20,14 +22,17 @@ public class AsyncStateBase : MonoBehaviour, IState
 	public virtual void StateExit()
 	{
 		// フェードOUTを開始
-		fader.OnFaded += OnFaded;
-		fader.FadeStart(FaderObject.FADE_TYPE.FADE_OUT, 1.0f, 1.0f);
+		if(Fader.UseFade)
+		{
+			Fader.StartFadeAll(fadeTime, Fader.FADE_TYPE.FADE_OUT);
+			Invoke("OnFaded", fadeTime);
+		}
+		else
+			OnFaded();
 	}
 		
-	private void OnFaded(GameObject sender)
+	private void OnFaded()
 	{
-		fader.OnFaded -= OnFaded;
-
 		// フェードOUT完了でState切り替えを実行 同期してStateを切り替え
 		AppMain.Instance.sceneStateManager.SyncState();
 	}

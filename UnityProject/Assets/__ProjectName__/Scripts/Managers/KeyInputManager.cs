@@ -108,7 +108,7 @@ public class KeyInputManager : ManagerBase
 			else if(sceneStateManager.CurrentState == SceneStateManager.SceneState.PLAY)
 				timeManager.timerEvents[0].StartTimer(ApplicationSetting.Instance.GetInt("GameTime"));
 			else if(sceneStateManager.CurrentState == SceneStateManager.SceneState.RESULT)
-				sceneStateManager.ChangeState(SceneStateManager.SceneState.WAIT);
+				sceneStateManager.ChangeAsyncState(SceneStateManager.SceneState.WAIT);
 		}
 	}
 	
