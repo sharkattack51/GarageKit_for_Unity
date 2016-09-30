@@ -8,14 +8,14 @@ using System;
  */ 
 public class SoundManager : ManagerBase
 {
-	//SE選択用
+	// SE選択用
 	public enum SE
 	{
 		CLICK = 0,
 		CANCEL
 	}
 	
-	//BGM選択用
+	// BGM選択用
 	public enum BGM
 	{
 		WAIT = 0,
@@ -46,13 +46,13 @@ public class SoundManager : ManagerBase
 	{
 		base.Start();
 
-		//設定値を取得
+		// 設定値を取得
 		useBGM = ApplicationSetting.Instance.GetBool("UseBGM");
 		useSE = ApplicationSetting.Instance.GetBool("UseSE");
 		volBGM = ApplicationSetting.Instance.GetFloat("VolBGM");
 		volSE = ApplicationSetting.Instance.GetFloat("VolSE");
 
-		//AudioSourceを設定
+		// AudioSourceを設定
 		audioSource_SE = this.gameObject.AddComponent<AudioSource>();
 		audioSource_BGM = this.gameObject.AddComponent<AudioSource>();
 	}
@@ -62,10 +62,8 @@ public class SoundManager : ManagerBase
 		base.Update();
 	}
 	
-	
-	/// <summary>
-	/// SEの再生
-	/// </summary>
+
+	// SEの再生
 	public void PlaySE(SE type, bool overlap = false)
 	{
 		if(useSE)
@@ -95,18 +93,14 @@ public class SoundManager : ManagerBase
 		}
 	}
 
-	/// <summary>
-	/// SEの停止
-	/// </summary>
+	// SEの停止
 	public void StopSE()
 	{
 		if(audioSource_SE.isPlaying)
 			audioSource_SE.Stop();
 	}
-	
-	/// <summary>
-	/// BGMの再生
-	/// </summary>
+
+	// BGMの再生
 	public void PlayBGM(BGM type, bool loop = true, bool overlap = false)
 	{
 		if(useBGM)
@@ -144,9 +138,7 @@ public class SoundManager : ManagerBase
 		}
 	}
 
-	/// <summary>
-	/// BGMの停止
-	/// </summary>
+	// BGMの停止
 	public void StopBGM()
 	{
 		if(audioSource_BGM.isPlaying)

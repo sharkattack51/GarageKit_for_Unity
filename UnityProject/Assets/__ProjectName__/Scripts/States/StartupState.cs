@@ -3,9 +3,9 @@ using System.Collections;
 
 public class StartupState : StateBase
 {
-	public override void StateStart()
+	public override void StateStart(object context)
 	{
-		base.StateStart();
+		base.StateStart(context);
 		
 		// StateをWAITに変更
 		AppMain.Instance.sceneStateManager.ChangeState(SceneStateManager.SceneState.WAIT);

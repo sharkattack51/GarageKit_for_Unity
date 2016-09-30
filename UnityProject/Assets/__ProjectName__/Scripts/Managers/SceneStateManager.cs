@@ -70,26 +70,26 @@ public class SceneStateManager : ManagerBase
 	}
 
 	// Stateを変更する
-	public void ChangeState(SceneState sceneState)
+	public void ChangeState(SceneState sceneState, object context = null)
 	{
 		isAsync = false;
 
-		StartCoroutine(ChangeStateCoroutine(sceneState));
+		StartCoroutine(ChangeStateCoroutine(sceneState, context));
 	}
 
 	// Stateを変更する
-	public void ChangeAsyncState(SceneState sceneState)
+	public void ChangeAsyncState(SceneState sceneState, object context = null)
 	{
 		if(!stateChanging)
 		{
 			isAsync = true;
 			stateChanging = true;
 
-			StartCoroutine(ChangeStateCoroutine(sceneState));
+			StartCoroutine(ChangeStateCoroutine(sceneState, context));
 		}
 	}
 
-	private IEnumerator ChangeStateCoroutine(SceneState sceneState)
+	private IEnumerator ChangeStateCoroutine(SceneState sceneState, object context)
 	{
 		// 前Stateの終了処理
 		if(stateObj != null)
@@ -104,7 +104,7 @@ public class SceneStateManager : ManagerBase
 		stateObj = this.gameObject.GetComponentInChildren(stateTable[sceneState]) as IState;
 
 		// 新規Stateの初期化処理
-		stateObj.StateStart();
+		stateObj.StateStart(context);
 
 		stateChanging = false;
 	}

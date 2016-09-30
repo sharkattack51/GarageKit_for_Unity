@@ -6,7 +6,7 @@ using System.Collections;
  */
 public interface IState
 {
-	void StateStart();
+	void StateStart(object context);
 	void StateUpdate();
 	void StateExit();
 }

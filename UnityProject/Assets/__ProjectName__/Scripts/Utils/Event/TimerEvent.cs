@@ -89,17 +89,18 @@ public class TimerEvent : MonoBehaviour
 	
 	
 #region タイマーの操作
-	
+
 	/// <summary>
 	/// タイマーをスタートする
 	/// </summary>
-	/// <param name="countTime">
-	/// A <see cref="System.Int32"/>
-	/// </param>
-	/// <param name="autoDestroy">
-	/// A <see cref="System.Boolean"/>
-	/// </param>
-	public void StartTimer(int countTime, bool autoDestroy)
+	public void StartTimer(int countTime, float delayTime = 0.0f, bool autoDestroy = false)
+	{
+		StartTimer(countTime, autoDestroy);
+
+		StartCoroutine(DelayStart(delayTime));
+	}
+
+	private void StartTimer(int countTime, bool autoDestroy)
 	{
 		this.startTime = countTime;
 		this.currentTime = this.startTime;
@@ -113,10 +114,14 @@ public class TimerEvent : MonoBehaviour
 		
 		isStarted = true;
 	}
-	
-	public void StartTimer(int countTime)
+
+	private IEnumerator DelayStart(float delay)
 	{
-		this.StartTimer(countTime, true);
+		StopTimer(); // 一旦停止
+
+		yield return new WaitForSeconds(delay);
+
+		ResumeTimer();
 	}
 	
 	/// <summary>
@@ -147,7 +152,7 @@ public class TimerEvent : MonoBehaviour
 		StopTimer();
 		
 		if(isStarted)
-			StartTimer(this.startTime, this.autoDestroy);
+			StartTimer(this.startTime, 0.0f, this.autoDestroy);
 	}
 	
 #endregion

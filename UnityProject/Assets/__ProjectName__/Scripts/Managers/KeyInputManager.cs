@@ -21,7 +21,7 @@ public class KeyInputManager : ManagerBase
 	{
 		base.Update();
 
-		//ESC
+		// ESC
 		if(Input.GetKeyDown(KeyCode.Escape))
 		{
 			Debug.Log("press key ESC : Application Quit");
@@ -29,40 +29,40 @@ public class KeyInputManager : ManagerBase
 			
 			if(Application.platform != RuntimePlatform.WindowsEditor)
 			{				
-				//アプリケーション終了
+				// アプリケーション終了
 				Application.Quit();
 			}
 		}
 		
-		//D
+		// D
 		if(Input.GetKeyDown(KeyCode.D))
 		{
 			Debug.Log("press key D : Visible Debug View");
 			DebugConsole.Log("press key D : Visible Debug View");
 			
-			//デバッグ表示のトグル
+			// デバッグ表示のトグル
 			DebugManager debugManager = AppMain.Instance.debugManager;
 			debugManager.IsDebug = !debugManager.IsDebug;
 			debugManager.ToggleShowDebugView();
 		}
 		
-		//C
+		// C
 		if(Input.GetKeyDown(KeyCode.C))
 		{
 			Debug.Log("press key C : Clear DebugConsole");
 			DebugConsole.Log("press key C : Clear DebugConsole");
 			
-			//デバッグコンソールのクリア
+			// デバッグコンソールのクリア
 			DebugConsole.Clear();
 		}
 		
-		//W
+		// W
 		if(Input.GetKeyDown(KeyCode.W))
 		{
 			Debug.Log("press key W : Change DebugConsole Mode");
 			DebugConsole.Log("press key W : Change DebugConsole Mode");
 			
-			//デバッグコンソールのモードを切り替える
+			// デバッグコンソールのモードを切り替える
 			if(DebugConsole.IsOpen)
 			{
 				if(DebugConsole.Instance.mode == DebugConsole.Mode.Log)
@@ -72,40 +72,41 @@ public class KeyInputManager : ManagerBase
 			}
 		}
 		
-		//G
+		// G
 		if(Input.GetKeyDown(KeyCode.G))
 		{
 			Debug.Log("press key G : System GC Collect");
 			DebugConsole.Log("press key G : System GC Collect");
 			
-			//強制CG
+			// 強制CG
 			System.GC.Collect();
 		}
 		
-		//R
+		// R
 		if(Input.GetKeyDown(KeyCode.R))
 		{
 			Debug.Log("press key R : Reload ApplicationSetting");
 			DebugConsole.Log("press key R : Reload ApplicationSetting");
 			
-			//設定ファイルの再読み込み
+			// 設定ファイルの再読み込み
 			ApplicationSetting.Instance.LoadXML();
 		}
 		
-		//Space
+		// Space
 		if(Input.GetKeyDown(KeyCode.Space))
 		{
 			Debug.Log("press key Space : Change Stage");
 			DebugConsole.Log("press key Space : Change Stage");
 			
-			//ステージの変更
+			// ステージの変更
 			SceneStateManager sceneStateManager = AppMain.Instance.sceneStateManager;
+			TimeManager timeManager = AppMain.Instance.timeManager;
 			if(sceneStateManager.CurrentState == SceneStateManager.SceneState.STARTUP)
 				sceneStateManager.ChangeState(SceneStateManager.SceneState.WAIT);
 			else if(sceneStateManager.CurrentState == SceneStateManager.SceneState.WAIT)
 				sceneStateManager.ChangeState(SceneStateManager.SceneState.PLAY);
 			else if(sceneStateManager.CurrentState == SceneStateManager.SceneState.PLAY)
-				AppMain.Instance.timeManager.gameTimer.Start();
+				timeManager.timerEvents[0].StartTimer(ApplicationSetting.Instance.GetInt("GameTime"));
 			else if(sceneStateManager.CurrentState == SceneStateManager.SceneState.RESULT)
 				sceneStateManager.ChangeState(SceneStateManager.SceneState.WAIT);
 		}

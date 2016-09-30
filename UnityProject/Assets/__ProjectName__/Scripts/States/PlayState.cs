@@ -8,9 +8,9 @@ public class PlayState : StateBase
 	public TextMesh timerText;
 	
 	
-	public override void StateStart()
+	public override void StateStart(object context)
 	{
-		base.StateStart();
+		base.StateStart(context);
 		
 		sceneText.text = "this is [Play] scene.";
 		messageText.text = "[Space] : timer start";
@@ -20,8 +20,8 @@ public class PlayState : StateBase
 	{
 		base.StateUpdate();
 		
-		if(AppMain.Instance.timeManager.gameTimer.timer.IsRunning)
-			timerText.text = AppMain.Instance.timeManager.gameTimer.timer.CurrentTime.ToString();
+		if(AppMain.Instance.timeManager.timerEvents[0].IsRunning)
+			timerText.text = AppMain.Instance.timeManager.timerEvents[0].CurrentTime.ToString();
 		else
 			timerText.text = "";
 	}

@@ -6,7 +6,7 @@ public class AsyncStateBase : MonoBehaviour, IState
 	public FaderObject fader;
 	
 	
-	public virtual void StateStart()
+	public virtual void StateStart(object context)
 	{
 		// フェードINを開始
 		fader.FadeStart(FaderObject.FADE_TYPE.FADE_IN, 1.0f, 0.0f);
@@ -14,7 +14,7 @@ public class AsyncStateBase : MonoBehaviour, IState
 
 	public virtual void StateUpdate()
 	{
-
+		
 	}
 
 	public virtual void StateExit()

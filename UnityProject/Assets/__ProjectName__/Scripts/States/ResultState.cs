@@ -8,9 +8,9 @@ public class ResultState : StateBase
 	public TextMesh timerText;
 	
 	
-	public override void StateStart()
+	public override void StateStart(object context)
 	{
-		base.StateStart();
+		base.StateStart(context);
 		
 		sceneText.text = "this is [Result] scene.";
 		messageText.text = "Timer End";

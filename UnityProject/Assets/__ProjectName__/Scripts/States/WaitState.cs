@@ -8,9 +8,9 @@ public class WaitState : StateBase
 	public TextMesh timerText;
 	
 	
-	public override void StateStart()
+	public override void StateStart(object context)
 	{
-		base.StateStart();
+		base.StateStart(context);
 		
 		sceneText.text = "this is [Wait] scene.";
 		messageText.text = "[Space] : next scene";

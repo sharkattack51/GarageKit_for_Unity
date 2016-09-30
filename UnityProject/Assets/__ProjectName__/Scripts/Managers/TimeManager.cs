@@ -7,8 +7,8 @@ using System.Collections;
  */
 public class TimeManager : ManagerBase
 {
-	//タイマーイベントオブジェクト設定
-	public TimerEventObject gameTimer;
+	// タイマーイベントオブジェクト設定
+	public TimerEvent[] timerEvents;
 	
 	
 	protected override void Awake()
@@ -20,9 +20,8 @@ public class TimeManager : ManagerBase
 	{
 		base.Start();
 
-		//各タイマー設定
-		gameTimer.time = ApplicationSetting.Instance.GetInt("GameTime");
-		gameTimer.timer.OnCompleteTimer += OnCompleteGameTimer;
+		// 各タイマー設定
+		timerEvents[0].OnCompleteTimer += OnCompleteGameTimer;
 	}
 
 	protected override void Update()
@@ -31,9 +30,10 @@ public class TimeManager : ManagerBase
 	}
 	
 
-	//ゲームタイマー完了イベント
+	// タイマー完了イベント
 	private void OnCompleteGameTimer(GameObject senderObject)
 	{
+		timerEvents[0].OnCompleteTimer -= OnCompleteGameTimer;
 		AppMain.Instance.sceneStateManager.ChangeState(SceneStateManager.SceneState.RESULT);
 	}
 }

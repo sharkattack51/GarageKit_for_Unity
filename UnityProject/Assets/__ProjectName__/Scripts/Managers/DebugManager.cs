@@ -23,23 +23,23 @@ public class DebugManager : ManagerBase
 	{
 		base.Start();
 
-		//設定値を取得
+		// 設定値を取得
 		IsDebug = ApplicationSetting.Instance.GetBool("IsDebug");
 		
-		//デバッグ用コンソール初期設定
+		// デバッグ用コンソール初期設定
 		UseDebugConsole = ApplicationSetting.Instance.GetBool("UseDebugConsole");
 		DebugConsole.IsOpen = UseDebugConsole;
 		
 		DebugConsoleLogEnable = ApplicationSetting.Instance.GetBool("DebugConsoleLogEnable");
 		DebugConsole.Instance._enable = DebugConsoleLogEnable;
 		
-		//FPS表示設定
+		// FPS表示設定
 		FrameRateUtil.useHUD = IsDebug;
 		
-		//メモリチェックの表紙設定
+		// メモリチェックの表紙設定
 		MemoryProfiler.useHUD = IsDebug;
 		
-		//マウスカーソル表示設定
+		// マウスカーソル表示設定
 		if(Application.platform == RuntimePlatform.WindowsEditor)
 			VisibleMouseCursor.showCursor = true;
 		else
@@ -52,17 +52,17 @@ public class DebugManager : ManagerBase
 	}
 
 
-	//デバッグ情報のトグル
+	// デバッグ情報のトグル
 	public void ToggleShowDebugView()
 	{
-		//デバッグコンソールの表示
+		// デバッグコンソールの表示
 		if(UseDebugConsole)
 			DebugConsole.IsOpen = !DebugConsole.IsOpen;
 		
-		//FPS表示
+		// FPS表示
 		FrameRateUtil.useHUD = !FrameRateUtil.useHUD;
 		
-		//メモリ表示
+		// メモリ表示
 		MemoryProfiler.useHUD = !MemoryProfiler.useHUD;
 	}
 }
