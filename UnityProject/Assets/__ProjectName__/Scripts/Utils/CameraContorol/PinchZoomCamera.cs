@@ -46,6 +46,7 @@ public class PinchZoomCamera : MonoBehaviour
 	public LimitValue limitMinMaxForOrthoSize = new LimitValue(2.7f, 5.4f); //オルソサイズで制限
 	public MonoBehaviour[] disableComponents; //ピンチズーム操作時に動作をOFFにする連携コンポーネント
 	public bool zoomToPinchCenter = false;
+	public float zoomSpeedForMouseWheel = 100.0f;
 	
 	private GameObject pinchZoomRoot;
 
@@ -325,6 +326,21 @@ public class PinchZoomCamera : MonoBehaviour
 				
 				calcZoom = currentDistance - oldDistance;
 				oldDistance = currentDistance;
+			}
+			else if(Input.mouseScrollDelta.magnitude > 0.0f)
+			{
+				//カメラ操作のロック
+				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
+				if(orbitCamera != null) orbitCamera.LockInput(this.gameObject);
+
+				//連携コンポーネントをOFF
+				foreach(MonoBehaviour component in disableComponents)
+				{
+					if(component != null)
+						component.enabled = false;
+				}
+
+				calcZoom = Input.mouseScrollDelta.y * zoomSpeedForMouseWheel;
 			}
 			else
 				ResetInput();	
