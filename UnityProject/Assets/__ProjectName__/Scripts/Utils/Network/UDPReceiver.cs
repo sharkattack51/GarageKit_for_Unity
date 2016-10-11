@@ -10,19 +10,19 @@ using System;
  * UDP受信を行いデリゲートを実行するクラス
  */
 
-public class UDPReciever : MonoBehaviour
+public class UDPReceiver : MonoBehaviour
 {
-	//受信ポート
+	// 受信ポート
 	public int port = 8001;
 	
-	//受信データ
-	private string recievedDataStr = "";
-	public string RecievedDataStr { get{ return recievedDataStr; } }
+	// 受信データ
+	private string receivedDataStr = "";
+	public string ReceivedDataStr { get{ return receivedDataStr; } }
 	
-	//スレッド処理でのデータ受信フラグ
-	private volatile bool isDataRecieved = false;
+	// スレッド処理でのデータ受信フラグ
+	private volatile bool isDataReceived = false;
 	
-	//データ受信イベント
+	// データ受信イベント
 	public delegate void OnReceivedDelegate(GameObject senderObject, string receivedStr);
 	public event OnReceivedDelegate OnReceived;
 	private void InvokeOnReceived(string receivedStr)
@@ -43,7 +43,7 @@ public class UDPReciever : MonoBehaviour
 	
 	void Start()
 	{
-		//受信スレッドを開始
+		// 受信スレッドを開始
 		receiveThread = new Thread(new ThreadStart(ReceiveData));
 		receiveThread.IsBackground = true;
 		receiveThread.Start();
@@ -51,11 +51,11 @@ public class UDPReciever : MonoBehaviour
 	
 	void Update()
 	{
-		//受信イベントをメインスレッドで実行
-		if(isDataRecieved)
+		// 受信イベントをメインスレッドで実行
+		if(isDataReceived)
 		{
-			InvokeOnReceived(recievedDataStr);
-			isDataRecieved = false;
+			InvokeOnReceived(receivedDataStr);
+			isDataReceived = false;
 		}
 	}
 	
@@ -63,23 +63,23 @@ public class UDPReciever : MonoBehaviour
 	{
 		threadAvairable = false;
 		
-		//受信スレッドを停止
+		// 受信スレッドを停止
 		if(receiveThread != null)
 		{
 			receiveThread.Join();
 			receiveThread = null;
 		}
 		
-		//udpクライアントを閉じる
+		// udpクライアントを閉じる
 		udpClient.Close();
 		udpClient = null;
 	}
 	
 	
-	//受信スレッド
+	// 受信スレッド
 	private void ReceiveData()
 	{
-		//udpクライアント設定
+		// udpクライアント設定
 		udpClient = new UdpClient(port);
 
 		while(threadAvairable)
@@ -91,8 +91,8 @@ public class UDPReciever : MonoBehaviour
 					IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Any, 0);
 					byte[] data = udpClient.Receive(ref ipEndPoint);
 					
-					recievedDataStr = Encoding.UTF8.GetString(data);
-					isDataRecieved = true;
+					receivedDataStr = Encoding.UTF8.GetString(data);
+					isDataReceived = true;
 				}
 			}
 			catch(Exception err)
