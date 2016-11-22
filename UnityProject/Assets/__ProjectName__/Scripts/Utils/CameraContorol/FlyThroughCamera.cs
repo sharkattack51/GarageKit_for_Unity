@@ -12,7 +12,7 @@ public class FlyThroughCamera : MonoBehaviour
 	public static bool win7touch = false;
 	public static bool updateEnable = true;
 
-	//フライスルーのコントロールタイプ
+	// フライスルーのコントロールタイプ
 	public enum FLYTHROUGH_CONTROLL_TYPE
 	{
 		DRAG = 0,
@@ -77,13 +77,13 @@ public class FlyThroughCamera : MonoBehaviour
 	
 	void Start()
 	{
-		//設定ファイルより入力タイプを取得
-		if(ApplicationSetting.Instance.GetBool("UseMouse"))
+		// 設定ファイルより入力タイプを取得
+		if(!ApplicationSetting.Instance.GetBool("UseMouse"))
 			win7touch = true;
 		
 		inputLock = false;
 		
-		//地面上視点位置に回転ルートを設定する
+		// 地面上視点位置に回転ルートを設定する
 		Ray ray = new Ray(this.transform.position, this.transform.forward);
 		RaycastHit hitInfo;
 		if(groundCollider.Raycast(ray, out hitInfo, float.PositiveInfinity))
@@ -106,7 +106,7 @@ public class FlyThroughCamera : MonoBehaviour
 			return;
 		}
 		
-		//初期値を保存
+		// 初期値を保存
 		defaultPos = flyThroughRoot.transform.position;
 		defaultRot = flyThroughRoot.transform.rotation;
 		
@@ -133,12 +133,12 @@ public class FlyThroughCamera : MonoBehaviour
 	
 	private void GetInput()
 	{
-		//for Touch
+		// for Touch
 		if(Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
 		{
 			if(Input.touchCount == 1)
 			{	
-				//ドラッグ量を計算
+				// ドラッグ量を計算
 				Vector3 currentScrTouchPos = Input.GetTouch(0).position;
 				
 				if(isFirstTouch)
@@ -162,7 +162,7 @@ public class FlyThroughCamera : MonoBehaviour
 		{
 			if(W7TouchManager.GetTouchCount() == 1)
 			{	
-				//ドラッグ量を計算
+				// ドラッグ量を計算
 				Vector3 currentScrTouchPos = W7TouchManager.GetTouch(0).Position;
 				
 				if(isFirstTouch)
@@ -182,12 +182,12 @@ public class FlyThroughCamera : MonoBehaviour
 		}
 #endif
 
-		//for Mouse
+		// for Mouse
 		else
 		{
 			if(Input.GetMouseButton(0))
 			{	
-				//ドラッグ量を計算
+				// ドラッグ量を計算
 				Vector3 currentScrTouchPos = Input.mousePosition;
 				
 				if(isFirstTouch)
@@ -236,7 +236,7 @@ public class FlyThroughCamera : MonoBehaviour
 		if(!FlyThroughCamera.updateEnable)
 			return;	
 
-		//位置
+		// 位置
 		float dragX = dragDelta.x * (dragInvertX ? -1.0f : 1.0f);
 		float dragY = dragDelta.y * (dragInvertY ? -1.0f : 1.0f);
 		
@@ -250,7 +250,7 @@ public class FlyThroughCamera : MonoBehaviour
 		
 		if(useLimitArea)
 		{
-			//移動範囲限界を設定
+			// 移動範囲限界を設定
 			if(limitAreaCollider != null)
 			{	
 				Vector3 movingLimitMin = limitAreaCollider.bounds.min + limitAreaCollider.bounds.center - limitAreaCollider.gameObject.transform.position;
@@ -271,7 +271,7 @@ public class FlyThroughCamera : MonoBehaviour
 			}
 		}
 		
-		//方向
+		// 方向
 		dampRotateDelta = Mathf.SmoothDamp(dampRotateDelta, pushRotateDelta * rotateBias, ref velocitySmoothRot, rotateSmoothTime);
 		if(moveType == FLYTHROUGH_MOVE_TYPE.XZ)
 			flyThroughRoot.transform.Rotate(Vector3.up, dampRotateDelta, Space.Self);
@@ -282,7 +282,7 @@ public class FlyThroughCamera : MonoBehaviour
 
 	private void UpdateOrbitCombination()
 	{
-		//連携機能
+		// 連携機能
 		if(combinationOrbitCamera != null)
 		{
 			Vector3 lookPoint = combinationOrbitCamera.OrbitRoot.transform.position;

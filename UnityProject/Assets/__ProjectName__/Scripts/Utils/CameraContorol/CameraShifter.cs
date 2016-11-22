@@ -18,38 +18,48 @@ public class CameraShifter : MonoBehaviour
 	
 	void Awake()
 	{
-		//初期値を保存
+		// 初期値を保存
 		orgProjM = this.GetComponent<Camera>().projectionMatrix;
 	}
-	
+
 	void Start()
-	{			
-		this.GetComponent<Camera>().projectionMatrix = CorrectedProjMat();
-	}
-	
-	void Update()
-	{	
-		if(calcAlways)
-			this.GetComponent<Camera>().projectionMatrix = CorrectedProjMat();
-	}
-	
-	private Matrix4x4 CorrectedProjMat()
 	{
-		Matrix4x4 outMat;
-		
-		//回転をリセット
-		//float camPitch = this.camera.transform.rotation.eulerAngles.x;				
-		//Matrix4x4 resetRotMat = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(new Vector3(-camPitch,0.0f,0.0f)), Vector3.one);
-		
-		//シフト
-		Vector3 shiftVec = new Vector3(shiftX, shiftY, 0.0f);
-		Matrix4x4 shiftMat = Matrix4x4.TRS(shiftVec, Quaternion.Euler(Vector3.zero), Vector3.one);
-		
-		outMat = shiftMat * orgProjM;// * resetRotMat;
-		
-		return outMat;
+		this.GetComponent<Camera>().projectionMatrix = CalcProjMat(shiftX, shiftY);
 	}
-	
+
+	void Update()
+	{
+		if(calcAlways)
+			this.GetComponent<Camera>().projectionMatrix = CalcProjMat(shiftX, shiftY);
+	}
+
+	private Matrix4x4 CalcProjMat(float shiftX, float shiftY)
+	{
+		Matrix4x4 m = orgProjM;
+
+		m.m00 += 0.0f;
+		m.m01 += 0.0f;
+		m.m02 += -shiftX;
+		m.m03 += 0.0f;
+
+		m.m10 += 0.0f;
+		m.m11 += 0.0f;
+		m.m12 += -shiftY;
+		m.m13 += 0.0f;
+
+		m.m20 += 0.0f;
+		m.m21 += 0.0f;
+		m.m22 += 0.0f;
+		m.m23 += 0.0f;
+
+		m.m30 += 0.0f;
+		m.m31 += 0.0f;
+		m.m32 += 0.0f;
+		m.m33 += 0.0f;
+
+		return m;
+	}
+
 	public void ResetProjMat()
 	{
 		this.GetComponent<Camera>().projectionMatrix = orgProjM;

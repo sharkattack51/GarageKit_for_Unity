@@ -14,7 +14,7 @@ public class GrabMove : MonoBehaviour
 	public int grabTouchNum = 3;
 	public float moveBias = 1.0f;
 	public float smoothTime = 0.1f;
-	public MonoBehaviour[] disableComponents; //グラブムーブ操作時に動作をOFFにするコンポーネント
+	public MonoBehaviour[] disableComponents; // グラブムーブ操作時に動作をOFFにするコンポーネント
 
 	private FlyThroughCamera flyThroughCamera;
 	private PinchZoomCamera pinchZoomCamera;
@@ -39,14 +39,18 @@ public class GrabMove : MonoBehaviour
 	
 	void Start()
 	{
+		// 設定ファイルより入力タイプを取得
+		if(!ApplicationSetting.Instance.GetBool("UseMouse"))
+			win7touch = true;
+		
 		inputLock = false;
 
-		//カメラコンポーネントの取得
+		// カメラコンポーネントの取得
 		flyThroughCamera = this.gameObject.GetComponent<FlyThroughCamera>();
 		pinchZoomCamera = this.gameObject.GetComponent<PinchZoomCamera>();
 		orbitCamera = this.gameObject.GetComponent<OrbitCamera>();
 		
-		//初期値を保存
+		// 初期値を保存
 		defaultPos = this.gameObject.transform.position;
 			
 		ResetInput();
@@ -68,12 +72,12 @@ public class GrabMove : MonoBehaviour
 		oldWorldTouchPos = Vector3.zero;
 		dragDelta = Vector3.zero;
 		
-		//カメラ操作のアンロック
+		// カメラ操作のアンロック
 		if(flyThroughCamera != null) flyThroughCamera.UnlockInput(this.gameObject);
 		if(pinchZoomCamera != null) pinchZoomCamera.UnlockInput(this.gameObject);
 		if(orbitCamera != null) orbitCamera.UnlockInput(this.gameObject);
 
-		//コンポーネントをON
+		// コンポーネントをON
 		foreach(MonoBehaviour component in disableComponents)
 		{
 			if(component != null)
@@ -83,24 +87,24 @@ public class GrabMove : MonoBehaviour
 	
 	private void GetInput()
 	{
-		//for Touch
+		// for Touch
 		if(Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
 		{
 			if(Input.touchCount >= grabTouchNum)
 			{
-				//カメラ操作のロック
+				// カメラ操作のロック
 				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
 				if(pinchZoomCamera != null) pinchZoomCamera.LockInput(this.gameObject);
 				if(orbitCamera != null) orbitCamera.LockInput(this.gameObject);
 				
-				//コンポーネントをOFF
+				// コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
 				{
 					if(component != null)
 						component.enabled = false;
 				}
 				
-				//ドラッグ量を計算
+				// ドラッグ量を計算
 				float touchesPosX = (Input.GetTouch(0).position.x + Input.GetTouch(1).position.x + Input.GetTouch(2).position.x) / 3.0f;
 				float touchesPosY = (Input.GetTouch(0).position.y + Input.GetTouch(1).position.y + Input.GetTouch(2).position.y) / 3.0f;
 				Vector3 currentWorldTouchPos = renderCamera.ScreenToWorldPoint(new Vector3(touchesPosX, touchesPosY, 1000.0f));
@@ -124,19 +128,19 @@ public class GrabMove : MonoBehaviour
 		{
 			if(W7TouchManager.GetTouchCount() >= grabTouchNum)
 			{
-				//カメラ操作のロック
+				// カメラ操作のロック
 				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
 				if(pinchZoomCamera != null) pinchZoomCamera.LockInput(this.gameObject);
 				if(orbitCamera != null) orbitCamera.LockInput(this.gameObject);
 
-				//コンポーネントをOFF
+				// コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
 				{
 					if(component != null)
 						component.enabled = false;
 				}
 				
-				//ドラッグ量を計算
+				// ドラッグ量を計算
 				float touchesPosX = (W7TouchManager.GetTouch(0).Position.x + W7TouchManager.GetTouch(1).Position.x + W7TouchManager.GetTouch(2).Position.x) / 3.0f;
 				float touchesPosY = (W7TouchManager.GetTouch(0).Position.y + W7TouchManager.GetTouch(1).Position.y + W7TouchManager.GetTouch(2).Position.y) / 3.0f;
 				Vector3 currentWorldTouchPos = renderCamera.ScreenToWorldPoint(new Vector3(touchesPosX, touchesPosY, 1000.0f));
@@ -156,26 +160,26 @@ public class GrabMove : MonoBehaviour
 		}
 #endif
 
-		//for Mouse
+		// for Mouse
 		else
 		{
 			if(Input.GetMouseButton(0)
 				&& (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
 				&& (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
 			{
-				//カメラ操作のロック
+				// カメラ操作のロック
 				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
 				if(pinchZoomCamera != null) pinchZoomCamera.LockInput(this.gameObject);
 				if(orbitCamera != null) orbitCamera.LockInput(this.gameObject);
 
-				//コンポーネントをOFF
+				// コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
 				{
 					if(component != null)
 						component.enabled = false;
 				}
 				
-				//ドラッグ量を計算
+				// ドラッグ量を計算
 				Vector3 currentWorldTouchPos = renderCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1000.0f));
 				
 				if(isFirstTouch)

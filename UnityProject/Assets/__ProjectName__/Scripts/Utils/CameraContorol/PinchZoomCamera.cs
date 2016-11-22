@@ -8,7 +8,7 @@ using System;
  * マウス&タッチ対応
  */
 
-//最大最上の制限値
+// 最大最上の制限値
 [Serializable]
 public class LimitValue
 {
@@ -28,7 +28,7 @@ public class PinchZoomCamera : MonoBehaviour
 	public static bool win7touch = false;
 	public static bool updateEnable = true;
 
-	//カメラのズームタイプ
+	// カメラのズームタイプ
 	public enum PINCH_ZOOM_TYPE
 	{
 		POSITION_Z = 0,
@@ -41,12 +41,11 @@ public class PinchZoomCamera : MonoBehaviour
 	public float zoomBias = 1.0f;
 	public float zoomSmoothTime = 0.1f;
 	public bool invertZoom = false;
-	public LimitValue limitMinMaxForRelativePosZ = new LimitValue(-1000.0f, 1000.0f); //Z位置の相対値で制限
-	public LimitValue limitMinMaxForFOV = new LimitValue(30.0f, 80.0f); //FOV値で制限
-	public LimitValue limitMinMaxForOrthoSize = new LimitValue(2.7f, 5.4f); //オルソサイズで制限
-	public MonoBehaviour[] disableComponents; //ピンチズーム操作時に動作をOFFにする連携コンポーネント
+	public LimitValue limitMinMaxForRelativePosZ = new LimitValue(-1000.0f, 1000.0f); // Z位置の相対値で制限
+	public LimitValue limitMinMaxForFOV = new LimitValue(30.0f, 80.0f); // FOV値で制限
+	public LimitValue limitMinMaxForOrthoSize = new LimitValue(2.7f, 5.4f); // オルソサイズで制限
+	public MonoBehaviour[] disableComponents; // ピンチズーム操作時に動作をOFFにする連携コンポーネント
 	public bool zoomToPinchCenter = false;
-	public float zoomSpeedForMouseWheel = 100.0f;
 	
 	private GameObject pinchZoomRoot;
 
@@ -93,11 +92,15 @@ public class PinchZoomCamera : MonoBehaviour
 	
 	void Start()
 	{
-		//カメラコンポーネントの取得
+		// 設定ファイルより入力タイプを取得
+		if(!ApplicationSetting.Instance.GetBool("UseMouse"))
+			win7touch = true;
+		
+		// カメラコンポーネントの取得
 		flyThroughCamera = this.gameObject.GetComponent<FlyThroughCamera>();
 		orbitCamera = this.gameObject.GetComponent<OrbitCamera>();
 
-		//ズーム位置のルートを設定する
+		// ズーム位置のルートを設定する
 		pinchZoomRoot = new GameObject(this.gameObject.name + " PinchZoom Root");
 		pinchZoomRoot.transform.position = this.gameObject.transform.position;
 		pinchZoomRoot.transform.rotation= this.gameObject.transform.rotation;
@@ -105,7 +108,7 @@ public class PinchZoomCamera : MonoBehaviour
 		pinchZoomRoot.transform.parent = this.gameObject.transform.parent;
 		this.gameObject.transform.parent = pinchZoomRoot.transform;
 
-		//初期値を保存
+		// 初期値を保存
 		switch(zoomType)
 		{
 			case PINCH_ZOOM_TYPE.POSITION_Z: defaultZoom = this.gameObject.transform.localPosition.z; break;
@@ -114,7 +117,7 @@ public class PinchZoomCamera : MonoBehaviour
 			default: break;
 		}
 		
-		//ピンチセンターへのズーム設定
+		// ピンチセンターへのズーム設定
 		if(zoomToPinchCenter)
 		{
 			Camera[] cameras = this.gameObject.GetComponent<Camera>().GetComponentsInChildren<Camera>();
@@ -159,7 +162,7 @@ public class PinchZoomCamera : MonoBehaviour
 	
 	private void ResetInput()
 	{
-		//ピンチセンターへのズーム設定をリセット
+		// ピンチセンターへのズーム設定をリセット
 		if(!isFirstTouch && zoomToPinchCenter)
 		{
 			if(flyThroughCamera != null)
@@ -169,11 +172,11 @@ public class PinchZoomCamera : MonoBehaviour
 				
 				if(flyThroughCamera.groundCollider.Raycast(ray, out hitInfo, float.PositiveInfinity))
 				{
-					//カメラ位置
+					// カメラ位置
 					flyThroughCamera.TranslateToFlyThrough(hitInfo.point - flyThroughCamera.currentPos);
 					flyThroughCamera.ShiftTransform.localPosition = Vector3.zero;
 					
-					//カメラシフト
+					// カメラシフト
 					foreach(CameraShifter cameraShifter in cameraShifterListForZtoPC)
 					{
 						cameraShifter.shiftX = 0.0f;
@@ -190,11 +193,11 @@ public class PinchZoomCamera : MonoBehaviour
 		dampZoomDelta = 0.0f;
 		pinchCenter = Vector2.zero;
 		
-		//カメラ操作のアンロック
+		// カメラ操作のアンロック
 		if(flyThroughCamera != null) flyThroughCamera.UnlockInput(this.gameObject);
 		if(orbitCamera != null) orbitCamera.UnlockInput(this.gameObject);
 		
-		//連携コンポーネントをON
+		// 連携コンポーネントをON
 		foreach(MonoBehaviour component in disableComponents)
 		{
 			if(component != null)
@@ -204,31 +207,31 @@ public class PinchZoomCamera : MonoBehaviour
 	
 	private void GetInput()
 	{
-		//for Touch
+		// for Touch
 		if(Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
 		{
 			if(Input.touchCount == 2)
 			{
-				//カメラ操作のロック
+				// カメラ操作のロック
 				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
 				if(orbitCamera != null) orbitCamera.LockInput(this.gameObject);
 
-				//連携コンポーネントをOFF
+				// 連携コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
 				{
 					if(component != null)
 						component.enabled = false;
 				}
 				
-				//ピンチセンターを設定
+				// ピンチセンターを設定
 				pinchCenter = (Input.GetTouch(0).position + Input.GetTouch(1).position) / 2.0f;
 				
-				//ピンチ距離を計算
+				// ピンチ距離を計算
 				currentDistance = Vector3.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
 				
 				if(isFirstTouch)
 				{
-					//ピンチセンターへのズーム開始
+					// ピンチセンターへのズーム開始
 					if(zoomToPinchCenter)
 						StartZoomToPinchCenter();
 					
@@ -249,26 +252,26 @@ public class PinchZoomCamera : MonoBehaviour
 		{
 			if(W7TouchManager.GetTouchCount() == 2)
 			{
-				//カメラ操作のロック
+				// カメラ操作のロック
 				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
 				if(orbitCamera != null) orbitCamera.LockInput(this.gameObject);
 
-				//連携コンポーネントをOFF
+				// 連携コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
 				{
 					if(component != null)
 						component.enabled = false;
 				}
 				
-				//ピンチセンターを設定
+				// ピンチセンターを設定
 				pinchCenter = (W7TouchManager.GetTouch(0).Position + W7TouchManager.GetTouch(1).Position) / 2.0f;
 				
-				//ピンチ距離を計算
+				// ピンチ距離を計算
 				currentDistance = Vector3.Distance(W7TouchManager.GetTouch(0).Position, W7TouchManager.GetTouch(1).Position);
 				
 				if(isFirstTouch)
 				{
-					//ピンチセンターへのズーム開始
+					// ピンチセンターへのズーム開始
 					if(zoomToPinchCenter)
 						StartZoomToPinchCenter();
 					
@@ -285,26 +288,26 @@ public class PinchZoomCamera : MonoBehaviour
 		}
 #endif
 
-		//for Mouse
+		// for Mouse
 		else
 		{
 			if(Input.GetMouseButton(0) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)))
 			{
-				//カメラ操作のロック
+				// カメラ操作のロック
 				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
 				if(orbitCamera != null) orbitCamera.LockInput(this.gameObject);
 				
-				//連携コンポーネントをOFF
+				// 連携コンポーネントをOFF
 				foreach(MonoBehaviour component in disableComponents)
 				{
 					if(component != null)
 						component.enabled = false;
 				}
 				
-				//ピンチセンターを設定
+				// ピンチセンターを設定
 				if(isFirstTouch) pinchCenter = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 				
-				//ピンチ距離を計算
+				// ピンチ距離を計算
 				Vector2 orgPoint = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 				Vector2 diff = orgPoint - pinchCenter;
 				Vector2 mirrorPoint = new Vector2(
@@ -315,7 +318,7 @@ public class PinchZoomCamera : MonoBehaviour
 				
 				if(isFirstTouch)
 				{
-					//ピンチセンターへのズーム開始
+					// ピンチセンターへのズーム開始
 					if(zoomToPinchCenter)
 						StartZoomToPinchCenter();
 					
@@ -326,21 +329,6 @@ public class PinchZoomCamera : MonoBehaviour
 				
 				calcZoom = currentDistance - oldDistance;
 				oldDistance = currentDistance;
-			}
-			else if(Input.mouseScrollDelta.magnitude > 0.0f)
-			{
-				//カメラ操作のロック
-				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
-				if(orbitCamera != null) orbitCamera.LockInput(this.gameObject);
-
-				//連携コンポーネントをOFF
-				foreach(MonoBehaviour component in disableComponents)
-				{
-					if(component != null)
-						component.enabled = false;
-				}
-
-				calcZoom = Input.mouseScrollDelta.y * zoomSpeedForMouseWheel;
 			}
 			else
 				ResetInput();	
@@ -358,11 +346,11 @@ public class PinchZoomCamera : MonoBehaviour
 			RaycastHit hitInfo;
 			if(flyThroughCamera.groundCollider.Raycast(ray, out hitInfo, float.PositiveInfinity))
 			{
-				//カメラ位置
+				// カメラ位置
 				Vector3 shift = hitInfo.point - flyThroughCamera.FlyThroughRoot.transform.position;
 				flyThroughCamera.ShiftTransform.localPosition = shift;
 				
-				//カメラシフト
+				// カメラシフト
 				foreach(CameraShifter cameraShifter in cameraShifterListForZtoPC)
 				{
 					cameraShifter.shiftX = ((pinchCenter.x / (float)Screen.width) - 0.5f) * 2.0f;
@@ -405,7 +393,7 @@ public class PinchZoomCamera : MonoBehaviour
 		dampZoomDelta = Mathf.SmoothDamp(dampZoomDelta, zoomDelta, ref velocitySmoothZoom, zoomSmoothTime);
 		this.gameObject.transform.Translate(new Vector3(0.0f, 0.0f, dampZoomDelta));
 		
-		//位置制限
+		// 位置制限
 		if(this.gameObject.transform.localPosition.z <= defaultZoom + limitMinMaxForRelativePosZ.min)
 			this.gameObject.transform.localPosition = new Vector3(0.0f, 0.0f, defaultZoom + limitMinMaxForRelativePosZ.min);
 		if(this.gameObject.transform.localPosition.z >= defaultZoom + limitMinMaxForRelativePosZ.max)
@@ -423,7 +411,7 @@ public class PinchZoomCamera : MonoBehaviour
 		dampZoomDelta = Mathf.SmoothDamp(dampZoomDelta, zoomDelta, ref velocitySmoothZoom, zoomSmoothTime);
 		this.gameObject.GetComponent<Camera>().fieldOfView += dampZoomDelta;
 		
-		//画角制限
+		// 画角制限
 		if(this.gameObject.GetComponent<Camera>().fieldOfView <= limitMinMaxForFOV.min)
 			this.gameObject.GetComponent<Camera>().fieldOfView = limitMinMaxForFOV.min;
 		if(this.gameObject.GetComponent<Camera>().fieldOfView >= limitMinMaxForFOV.max)
@@ -441,7 +429,7 @@ public class PinchZoomCamera : MonoBehaviour
 		dampZoomDelta = Mathf.SmoothDamp(dampZoomDelta, zoomDelta, ref velocitySmoothZoom, zoomSmoothTime);
 		this.gameObject.GetComponent<Camera>().orthographicSize += dampZoomDelta;
 		
-		//Orthoサイズ制限
+		// Orthoサイズ制限
 		if(this.gameObject.GetComponent<Camera>().orthographicSize <= limitMinMaxForOrthoSize.min)
 			this.gameObject.GetComponent<Camera>().orthographicSize = limitMinMaxForOrthoSize.min;
 		if(this.gameObject.GetComponent<Camera>().orthographicSize >= limitMinMaxForOrthoSize.max)
@@ -467,7 +455,7 @@ public class PinchZoomCamera : MonoBehaviour
 		
 		if(zoomType == PINCH_ZOOM_TYPE.POSITION_Z)
 		{
-			//位置制限
+			// 位置制限
 			if(this.gameObject.transform.localPosition.z + zoom <= defaultZoom + limitMinMaxForRelativePosZ.min)
 				zoom = (defaultZoom + limitMinMaxForRelativePosZ.min) - this.gameObject.transform.localPosition.z;
 			if(this.gameObject.transform.localPosition.z + zoom >= defaultZoom + limitMinMaxForRelativePosZ.max)
@@ -485,7 +473,7 @@ public class PinchZoomCamera : MonoBehaviour
 		}
 		else if(zoomType == PINCH_ZOOM_TYPE.FOV)
 		{
-			//画角制限
+			// 画角制限
 			if(zoom <= limitMinMaxForFOV.min)
 				zoom = limitMinMaxForFOV.min;
 			if(zoom >= limitMinMaxForFOV.max)
@@ -504,7 +492,7 @@ public class PinchZoomCamera : MonoBehaviour
 		}
 		else if(zoomType == PINCH_ZOOM_TYPE.ORTHOSIZE)
 		{
-			//Orthoサイズ制限
+			// Orthoサイズ制限
 			if(zoom <= limitMinMaxForOrthoSize.min)
 				zoom = limitMinMaxForOrthoSize.min;
 			if(zoom >= limitMinMaxForOrthoSize.max)
