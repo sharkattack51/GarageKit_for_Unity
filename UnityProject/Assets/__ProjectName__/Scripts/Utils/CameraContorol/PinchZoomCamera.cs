@@ -120,6 +120,9 @@ public class PinchZoomCamera : MonoBehaviour
 		// ピンチセンターへのズーム設定
 		if(zoomToPinchCenter)
 		{
+			if(zoomType != PINCH_ZOOM_TYPE.POSITION_Z)
+				Debug.LogWarning("PinchZoomCamera :: [zoomToPinchCenter] only works for [PINCH_ZOOM_TYPE.POSITION_Z]");
+
 			Camera[] cameras = this.gameObject.GetComponent<Camera>().GetComponentsInChildren<Camera>();
 			foreach(Camera cam in cameras)
 			{
