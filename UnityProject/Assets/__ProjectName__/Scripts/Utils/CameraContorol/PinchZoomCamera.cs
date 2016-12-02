@@ -68,6 +68,8 @@ public class PinchZoomCamera : MonoBehaviour
 	private float calcZoom;
 	private Vector2 pinchCenter;
 	private List<CameraShifter> cameraShifterListForZtoPC = new List<CameraShifter>();
+
+	public float ratioForWheel = 1.0f;
 	
 	public float currentZoom
 	{
@@ -193,7 +195,9 @@ public class PinchZoomCamera : MonoBehaviour
 		oldDistance = 0.0f;
 		currentDistance = 0.0f;
 		calcZoom = 0.0f;
+		velocitySmoothZoom = 0.0f;
 		dampZoomDelta = 0.0f;
+		pushZoomDelta = 0.0f;
 		pinchCenter = Vector2.zero;
 		
 		// カメラ操作のアンロック
@@ -294,7 +298,8 @@ public class PinchZoomCamera : MonoBehaviour
 		// for Mouse
 		else
 		{
-			if(Input.GetMouseButton(0) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)))
+			if((Input.GetMouseButton(0) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)))
+				|| Input.mouseScrollDelta.y != 0.0f)
 			{
 				// カメラ操作のロック
 				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
@@ -306,32 +311,42 @@ public class PinchZoomCamera : MonoBehaviour
 					if(component != null)
 						component.enabled = false;
 				}
-				
-				// ピンチセンターを設定
-				if(isFirstTouch) pinchCenter = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-				
-				// ピンチ距離を計算
-				Vector2 orgPoint = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-				Vector2 diff = orgPoint - pinchCenter;
-				Vector2 mirrorPoint = new Vector2(
-					(diff.x * Mathf.Cos(180 * Mathf.Deg2Rad)) - (diff.y * Mathf.Sin(180 * Mathf.Deg2Rad)),
-					(diff.x * Mathf.Sin(180 * Mathf.Deg2Rad)) + (diff.y * Mathf.Cos(180 * Mathf.Deg2Rad))
-				);
-				currentDistance = Vector3.Distance(orgPoint, mirrorPoint);
-				
-				if(isFirstTouch)
+
+				if(Input.mouseScrollDelta.y == 0.0f)
 				{
-					// ピンチセンターへのズーム開始
-					if(zoomToPinchCenter)
-						StartZoomToPinchCenter();
+					//ドラッグでの操作
 					
+					//ピンチセンターを設定
+					if(isFirstTouch) pinchCenter = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+					
+					//ピンチ距離を計算
+					Vector2 orgPoint = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+					Vector2 diff = orgPoint - pinchCenter;
+					Vector2 mirrorPoint = new Vector2(
+						(diff.x * Mathf.Cos(180 * Mathf.Deg2Rad)) - (diff.y * Mathf.Sin(180 * Mathf.Deg2Rad)),
+						(diff.x * Mathf.Sin(180 * Mathf.Deg2Rad)) + (diff.y * Mathf.Cos(180 * Mathf.Deg2Rad))
+					);
+					currentDistance = Vector3.Distance(orgPoint, mirrorPoint);
+					
+					if(isFirstTouch)
+					{
+						// ピンチセンターへのズーム開始
+						if(zoomToPinchCenter)
+							StartZoomToPinchCenter();
+						
+						oldDistance = currentDistance;
+						isFirstTouch = false;
+						return;
+					}
+					
+					calcZoom = currentDistance - oldDistance;
 					oldDistance = currentDistance;
-					isFirstTouch = false;
-					return;
 				}
-				
-				calcZoom = currentDistance - oldDistance;
-				oldDistance = currentDistance;
+				else
+				{
+					// ホイールでの操作
+					calcZoom = Input.mouseScrollDelta.y * ratioForWheel;
+				}
 			}
 			else
 				ResetInput();	

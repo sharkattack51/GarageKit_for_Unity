@@ -1,6 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+#if UNITY_5_5_OR_NEWER
+
+using UnityEngine.Profiling;
+
+#endif
+
 /*
  * Debug用に使用メモリを表示する
  */
@@ -18,13 +24,13 @@ public class MemoryProfiler : MonoBehaviour
 	
 	void Awake()
 	{
-		//表示設定
+		// 表示設定
 		displayRect = new Rect(Screen.width - 200, Screen.height -100, 75, 50);
 	}
 
 	void Start()
 	{
-		//使用メモリ測定の開始
+		// 使用メモリ測定の開始
 		StartCoroutine(MemoryCheck());
 	}
 
@@ -35,13 +41,13 @@ public class MemoryProfiler : MonoBehaviour
 	
 	private IEnumerator MemoryCheck()
     {
-		//Update FPS
+		// Update FPS
 		while( true )
 		{
-			//string
+			// string
 			useMem = Mathf.Floor((int)Profiler.usedHeapSize / 100000.0f) / 10.0f;
 			
-			//color
+			// color
 			if(useMem <= 600.0f)
 				color = Color.green;
 			else if(useMem >= 800.0f)
@@ -57,7 +63,7 @@ public class MemoryProfiler : MonoBehaviour
 	{
 		if(useHUD)
 		{
-			//スタイルの設定
+			// スタイルの設定
 			if( style == null )
 			{
 				style = new GUIStyle(GUI.skin.label);
@@ -65,7 +71,7 @@ public class MemoryProfiler : MonoBehaviour
 				style.alignment = TextAnchor.MiddleCenter;
 			}
 	        
-			//表示を更新
+			// 表示を更新
 			GUI.color = color;
 			displayRect = GUI.Window(200, displayRect, DoWindow, "");
 		}
