@@ -23,7 +23,7 @@ public class ScreenSaverObject : MonoBehaviour
 	{
 		MOUSE = 0,
 		INPUTTOUCH,
-		W7TOUCH,
+		WTOUCH,
 		KINECT
 	}
 	public static INPUT_TYPE inputType = INPUT_TYPE.MOUSE;
@@ -49,7 +49,7 @@ public class ScreenSaverObject : MonoBehaviour
 		if(mode == "mouse")
 			inputType = INPUT_TYPE.MOUSE;
 		else if(mode == "touch")
-			inputType = INPUT_TYPE.W7TOUCH;
+			inputType = INPUT_TYPE.WTOUCH;
 		else 
 			inputType = INPUT_TYPE.KINECT;
 		
@@ -85,10 +85,10 @@ public class ScreenSaverObject : MonoBehaviour
 					DisableScreenSaver();
 			}
 		
-			//for W7Touch
-			else if(inputType == INPUT_TYPE.W7TOUCH)
+			//for WTouch
+			else if(inputType == INPUT_TYPE.WTOUCH)
 			{
-				if(W7TouchManager.GetTouchCount() > 0)
+				if(TouchScript.TouchManager.Instance.NumberOfTouches > 0)
 					DisableScreenSaver();
 			}
 		

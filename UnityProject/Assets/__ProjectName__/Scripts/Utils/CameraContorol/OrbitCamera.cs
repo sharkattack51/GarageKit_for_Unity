@@ -9,7 +9,7 @@ using System.Collections;
 [RequireComponent(typeof(Camera))]
 public class OrbitCamera : MonoBehaviour
 {
-	public static bool win7touch = false;
+	public static bool winTouch = false;
 	public static bool updateEnable = true;
 
 	public GameObject target;
@@ -94,18 +94,17 @@ public class OrbitCamera : MonoBehaviour
 		}
 
 #if UNITY_STANDALONE_WIN
-		else if(Application.platform == RuntimePlatform.WindowsPlayer && win7touch)
+		else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 		{
-			if(W7TouchManager.GetTouchCount() == 1)
+			if(TouchScript.TouchManager.Instance.NumberOfTouches == 1)
 			{
-				if(W7TouchManager.GetTouch(0).Phase == TouchPhase.Moved)
-				{
-					moveVector = (Vector3)(W7TouchManager.GetTouch(0).DeltaPosition / 10.0f);
-				}
+				TouchScript.TouchPoint tp = TouchScript.TouchManager.Instance.ActiveTouches[0];
+				if(tp.Position != tp.PreviousPosition)
+					moveVector = (Vector3)((tp.PreviousPosition - tp.Position) / 10.0f);
 				else
 					ResetInput();
 			}
-			else if(W7TouchManager.GetTouchCount() == 0)
+			else if(TouchScript.TouchManager.Instance.NumberOfTouches == 0)
 				ResetInput();
 		}
 #endif

@@ -9,7 +9,7 @@ using System.Collections;
 [RequireComponent(typeof(Camera))]
 public class FlyThroughCamera : MonoBehaviour
 {
-	public static bool win7touch = false;
+	public static bool winTouch = false;
 	public static bool updateEnable = true;
 
 	// フライスルーのコントロールタイプ
@@ -21,7 +21,7 @@ public class FlyThroughCamera : MonoBehaviour
 	
 	public FLYTHROUGH_CONTROLL_TYPE controllType;
 	
-	//移動軸の方向
+	// 移動軸の方向
 	public enum FLYTHROUGH_MOVE_TYPE
 	{
 		XZ = 0,
@@ -79,37 +79,37 @@ public class FlyThroughCamera : MonoBehaviour
 	{
 		// 設定ファイルより入力タイプを取得
 		if(!ApplicationSetting.Instance.GetBool("UseMouse"))
-			win7touch = true;
-		
+			winTouch = true;
+
 		inputLock = false;
-		
+
 		// 地面上視点位置に回転ルートを設定する
 		Ray ray = new Ray(this.transform.position, this.transform.forward);
 		RaycastHit hitInfo;
 		if(groundCollider.Raycast(ray, out hitInfo, float.PositiveInfinity))
 		{
 			flyThroughRoot = new GameObject(this.gameObject.name + " FlyThrough Root");
-			flyThroughRoot.transform.parent = this.gameObject.transform.parent;
+			flyThroughRoot.transform.SetParent(this.gameObject.transform.parent, false);
 			flyThroughRoot.transform.position = hitInfo.point;
 			flyThroughRoot.transform.rotation = Quaternion.identity;
-			
+
 			shiftTransformRoot = new GameObject(this.gameObject.name + " ShiftTransform Root");
-			shiftTransformRoot.transform.parent = flyThroughRoot.transform;
+			shiftTransformRoot.transform.SetParent(flyThroughRoot.transform, true);
 			shiftTransformRoot.transform.localPosition = Vector3.zero;
 			shiftTransformRoot.transform.localRotation = Quaternion.identity;
-			
-			this.gameObject.transform.parent = shiftTransformRoot.transform;
+
+			this.gameObject.transform.SetParent(shiftTransformRoot.transform, true);
 		}
 		else
 		{
 			Debug.LogWarning("FlyThroughCamera :: not set the ground collider !!");
 			return;
 		}
-		
+
 		// 初期値を保存
 		defaultPos = flyThroughRoot.transform.position;
 		defaultRot = flyThroughRoot.transform.rotation;
-		
+
 		ResetInput();
 	}
 	
@@ -158,12 +158,12 @@ public class FlyThroughCamera : MonoBehaviour
 		}
 
 #if UNITY_STANDALONE_WIN
-		else if(Application.platform == RuntimePlatform.WindowsPlayer && win7touch)
+		else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 		{
-			if(W7TouchManager.GetTouchCount() == 1)
+			if(TouchScript.TouchManager.Instance.NumberOfTouches == 1)
 			{	
 				// ドラッグ量を計算
-				Vector3 currentScrTouchPos = W7TouchManager.GetTouch(0).Position;
+				Vector3 currentScrTouchPos = TouchScript.TouchManager.Instance.ActiveTouches[0].Position;
 				
 				if(isFirstTouch)
 				{
@@ -233,7 +233,7 @@ public class FlyThroughCamera : MonoBehaviour
 	/// </summary>
 	private void UpdateFlyThrough()
 	{
-		if(!FlyThroughCamera.updateEnable)
+		if(!FlyThroughCamera.updateEnable || flyThroughRoot == null)
 			return;	
 
 		// 位置

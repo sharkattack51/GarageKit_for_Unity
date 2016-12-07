@@ -30,7 +30,7 @@ public class ButtonObjectBase : MonoBehaviour
 	//入力タイプ
 	public enum INPUT_TYPE
 	{
-		W7TOUCH = 0,
+		WTOUCH = 0,
 		INPUTTOUCH,
 		MOUSE
 	}
@@ -99,7 +99,7 @@ public class ButtonObjectBase : MonoBehaviour
 		if(ApplicationSetting.Instance.GetString("InputMode").ToLower() == "mouse")
 			inputType = INPUT_TYPE.MOUSE;
 		else
-			inputType = INPUT_TYPE.W7TOUCH;
+			inputType = INPUT_TYPE.WTOUCH;
 		
 		//自分を描画するカメラを取得
 		rayCamera = Utils.CameraUtil.FindCameraForLayer(this.gameObject.layer);
@@ -132,40 +132,30 @@ public class ButtonObjectBase : MonoBehaviour
 		isTouch = true;
 		touchCount=0;
 		
-		//for Win7Touch
-		if(inputType == INPUT_TYPE.W7TOUCH)
+		//for WinTouch
+		if(inputType == INPUT_TYPE.WTOUCH)
 		{
 			
 #if UNITY_STANDALONE_WIN
-			
-			//WindowsのときのみWin7Touchが必要
-			touchCount = W7TouchManager.GetTouchCount();
-			
+			touchCount = TouchScript.TouchManager.Instance.NumberOfTouches;
+
 			//1点目を入力として受付
 			if(touchCount >= 1)
 			{
-				W7Touch w7t1 = W7TouchManager.GetTouch(0);
+				TouchScript.TouchPoint tp = TouchScript.TouchManager.Instance.ActiveTouches[0];
 				Rect wrect = Utils.WindowsUtil.GetApplicationWindowRect(); //not work in Editor.
 				touchPosition = new Vector2(
-					(int)(((w7t1.Position.x / Screen.width) * Screen.currentResolution.width) - wrect.x),
-					Screen.height + (int)(((w7t1.Position.y / Screen.height) * Screen.currentResolution.height) - wrect.y));
-			 	TouchPhase tphase = w7t1.Phase;
+					(int)(((tp.Position.x / Screen.width) * Screen.currentResolution.width) - wrect.x),
+					Screen.height + (int)(((tp.Position.y / Screen.height) * Screen.currentResolution.height) - wrect.y));
 				
-				if(tphase == TouchPhase.Began)
+				if(tp.Position == tp.PreviousPosition)
 				{
-					//isPressed == Trueの状態でBeganがくることはありえないのだが来てしまうときがある
-					//その場合はMovedということにする
 					if(isPressed)
 						phase = INPUT_PHASE.Moved;
 					else
 						phase = INPUT_PHASE.Began;
 				}
-				else if(tphase == TouchPhase.Ended || tphase == TouchPhase.Canceled)
-				{
-					//Win7Touchではここにはこないようです
-					phase = INPUT_PHASE.Ended;
-				}
-				else if(tphase == TouchPhase.Moved || tphase == TouchPhase.Stationary)
+				else
 				{
 					phase = INPUT_PHASE.Moved;
 				}
@@ -184,7 +174,6 @@ public class ButtonObjectBase : MonoBehaviour
 					isTouch = false;
 				}
 			}
-			
 #endif
 			
 		}

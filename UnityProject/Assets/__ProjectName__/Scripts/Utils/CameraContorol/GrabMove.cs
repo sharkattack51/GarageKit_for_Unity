@@ -8,7 +8,7 @@ using System.Collections;
 
 public class GrabMove : MonoBehaviour
 {
-	public static bool win7touch = false;
+	public static bool winTouch = false;
 	
 	public Camera renderCamera;
 	public int grabTouchNum = 3;
@@ -41,7 +41,7 @@ public class GrabMove : MonoBehaviour
 	{
 		// 設定ファイルより入力タイプを取得
 		if(!ApplicationSetting.Instance.GetBool("UseMouse"))
-			win7touch = true;
+			winTouch = true;
 		
 		inputLock = false;
 
@@ -124,9 +124,9 @@ public class GrabMove : MonoBehaviour
 		}
 
 #if UNITY_STANDALONE_WIN
-		else if(Application.platform == RuntimePlatform.WindowsPlayer && win7touch)
+		else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 		{
-			if(W7TouchManager.GetTouchCount() >= grabTouchNum)
+			if(TouchScript.TouchManager.Instance.NumberOfTouches >= grabTouchNum)
 			{
 				// カメラ操作のロック
 				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
@@ -141,8 +141,11 @@ public class GrabMove : MonoBehaviour
 				}
 				
 				// ドラッグ量を計算
-				float touchesPosX = (W7TouchManager.GetTouch(0).Position.x + W7TouchManager.GetTouch(1).Position.x + W7TouchManager.GetTouch(2).Position.x) / 3.0f;
-				float touchesPosY = (W7TouchManager.GetTouch(0).Position.y + W7TouchManager.GetTouch(1).Position.y + W7TouchManager.GetTouch(2).Position.y) / 3.0f;
+				TouchScript.TouchPoint tp0 = TouchScript.TouchManager.Instance.ActiveTouches[0];
+				TouchScript.TouchPoint tp1 = TouchScript.TouchManager.Instance.ActiveTouches[1];
+				TouchScript.TouchPoint tp2 = TouchScript.TouchManager.Instance.ActiveTouches[2];
+				float touchesPosX = (tp0.Position.x + tp1.Position.x + tp2.Position.x) / 3.0f;
+				float touchesPosY = (tp0.Position.y + tp1.Position.y + tp2.Position.y) / 3.0f;
 				Vector3 currentWorldTouchPos = renderCamera.ScreenToWorldPoint(new Vector3(touchesPosX, touchesPosY, 1000.0f));
 				
 				if(isFirstTouch)

@@ -18,16 +18,18 @@ public class CameraShifter : MonoBehaviour
 	
 	void Awake()
 	{
-		// 初期値を保存
-		orgProjM = this.GetComponent<Camera>().projectionMatrix;
+		
 	}
 
 	void Start()
 	{
+		// 初期値を保存
+		orgProjM = this.GetComponent<Camera>().projectionMatrix;
+
 		this.GetComponent<Camera>().projectionMatrix = CalcProjMat(shiftX, shiftY);
 	}
 
-	void Update()
+	void LateUpdate()
 	{
 		if(calcAlways)
 			this.GetComponent<Camera>().projectionMatrix = CalcProjMat(shiftX, shiftY);

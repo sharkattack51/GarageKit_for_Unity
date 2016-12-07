@@ -8,7 +8,7 @@ using System.Collections;
 
 public class ObjectOrbit : MonoBehaviour
 {
-	public static bool win7touch = false;
+	public static bool winTouch = false;
 
 	public float sensitivity = 10.0f;
 	public float speed = 1.0f;
@@ -91,19 +91,20 @@ public class ObjectOrbit : MonoBehaviour
 		}
 
 #if UNITY_STANDALONE_WIN
-		else if(Application.platform == RuntimePlatform.WindowsPlayer && win7touch)
+		else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 		{
-			if(W7TouchManager.GetTouchCount() == 1)
+			if(TouchScript.TouchManager.Instance.NumberOfTouches == 1)
 			{
-				if(W7TouchManager.GetTouch(0).Phase == TouchPhase.Moved)
+				TouchScript.TouchPoint tp = TouchScript.TouchManager.Instance.ActiveTouches[0];
+				if(tp.Position != tp.PreviousPosition)
 				{
-					moveVector = (Vector3)(W7TouchManager.GetTouch(0).DeltaPosition / 10.0f);
+					moveVector = (Vector3)((tp.PreviousPosition - tp.Position) / 10.0f);
 					isClicked = true;
 				}
 				else
 					ResetInput();
 			}
-			else if(W7TouchManager.GetTouchCount() == 0)
+			else if(TouchScript.TouchManager.Instance.NumberOfTouches == 0)
 				ResetInput();
 		}
 #endif

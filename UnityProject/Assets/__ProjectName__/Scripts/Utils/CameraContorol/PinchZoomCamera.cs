@@ -25,7 +25,7 @@ public class LimitValue
 [RequireComponent(typeof(Camera))] 
 public class PinchZoomCamera : MonoBehaviour
 {
-	public static bool win7touch = false;
+	public static bool winTouch = false;
 	public static bool updateEnable = true;
 
 	// カメラのズームタイプ
@@ -45,7 +45,7 @@ public class PinchZoomCamera : MonoBehaviour
 	public LimitValue limitMinMaxForFOV = new LimitValue(30.0f, 80.0f); // FOV値で制限
 	public LimitValue limitMinMaxForOrthoSize = new LimitValue(2.7f, 5.4f); // オルソサイズで制限
 	public MonoBehaviour[] disableComponents; // ピンチズーム操作時に動作をOFFにする連携コンポーネント
-	public bool zoomToPinchCenter = false;
+	public bool zoomToPinchCenterFor2D = false;
 	
 	private GameObject pinchZoomRoot;
 
@@ -91,24 +91,33 @@ public class PinchZoomCamera : MonoBehaviour
 	{
 
 	}
-	
-	void Start()
+
+	IEnumerator Start()
 	{
 		// 設定ファイルより入力タイプを取得
 		if(!ApplicationSetting.Instance.GetBool("UseMouse"))
-			win7touch = true;
+			winTouch = true;
 		
+		Vector3 temp_pos = this.gameObject.transform.position;
+		Quaternion temp_rot = this.gameObject.transform.rotation;
+		Vector3 temp_scale = this.gameObject.transform.localScale;
+
+		yield return new WaitForEndOfFrame();
+
 		// カメラコンポーネントの取得
 		flyThroughCamera = this.gameObject.GetComponent<FlyThroughCamera>();
 		orbitCamera = this.gameObject.GetComponent<OrbitCamera>();
 
 		// ズーム位置のルートを設定する
 		pinchZoomRoot = new GameObject(this.gameObject.name + " PinchZoom Root");
-		pinchZoomRoot.transform.position = this.gameObject.transform.position;
-		pinchZoomRoot.transform.rotation= this.gameObject.transform.rotation;
-		pinchZoomRoot.transform.localScale = this.gameObject.transform.localScale;
-		pinchZoomRoot.transform.parent = this.gameObject.transform.parent;
-		this.gameObject.transform.parent = pinchZoomRoot.transform;
+		pinchZoomRoot.transform.SetParent(this.gameObject.transform.parent, true);
+		pinchZoomRoot.transform.position = temp_pos;
+		pinchZoomRoot.transform.rotation = temp_rot;
+		pinchZoomRoot.transform.localScale = temp_scale;
+		this.gameObject.transform.SetParent(pinchZoomRoot.transform, true);
+		this.gameObject.transform.localPosition = Vector3.zero;
+		this.gameObject.transform.localRotation = Quaternion.identity;
+		this.gameObject.transform.localScale = Vector3.one;
 
 		// 初期値を保存
 		switch(zoomType)
@@ -120,7 +129,7 @@ public class PinchZoomCamera : MonoBehaviour
 		}
 		
 		// ピンチセンターへのズーム設定
-		if(zoomToPinchCenter)
+		if(zoomToPinchCenterFor2D)
 		{
 			if(zoomType != PINCH_ZOOM_TYPE.POSITION_Z)
 				Debug.LogWarning("PinchZoomCamera :: [zoomToPinchCenter] only works for [PINCH_ZOOM_TYPE.POSITION_Z]");
@@ -168,7 +177,7 @@ public class PinchZoomCamera : MonoBehaviour
 	private void ResetInput()
 	{
 		// ピンチセンターへのズーム設定をリセット
-		if(!isFirstTouch && zoomToPinchCenter)
+		if(!isFirstTouch && zoomToPinchCenterFor2D)
 		{
 			if(flyThroughCamera != null)
 			{
@@ -239,7 +248,7 @@ public class PinchZoomCamera : MonoBehaviour
 				if(isFirstTouch)
 				{
 					// ピンチセンターへのズーム開始
-					if(zoomToPinchCenter)
+					if(zoomToPinchCenterFor2D)
 						StartZoomToPinchCenter();
 					
 					oldDistance = currentDistance;
@@ -255,9 +264,9 @@ public class PinchZoomCamera : MonoBehaviour
 		}
 
 #if UNITY_STANDALONE_WIN
-		else if(Application.platform == RuntimePlatform.WindowsPlayer && win7touch)
+		else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 		{
-			if(W7TouchManager.GetTouchCount() == 2)
+			if(TouchScript.TouchManager.Instance.NumberOfTouches == 2)
 			{
 				// カメラ操作のロック
 				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
@@ -271,15 +280,18 @@ public class PinchZoomCamera : MonoBehaviour
 				}
 				
 				// ピンチセンターを設定
-				pinchCenter = (W7TouchManager.GetTouch(0).Position + W7TouchManager.GetTouch(1).Position) / 2.0f;
+				pinchCenter = (
+					TouchScript.TouchManager.Instance.ActiveTouches[0].Position + TouchScript.TouchManager.Instance.ActiveTouches[1].Position) / 2.0f;
 				
 				// ピンチ距離を計算
-				currentDistance = Vector3.Distance(W7TouchManager.GetTouch(0).Position, W7TouchManager.GetTouch(1).Position);
+				currentDistance = Vector3.Distance(
+					TouchScript.TouchManager.Instance.ActiveTouches[0].Position,
+					TouchScript.TouchManager.Instance.ActiveTouches[1].Position);
 				
 				if(isFirstTouch)
 				{
 					// ピンチセンターへのズーム開始
-					if(zoomToPinchCenter)
+					if(zoomToPinchCenterFor2D)
 						StartZoomToPinchCenter();
 					
 					oldDistance = currentDistance;
@@ -314,12 +326,12 @@ public class PinchZoomCamera : MonoBehaviour
 
 				if(Input.mouseScrollDelta.y == 0.0f)
 				{
-					//ドラッグでの操作
+					// ドラッグでの操作
 					
-					//ピンチセンターを設定
+					// ピンチセンターを設定
 					if(isFirstTouch) pinchCenter = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 					
-					//ピンチ距離を計算
+					// ピンチ距離を計算
 					Vector2 orgPoint = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 					Vector2 diff = orgPoint - pinchCenter;
 					Vector2 mirrorPoint = new Vector2(
@@ -331,7 +343,7 @@ public class PinchZoomCamera : MonoBehaviour
 					if(isFirstTouch)
 					{
 						// ピンチセンターへのズーム開始
-						if(zoomToPinchCenter)
+						if(zoomToPinchCenterFor2D)
 							StartZoomToPinchCenter();
 						
 						oldDistance = currentDistance;
@@ -409,7 +421,7 @@ public class PinchZoomCamera : MonoBehaviour
 	{
 		float zoomDelta = (calcZoom + pushZoomDelta) * (invertZoom ? -1.0f : 1.0f) * zoomBias;
 		dampZoomDelta = Mathf.SmoothDamp(dampZoomDelta, zoomDelta, ref velocitySmoothZoom, zoomSmoothTime);
-		this.gameObject.transform.Translate(new Vector3(0.0f, 0.0f, dampZoomDelta));
+		this.gameObject.transform.Translate(new Vector3(0.0f, 0.0f, dampZoomDelta), Space.Self);
 		
 		// 位置制限
 		if(this.gameObject.transform.localPosition.z <= defaultZoom + limitMinMaxForRelativePosZ.min)

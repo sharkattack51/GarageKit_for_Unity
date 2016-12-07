@@ -8,7 +8,7 @@ using System.Collections;
 
 public class ObjectOrbit2 : MonoBehaviour
 {
-	public static bool win7touch = false;
+	public static bool winTouch = false;
 
 	public Camera renderCam;
 	public float sensitivity = 1.0f;
@@ -108,10 +108,10 @@ public class ObjectOrbit2 : MonoBehaviour
 		}
 
 #if UNITY_STANDALONE_WIN
-		else if(Application.platform == RuntimePlatform.WindowsPlayer && win7touch)
+		else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 		{
-			if(W7TouchManager.GetTouchCount() > 0)
-				currentTouchScrPos = W7TouchManager.GetTouch(0).Position;
+			if(TouchScript.TouchManager.Instance.NumberOfTouches > 0)
+				currentTouchScrPos = TouchScript.TouchManager.Instance.ActiveTouches[0].Position;
 			else
 				ResetInput();
 		}
