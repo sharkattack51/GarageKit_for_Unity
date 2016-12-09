@@ -14,6 +14,8 @@ public class UDPReceiver : MonoBehaviour
 {
 	// 受信ポート
 	public int port = 8001;
+
+	public bool autoStart = true;
 	
 	// 受信データ
 	private string receivedDataStr = "";
@@ -33,7 +35,7 @@ public class UDPReceiver : MonoBehaviour
 	
 	private UdpClient udpClient = null;
 	private Thread receiveThread = null;
-	private volatile bool threadAvairable = true;
+	private volatile bool threadAvairable = false;
 	
 	
 	void Awake()
@@ -43,10 +45,8 @@ public class UDPReceiver : MonoBehaviour
 	
 	void Start()
 	{
-		// 受信スレッドを開始
-		receiveThread = new Thread(new ThreadStart(ReceiveData));
-		receiveThread.IsBackground = true;
-		receiveThread.Start();
+		if(autoStart)
+			Open();
 	}
 	
 	void Update()
@@ -61,20 +61,37 @@ public class UDPReceiver : MonoBehaviour
 	
 	void OnApplicationQuit()
 	{
+		Close();
+	}
+
+
+	public void Open()
+	{
+		// 受信スレッドを開始
+		if(!threadAvairable)
+		{
+			receiveThread = new Thread(new ThreadStart(ReceiveData));
+			receiveThread.IsBackground = true;
+			receiveThread.Start();
+		}
+	}
+
+	public void Close()
+	{
 		threadAvairable = false;
-		
+
 		// 受信スレッドを停止
 		if(receiveThread != null)
 		{
 			receiveThread.Join();
 			receiveThread = null;
 		}
-		
+
 		// udpクライアントを閉じる
-		udpClient.Close();
+		if(udpClient != null)
+			udpClient.Close();
 		udpClient = null;
 	}
-	
 	
 	// 受信スレッド
 	private void ReceiveData()
@@ -82,6 +99,7 @@ public class UDPReceiver : MonoBehaviour
 		// udpクライアント設定
 		udpClient = new UdpClient(port);
 
+		threadAvairable = true;
 		while(threadAvairable)
 		{
 			try
@@ -98,8 +116,6 @@ public class UDPReceiver : MonoBehaviour
 			catch(Exception err)
 			{
 				Debug.LogError(err.Message);
-				DebugConsole.LogError(err.Message);
-				break;
 			}
 		}
 	}
