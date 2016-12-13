@@ -283,7 +283,7 @@ public class FlyThroughCamera : MonoBehaviour
 	private void UpdateOrbitCombination()
 	{
 		// 連携機能
-		if(combinationOrbitCamera != null)
+		if(combinationOrbitCamera != null && combinationOrbitCamera.OrbitRoot != null)
 		{
 			Vector3 lookPoint = combinationOrbitCamera.OrbitRoot.transform.position;
 			Transform orbitParent = combinationOrbitCamera.OrbitRoot.transform.parent;
