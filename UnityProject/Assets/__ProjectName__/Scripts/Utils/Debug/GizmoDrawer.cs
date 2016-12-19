@@ -71,7 +71,7 @@ public class GizmoDrawer : MonoBehaviour
 		Matrix4x4 mat = new Matrix4x4();
 		mat.SetTRS(
 			new Vector3(centerX, centerY, centerZ),
-			this.gameObject.transform.localRotation,
+			this.gameObject.transform.rotation,
 			Vector3.one);
 		Gizmos.matrix = mat;
 		
