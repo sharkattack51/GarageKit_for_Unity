@@ -124,7 +124,7 @@ public class AndroidUtil
 
 		oIntent.Call<AndroidJavaObject>("setAction", "android.intent.action.VIEW");
 		if(asNewTask)
-		oIntent.Call<AndroidJavaObject>("setFlags", 0x10000000); // FLAG_ACTIVITY_NEW_TASK
+			oIntent.Call<AndroidJavaObject>("setFlags", 0x10000000); // FLAG_ACTIVITY_NEW_TASK
 		oIntent.Call<AndroidJavaObject>("setClassName", packageName, packageName + "." + className);
 		oCurrentActivity.Call("startActivity", oIntent);
 
