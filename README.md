@@ -18,6 +18,8 @@ http://debuglog.tumblr.com/post/100742681354/garagekit-for-unity
 
 ## Require Modules
 
+_*require set to [ PlayerSettings > OtherSettings > ApiCompatibilityLevel > .NET2.0 ]*_
+
 /Editor
 
 - Editor enhancements  

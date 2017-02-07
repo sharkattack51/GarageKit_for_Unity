@@ -8,6 +8,7 @@ using System.Text;
 
 /*
  * シリアル通信を行うクラス
+ * !!! require set to [ PlayerSettings > OtherSettings > ApiCompatibilityLevel > .NET2.0 ] !!!
  */
 
 public class SerialPortController : MonoBehaviour
