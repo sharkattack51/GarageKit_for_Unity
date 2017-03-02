@@ -6,19 +6,23 @@ You can start the project immediately in Unity using GarageKit.
 
 ## What is it?
 
-GaraegKit is framework that uses the Unity C#. I provide the template scene, some manager scripts, utility scripts and directory structure.
+GaraegKit is framework that uses the Unity C#. I provide the template scene, some manager scripts, state scripts, utility scripts and directory structure.
 
 http://debuglog.tumblr.com/post/100742681354/garagekit-for-unity
 
 ## How to use?
 
+Please set `PlayerSettings > OtherSettings > ApiCompatibilityLevel > .NET2.0` to fix compile error.
+
 1. open Main.unity
 2. and press the play.
 3. and customize your project.
 
-## Require Modules
+you can add or delete the `SceneState` class using the `StateGenerator` of the editor script.
 
-_*require set to [ PlayerSettings > OtherSettings > ApiCompatibilityLevel > .NET2.0 ]*_
+`Menu -> EditorScript -> StateGenerator`
+
+## Require Modules
 
 /Editor
 
@@ -52,9 +56,8 @@ https://gist.github.com/darktable/1411710
 /Editor
 
 - AssetPostprocessUTF8Encode.cs
-- ChangeMaterialSetting.cs
-- ChangeTextureImportSettings.cs
 - CreateCuntomPlane.cs
+- StateGenerator.cs
 
 /Scripts/Utils
 
