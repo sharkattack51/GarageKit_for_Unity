@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced 'glstate.matrix.invtrans.modelview[0]' with 'UNITY_MATRIX_IT_MV'
 // Upgrade NOTE: replaced 'glstate.matrix.mvp' with 'UNITY_MATRIX_MVP'
 
@@ -69,7 +71,7 @@ Shader "Custom/ShaderLib/CrossSection"
 				float4 c = float4(IN.vertex.xyz, 1);
 				
 				OUT.mask = mul(r, c);
-				OUT.position = mul(UNITY_MATRIX_MVP, IN.vertex);
+				OUT.position = UnityObjectToClipPos(IN.vertex);
 				OUT.texcoord = IN.texcoord;
 				
 				r *= float4x4(
@@ -156,7 +158,7 @@ Shader "Custom/ShaderLib/CrossSection"
 				float4 c = float4(IN.vertex.xyz, 1);
 				
 				OUT.mask = mul(r, c);
-				OUT.position = mul(UNITY_MATRIX_MVP, IN.vertex);
+				OUT.position = UnityObjectToClipPos(IN.vertex);
 				OUT.texcoord = IN.texcoord;
 				OUT.normal = IN.normal;
 				OUT.vertex = IN.vertex;

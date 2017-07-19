@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
 Shader "Custom/ShaderLib/Billboard-Unlit"
@@ -74,7 +76,7 @@ Shader "Custom/ShaderLib/Billboard-Unlit"
 
                         output.pos.xz = mul(billboardRotation, input.vertex.xz); 
                         output.pos.yw = input.vertex.yw;
-                        output.pos = mul(UNITY_MATRIX_MVP, output.pos);
+                        output.pos = UnityObjectToClipPos(output.pos);
 
                         output.tex = float2(input.texcoord.x, input.texcoord.y);                        
                         output.tex = TRANSFORM_TEX(input.texcoord, _MainTex);

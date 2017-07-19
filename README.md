@@ -28,6 +28,7 @@ you can add or delete the `SceneState` class using the `StateGenerator` of the e
 
 - Editor enhancements  
 http://forum.unity3d.com/threads/free-editor-enhancements-extensions-in-project-window-components-in-heirarchy.149569/
+https://bitbucket.org/Tenebrous/unityeditorenhancements/commits/all
 
 /Plugins/Log4Net
 

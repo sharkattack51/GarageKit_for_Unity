@@ -10,15 +10,12 @@ public class ScreenPositionFollower : MonoBehaviour
 	public GameObject targetObject;
 	public int screenWidth = 1920;
 	public int screenHeight = 1080;
-	
-	private Camera renderCamera;
+	public float uiScale = 1.0f;
+	public Camera rayCamera;
 	
 	
 	void Awake()
 	{
-		//レンダーカメラを取得
-		renderCamera = Utils.CameraUtil.FindCameraForLayer(targetObject.layer);
-		
 		SetFollowScreenPosition();
 	}
 	
@@ -38,10 +35,10 @@ public class ScreenPositionFollower : MonoBehaviour
 	{
 		if(targetObject != null)
 		{
-			Vector3 viewportPoint = renderCamera.WorldToViewportPoint(targetObject.transform.position);
+			Vector3 viewportPoint = rayCamera.WorldToViewportPoint(targetObject.transform.position);
 			Vector3 screenPosition = new Vector3(
-				screenWidth / 2.0f * (viewportPoint.x - 0.5f),
-				screenHeight / 2.0f * (viewportPoint.y - 0.5f),
+				screenWidth / 2.0f * (viewportPoint.x - 0.5f) * uiScale,
+				screenHeight / 2.0f * (viewportPoint.y - 0.5f) * uiScale,
 				0.0f);
 			this.gameObject.transform.localPosition = screenPosition / 100.0f;
 		}

@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Custom/ShaderLib/TransBlur"
 {
     Properties
@@ -45,7 +47,7 @@ Shader "Custom/ShaderLib/TransBlur"
             v2f vert(appdata i)
             {
                 v2f o;
-                o.position = mul(UNITY_MATRIX_MVP, i.vertex);
+                o.position = UnityObjectToClipPos(i.vertex);
                 o.screenPos = o.position;
                 return o;
             }
