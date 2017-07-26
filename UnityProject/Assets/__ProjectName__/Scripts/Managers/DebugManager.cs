@@ -11,7 +11,6 @@ public class DebugManager : ManagerBase
 {
 	public bool IsDebug = true;
 	public bool UseDebugConsole = false;
-	public bool DebugConsoleLogEnable = true;
 	
 	
 	protected override void Awake()
