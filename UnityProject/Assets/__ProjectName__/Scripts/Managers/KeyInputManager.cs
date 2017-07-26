@@ -56,22 +56,6 @@ public class KeyInputManager : ManagerBase
 			DebugConsole.Clear();
 		}
 		
-		// W
-		if(Input.GetKeyDown(KeyCode.W))
-		{
-			Debug.Log("press key W : Change DebugConsole Mode");
-			DebugConsole.Log("press key W : Change DebugConsole Mode");
-			
-			// デバッグコンソールのモードを切り替える
-			if(DebugConsole.IsOpen)
-			{
-				if(DebugConsole.Instance.mode == DebugConsole.Mode.Log)
-					DebugConsole.Instance.mode = DebugConsole.Mode.WatchVars;
-				else
-					DebugConsole.Instance.mode = DebugConsole.Mode.Log;
-			}
-		}
-		
 		// G
 		if(Input.GetKeyDown(KeyCode.G))
 		{
@@ -124,7 +108,6 @@ public class KeyInputManager : ManagerBase
 		GUILayout.Label("ESC : Application Quit");
 		GUILayout.Label("D : Visible Debug View");
 		GUILayout.Label("C : Clear DebugConsole");
-		GUILayout.Label("W : Change DebugConsole Mode");
 		GUILayout.Label("G : System GC Collect");
 		GUILayout.Label("R : Reload ApplicationSetting");
 		GUILayout.EndVertical();

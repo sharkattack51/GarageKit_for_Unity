@@ -4,7 +4,6 @@
 	<!-- デバッグ -->
 	<item name="IsDebug" value="false"/>
 	<item name="UseDebugConsole" value="false"/>
-	<item name="DebugConsoleLogEnable" value="true"/>
 
 	<!-- 入力設定 -->
 	<item name="UseMouse" value="true"/>

@@ -4,7 +4,6 @@
 	<!-- デバッグ -->
 	<item name="IsDebug" value="false"/>
 	<item name="UseDebugConsole" value="false"/>
-	<item name="DebugConsoleLogEnable" value="true"/>
 
 	<!-- 入力設定 -->
 	<item name="UseMouse" value="true"/>
@@ -16,6 +15,6 @@
 	<item name="VolBGM" value="1.0"/>
 	
 	<!-- ゲーム時間 -->
-	<item name="GameTime" value="5"/>
+	<item name="GameTime" value="10"/>
 	
 </data>

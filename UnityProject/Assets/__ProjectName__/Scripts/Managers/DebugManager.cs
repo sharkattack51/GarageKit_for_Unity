@@ -30,9 +30,6 @@ public class DebugManager : ManagerBase
 		UseDebugConsole = ApplicationSetting.Instance.GetBool("UseDebugConsole");
 		DebugConsole.IsOpen = UseDebugConsole;
 		
-		DebugConsoleLogEnable = ApplicationSetting.Instance.GetBool("DebugConsoleLogEnable");
-		DebugConsole.Instance._enable = DebugConsoleLogEnable;
-		
 		// FPS表示設定
 		FrameRateUtil.useHUD = IsDebug;
 		
