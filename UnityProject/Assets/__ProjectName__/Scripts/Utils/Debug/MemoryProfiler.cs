@@ -45,7 +45,7 @@ public class MemoryProfiler : MonoBehaviour
 		while( true )
 		{
 			// string
-			useMem = Mathf.Floor((int)Profiler.usedHeapSize / 100000.0f) / 10.0f;
+			useMem = Mathf.Floor((int)Profiler.usedHeapSizeLong / 100000.0f) / 10.0f;
 			
 			// color
 			if(useMem <= 600.0f)

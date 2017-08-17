@@ -11,7 +11,6 @@ public class DebugManager : ManagerBase
 {
 	public bool IsDebug = true;
 	public bool UseDebugConsole = false;
-	public bool DebugConsoleLogEnable = true;
 	
 	
 	protected override void Awake()
@@ -29,9 +28,6 @@ public class DebugManager : ManagerBase
 		// デバッグ用コンソール初期設定
 		UseDebugConsole = ApplicationSetting.Instance.GetBool("UseDebugConsole");
 		DebugConsole.IsOpen = UseDebugConsole;
-		
-		DebugConsoleLogEnable = ApplicationSetting.Instance.GetBool("DebugConsoleLogEnable");
-		DebugConsole.Instance._enable = DebugConsoleLogEnable;
 		
 		// FPS表示設定
 		FrameRateUtil.useHUD = IsDebug;
