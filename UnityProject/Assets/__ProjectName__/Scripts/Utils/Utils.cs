@@ -544,6 +544,9 @@ namespace Utils
 		[DllImport("user32.dll")]
 		private static extern bool IsWindowVisible(IntPtr hWnd);
 
+		[DllImport("user32.dll")]
+		private static extern int ShowWindow(IntPtr hWnd, int nCmdShow); 
+
 
 		private const int SM_CXFULLSCREEN = 0;
 		private const int SM_CYFULLSCREEN = 1;
@@ -575,6 +578,8 @@ namespace Utils
         private const uint SWP_NOMOVE = 0x0002;
 		private const uint SWP_FRAMECHANGED = 0x0020;
 		private const uint TOPMOST_FLAGS = (SWP_NOSIZE | SWP_NOMOVE);
+
+		private const int SW_MINIMIZE = 6;
 		
 		[StructLayout(LayoutKind.Sequential)]
 		public struct RECT
@@ -650,6 +655,15 @@ namespace Utils
 			SetWindowLong(hWnd, GWL_STYLE, new_style);
 			
 			SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_FRAMECHANGED);
+		}
+
+		/// <summary>
+		/// 指定ウィンドウを最小化する
+		/// </summary>
+		public static void MinimizeWindow(string className, string windowName)
+		{
+			IntPtr hWnd = FindWindow(className, windowName);
+			ShowWindow(hWnd, SW_MINIMIZE);
 		}
 	}
 }
