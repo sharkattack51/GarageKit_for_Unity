@@ -120,15 +120,15 @@ public class OrbitCamera : MonoBehaviour
 #if UNITY_STANDALONE_WIN
 		else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 		{
-			if(TouchScript.TouchManager.Instance.NumberOfTouches == 1)
+			if(TouchScript.TouchManager.Instance.PressedPointersCount == 1)
 			{
-				TouchScript.TouchPoint tp = TouchScript.TouchManager.Instance.ActiveTouches[0];
+				TouchScript.Pointers.Pointer tp = TouchScript.TouchManager.Instance.PressedPointers[0];
 				if(tp.Position != tp.PreviousPosition)
 					moveVector = (Vector3)((tp.PreviousPosition - tp.Position) / 10.0f);
 				else
 					ResetInput();
 			}
-			else if(TouchScript.TouchManager.Instance.NumberOfTouches == 0)
+			else if(TouchScript.TouchManager.Instance.PressedPointersCount == 0)
 				ResetInput();
 		}
 #endif
@@ -181,10 +181,10 @@ public class OrbitCamera : MonoBehaviour
 #if UNITY_STANDALONE_WIN
 		else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 		{
-			if(TouchScript.TouchManager.Instance.NumberOfTouches == 2)
+			if(TouchScript.TouchManager.Instance.PressedPointersCount == 2)
 			{
-				TouchScript.TouchPoint pt0 = TouchScript.TouchManager.Instance.ActiveTouches[0];
-				TouchScript.TouchPoint pt1 = TouchScript.TouchManager.Instance.ActiveTouches[1];
+				TouchScript.Pointers.Pointer pt0 = TouchScript.TouchManager.Instance.PressedPointers[0];
+				TouchScript.Pointers.Pointer pt1 = TouchScript.TouchManager.Instance.PressedPointers[1];
 
 				if(lastFingerVec == Vector3.zero)
 				{

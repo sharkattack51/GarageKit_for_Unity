@@ -93,9 +93,9 @@ public class ObjectOrbit : MonoBehaviour
 #if UNITY_STANDALONE_WIN
 		else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 		{
-			if(TouchScript.TouchManager.Instance.NumberOfTouches == 1)
+			if(TouchScript.TouchManager.Instance.PressedPointersCount == 1)
 			{
-				TouchScript.TouchPoint tp = TouchScript.TouchManager.Instance.ActiveTouches[0];
+				TouchScript.Pointers.Pointer tp = TouchScript.TouchManager.Instance.PressedPointers[0];
 				if(tp.Position != tp.PreviousPosition)
 				{
 					moveVector = (Vector3)((tp.PreviousPosition - tp.Position) / 10.0f);
@@ -104,7 +104,7 @@ public class ObjectOrbit : MonoBehaviour
 				else
 					ResetInput();
 			}
-			else if(TouchScript.TouchManager.Instance.NumberOfTouches == 0)
+			else if(TouchScript.TouchManager.Instance.PressedPointersCount == 0)
 				ResetInput();
 		}
 #endif

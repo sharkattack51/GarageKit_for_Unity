@@ -160,10 +160,10 @@ public class FlyThroughCamera : MonoBehaviour
 #if UNITY_STANDALONE_WIN
 		else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 		{
-			if(TouchScript.TouchManager.Instance.NumberOfTouches == 1)
+			if(TouchScript.TouchManager.Instance.PressedPointersCount == 1)
 			{	
 				// ドラッグ量を計算
-				Vector3 currentScrTouchPos = TouchScript.TouchManager.Instance.ActiveTouches[0].Position;
+				Vector3 currentScrTouchPos = TouchScript.TouchManager.Instance.PressedPointers[0].Position;
 				
 				if(isFirstTouch)
 				{

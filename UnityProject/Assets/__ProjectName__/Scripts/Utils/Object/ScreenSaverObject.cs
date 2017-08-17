@@ -88,7 +88,7 @@ public class ScreenSaverObject : MonoBehaviour
 			//for WTouch
 			else if(inputType == INPUT_TYPE.WTOUCH)
 			{
-				if(TouchScript.TouchManager.Instance.NumberOfTouches > 0)
+				if(TouchScript.TouchManager.Instance.PressedPointersCount > 0)
 					DisableScreenSaver();
 			}
 		

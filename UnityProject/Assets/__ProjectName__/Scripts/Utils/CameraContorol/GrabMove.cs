@@ -126,7 +126,7 @@ public class GrabMove : MonoBehaviour
 #if UNITY_STANDALONE_WIN
 		else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 		{
-			if(TouchScript.TouchManager.Instance.NumberOfTouches >= grabTouchNum)
+			if(TouchScript.TouchManager.Instance.PressedPointersCount >= grabTouchNum)
 			{
 				// カメラ操作のロック
 				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
@@ -141,9 +141,9 @@ public class GrabMove : MonoBehaviour
 				}
 				
 				// ドラッグ量を計算
-				TouchScript.TouchPoint tp0 = TouchScript.TouchManager.Instance.ActiveTouches[0];
-				TouchScript.TouchPoint tp1 = TouchScript.TouchManager.Instance.ActiveTouches[1];
-				TouchScript.TouchPoint tp2 = TouchScript.TouchManager.Instance.ActiveTouches[2];
+				TouchScript.Pointers.Pointer tp0 = TouchScript.TouchManager.Instance.PressedPointers[0];
+				TouchScript.Pointers.Pointer tp1 = TouchScript.TouchManager.Instance.PressedPointers[1];
+				TouchScript.Pointers.Pointer tp2 = TouchScript.TouchManager.Instance.PressedPointers[2];
 				float touchesPosX = (tp0.Position.x + tp1.Position.x + tp2.Position.x) / 3.0f;
 				float touchesPosY = (tp0.Position.y + tp1.Position.y + tp2.Position.y) / 3.0f;
 				Vector3 currentWorldTouchPos = renderCamera.ScreenToWorldPoint(new Vector3(touchesPosX, touchesPosY, 1000.0f));

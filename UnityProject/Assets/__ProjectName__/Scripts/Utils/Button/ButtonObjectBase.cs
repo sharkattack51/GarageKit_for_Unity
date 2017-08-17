@@ -137,12 +137,12 @@ public class ButtonObjectBase : MonoBehaviour
 		{
 			
 #if UNITY_STANDALONE_WIN
-			touchCount = TouchScript.TouchManager.Instance.NumberOfTouches;
+			touchCount = TouchScript.TouchManager.Instance.PressedPointersCount;
 
 			//1点目を入力として受付
 			if(touchCount >= 1)
 			{
-				TouchScript.TouchPoint tp = TouchScript.TouchManager.Instance.ActiveTouches[0];
+				TouchScript.Pointers.Pointer tp = TouchScript.TouchManager.Instance.PressedPointers[0];
 				Rect wrect = Utils.WindowsUtil.GetApplicationWindowRect(); //not work in Editor.
 				touchPosition = new Vector2(
 					(int)(((tp.Position.x / Screen.width) * Screen.currentResolution.width) - wrect.x),

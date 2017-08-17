@@ -110,8 +110,8 @@ public class ObjectOrbit2 : MonoBehaviour
 #if UNITY_STANDALONE_WIN
 		else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 		{
-			if(TouchScript.TouchManager.Instance.NumberOfTouches > 0)
-				currentTouchScrPos = TouchScript.TouchManager.Instance.ActiveTouches[0].Position;
+			if(TouchScript.TouchManager.Instance.PressedPointersCount > 0)
+				currentTouchScrPos = TouchScript.TouchManager.Instance.PressedPointers[0].Position;
 			else
 				ResetInput();
 		}

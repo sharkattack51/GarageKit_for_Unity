@@ -266,7 +266,7 @@ public class PinchZoomCamera : MonoBehaviour
 #if UNITY_STANDALONE_WIN
 		else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 		{
-			if(TouchScript.TouchManager.Instance.NumberOfTouches == 2)
+			if(TouchScript.TouchManager.Instance.PressedPointersCount == 2)
 			{
 				// カメラ操作のロック
 				if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
@@ -281,12 +281,12 @@ public class PinchZoomCamera : MonoBehaviour
 				
 				// ピンチセンターを設定
 				pinchCenter = (
-					TouchScript.TouchManager.Instance.ActiveTouches[0].Position + TouchScript.TouchManager.Instance.ActiveTouches[1].Position) / 2.0f;
+					TouchScript.TouchManager.Instance.PressedPointers[0].Position + TouchScript.TouchManager.Instance.PressedPointers[1].Position) / 2.0f;
 				
 				// ピンチ距離を計算
 				currentDistance = Vector3.Distance(
-					TouchScript.TouchManager.Instance.ActiveTouches[0].Position,
-					TouchScript.TouchManager.Instance.ActiveTouches[1].Position);
+					TouchScript.TouchManager.Instance.PressedPointers[0].Position,
+					TouchScript.TouchManager.Instance.PressedPointers[1].Position);
 				
 				if(isFirstTouch)
 				{
