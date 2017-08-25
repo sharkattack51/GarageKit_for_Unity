@@ -28,10 +28,14 @@ public class TimerEvent : MonoBehaviour
 	
 	private int currentTime = 0;
 	public int CurrentTime { get{ return currentTime; } }
-	
+
+	public int ElapsedTime { get{ return startTime - currentTime; } }
+	public float ElapsedTimeRaw { get{ return ElapsedTime + Mathf.Min(decimalSec, 0.999999999f); } }
+
 	private int startTime;
 	private bool autoDestroy;
 	//private int repeatCount;
+	private float decimalSec = 0.0f;
 	
 	private string timerName;
 	
@@ -85,6 +89,9 @@ public class TimerEvent : MonoBehaviour
 	{
 		//オブジェクト名に現在時間を設定
 		this.gameObject.name = timerName + " ["+ currentTime.ToString() + "]";
+
+		// 経過時間少数点以下を加算
+		decimalSec += Time.fixedDeltaTime;
 	}
 	
 	
@@ -174,6 +181,7 @@ public class TimerEvent : MonoBehaviour
 			InvokeOnTimer();
 			
 			currentTime--;
+			decimalSec = 0.0f;
 		
 			if(currentTime < 0)
 				break;
