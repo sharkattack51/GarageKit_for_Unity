@@ -12,8 +12,6 @@ http://debuglog.tumblr.com/post/100742681354/garagekit-for-unity
 
 ## How to use?
 
-Please set `PlayerSettings > OtherSettings > ApiCompatibilityLevel > .NET2.0` to fix compile error.
-
 1. open Main.unity
 2. and press the play.
 3. and customize your project.
