@@ -4,135 +4,138 @@ using System.IO;
 using System;
 using UnityEngine;
 
-public class AndroidUtil
+namespace GarageKit
 {
+	public class AndroidUtil
+	{
 #region ANDROID_PATH
 
-	static public string FileDir()
-	{
-		string _FilesDir = "";
-
-		#if !UNITY_EDITOR && UNITY_ANDROID
-
-		using(AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+		static public string FileDir()
 		{
-			using(AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+			string _FilesDir = "";
+
+#if !UNITY_EDITOR && UNITY_ANDROID
+
+			using(AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
 			{
-				using(AndroidJavaObject filesDir = currentActivity.Call<AndroidJavaObject>("getFilesDir"))
+				using(AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
 				{
-					_FilesDir = filesDir.Call<string>("getCanonicalPath");
+					using(AndroidJavaObject filesDir = currentActivity.Call<AndroidJavaObject>("getFilesDir"))
+					{
+						_FilesDir = filesDir.Call<string>("getCanonicalPath");
+					}
 				}
 			}
+
+#endif
+
+			return _FilesDir;
 		}
 
-		#endif
-
-		return _FilesDir;
-	}
-
-	static public string CacheDir()
-	{
-		string _CacheDir = "";
-
-		#if !UNITY_EDITOR && UNITY_ANDROID
-
-		using(AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+		static public string CacheDir()
 		{
-			using(AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+			string _CacheDir = "";
+
+#if !UNITY_EDITOR && UNITY_ANDROID
+
+			using(AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
 			{
-				using(AndroidJavaObject cacheDir = currentActivity.Call<AndroidJavaObject>("getCacheDir"))
+				using(AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
 				{
-					_CacheDir = cacheDir.Call<string>("getCanonicalPath");
+					using(AndroidJavaObject cacheDir = currentActivity.Call<AndroidJavaObject>("getCacheDir"))
+					{
+						_CacheDir = cacheDir.Call<string>("getCanonicalPath");
+					}
 				}
 			}
+
+#endif
+
+			return _CacheDir;
 		}
 
-		#endif
-
-		return _CacheDir;
-	}
-
-	static public string ExternalFilesDir()
-	{
-		string _ExternalFilesDir = "";
-
-		#if !UNITY_EDITOR && UNITY_ANDROID
-
-		using(AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+		static public string ExternalFilesDir()
 		{
-			using(AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+			string _ExternalFilesDir = "";
+
+#if !UNITY_EDITOR && UNITY_ANDROID
+
+			using(AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
 			{
-				using(AndroidJavaObject externalFilesDir = currentActivity.Call<AndroidJavaObject>("getExternalFilesDir", null))
+				using(AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
 				{
-					_ExternalFilesDir = externalFilesDir.Call<string>("getCanonicalPath");
+					using(AndroidJavaObject externalFilesDir = currentActivity.Call<AndroidJavaObject>("getExternalFilesDir", null))
+					{
+						_ExternalFilesDir = externalFilesDir.Call<string>("getCanonicalPath");
+					}
 				}
 			}
+
+#endif
+
+			return _ExternalFilesDir;
 		}
 
-		#endif
-
-		return _ExternalFilesDir;
-	}
-
-	static public string ExternalCacheDir()
-	{
-		string _ExternalCacheDir = "";
-
-		#if !UNITY_EDITOR && UNITY_ANDROID
-
-		using(AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+		static public string ExternalCacheDir()
 		{
-			using(AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+			string _ExternalCacheDir = "";
+
+#if !UNITY_EDITOR && UNITY_ANDROID
+
+			using(AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
 			{
-				using(AndroidJavaObject externalCacheDir = currentActivity.Call<AndroidJavaObject>("getExternalCacheDir"))
+				using(AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
 				{
-					_ExternalCacheDir = externalCacheDir.Call<string>("getCanonicalPath");
+					using(AndroidJavaObject externalCacheDir = currentActivity.Call<AndroidJavaObject>("getExternalCacheDir"))
+					{
+						_ExternalCacheDir = externalCacheDir.Call<string>("getCanonicalPath");
+					}
 				}
 			}
+
+#endif
+
+			return _ExternalCacheDir;
 		}
 
-		#endif
+		public static string DownloadDir()
+		{
+			string _DownloadDir = "";
 
-		return _ExternalCacheDir;
-	}
+#if !UNITY_EDITOR && UNITY_ANDROID
 
-	public static string DownloadDir()
-	{
-		string _DownloadDir = "";
+			string[] paths = (Application.persistentDataPath.Replace("Android","")).Split(new string[]{ "//" }, StringSplitOptions.None);
+			_DownloadDir = Path.Combine(paths[0], "Download");
 
-		#if !UNITY_EDITOR && UNITY_ANDROID
+#endif
 
-		string[] paths = (Application.persistentDataPath.Replace("Android","")).Split(new string[]{ "//" }, StringSplitOptions.None);
-		_DownloadDir = Path.Combine(paths[0], "Download");
-
-		#endif
-
-		return _DownloadDir;
-	}
+			return _DownloadDir;
+		}
 
 #endregion
 
 #region EXTERNAL_ACTIVITY
 
-	public static void OpenActivity(string packageName, string className, bool asNewTask)
-	{
-		#if !UNITY_EDITOR && UNITY_ANDROID
+		public static void OpenActivity(string packageName, string className, bool asNewTask)
+		{
+#if !UNITY_EDITOR && UNITY_ANDROID
 
-		AndroidJavaClass cUnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-		AndroidJavaObject oCurrentActivity = cUnityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-		AndroidJavaObject oIntent = new AndroidJavaObject("android.content.Intent");
+			AndroidJavaClass cUnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+			AndroidJavaObject oCurrentActivity = cUnityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+			AndroidJavaObject oIntent = new AndroidJavaObject("android.content.Intent");
 
-		oIntent.Call<AndroidJavaObject>("setAction", "android.intent.action.VIEW");
-		if(asNewTask)
-			oIntent.Call<AndroidJavaObject>("setFlags", 0x10000000); // FLAG_ACTIVITY_NEW_TASK
-		oIntent.Call<AndroidJavaObject>("setClassName", packageName, packageName + "." + className);
-		oCurrentActivity.Call("startActivity", oIntent);
+			oIntent.Call<AndroidJavaObject>("setAction", "android.intent.action.VIEW");
+			if(asNewTask)
+				oIntent.Call<AndroidJavaObject>("setFlags", 0x10000000); // FLAG_ACTIVITY_NEW_TASK
+			oIntent.Call<AndroidJavaObject>("setClassName", packageName, packageName + "." + className);
+			oCurrentActivity.Call("startActivity", oIntent);
 
-		oIntent.Dispose();
-		oCurrentActivity.Dispose();
+			oIntent.Dispose();
+			oCurrentActivity.Dispose();
 
-		#endif
-	}
+#endif
+		}
 
 #endregion
+	}
 }

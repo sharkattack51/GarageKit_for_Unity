@@ -5,32 +5,35 @@ using System;
 /*
  * Aplplicationのメインクラス
  */
-public class AppMain : MonoBehaviour
+namespace GarageKit
 {
-	//singleton
-	private static AppMain instance;
-	public static AppMain Instance { get{ return instance; } }
-	
-	public SceneStateManager sceneStateManager;
-	public TimeManager timeManager;
-	public SoundManager soundManager;
-	public KeyInputManager keyInputManager;
-	public DebugManager debugManager;
+	public class AppMain : MonoBehaviour
+	{
+		// singleton
+		private static AppMain instance;
+		public static AppMain Instance { get{ return instance; } }
+		
+		public SceneStateManager sceneStateManager;
+		public TimeManager timeManager;
+		public SoundManager soundManager;
+		public KeyInputManager keyInputManager;
+		public DebugManager debugManager;
 
 
-	void Awake()
-	{
-		instance = this;
-	}
+		void Awake()
+		{
+			instance = this;
+		}
 
-	void Start()
-	{
-		//アプリケーションをスタートする
-		sceneStateManager.InitState();
-	}
-	
-	void Update()
-	{
-	
+		void Start()
+		{
+			// アプリケーションをスタートする
+			sceneStateManager.InitState();
+		}
+		
+		void Update()
+		{
+		
+		}
 	}
 }

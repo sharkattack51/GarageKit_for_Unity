@@ -5,40 +5,42 @@ using System;
 /*
  * シェーダー内のテクスチャを更新する
  */ 
-
-[Serializable]
-public class LayerTexture
+namespace GarageKit
 {
-	public RenderScreenTexture renderScreenTexture;
-	public string shaderTextureName = "_MainTex";
-}
+	[Serializable]
+	public class LayerTexture
+	{
+		public RenderScreenTexture renderScreenTexture;
+		public string shaderTextureName = "_MainTex";
+	}
 
-public class CompositLayer : MonoBehaviour
-{
-	public bool isUpdateShader = true;
-	public LayerTexture[] layerTextures;
-	
-	
-	void Awake()
+	public class CompositLayer : MonoBehaviour
 	{
-	
-	}
-	
-	void Start()
-	{
-	
-	}
-	
-	void Update()
-	{
-		//シェーダー内のテクスチャを更新
-		if(isUpdateShader)
+		public bool isUpdateShader = true;
+		public LayerTexture[] layerTextures;
+		
+		
+		void Awake()
 		{
-			foreach(LayerTexture layerTex in layerTextures)
+		
+		}
+		
+		void Start()
+		{
+		
+		}
+		
+		void Update()
+		{
+			//シェーダー内のテクスチャを更新
+			if(isUpdateShader)
 			{
-				this.gameObject.GetComponent<Renderer>().material.SetTexture(
-					layerTex.shaderTextureName,
-					layerTex.renderScreenTexture.GetRenderTexture());
+				foreach(LayerTexture layerTex in layerTextures)
+				{
+					this.gameObject.GetComponent<Renderer>().material.SetTexture(
+						layerTex.shaderTextureName,
+						layerTex.renderScreenTexture.GetRenderTexture());
+				}
 			}
 		}
 	}

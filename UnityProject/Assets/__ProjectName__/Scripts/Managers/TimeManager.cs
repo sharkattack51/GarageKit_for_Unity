@@ -5,35 +5,38 @@ using System.Collections;
 /*
  * タイマーを管理する
  */
-public class TimeManager : ManagerBase
+namespace GarageKit
 {
-	// タイマーイベントオブジェクト設定
-	public TimerEvent[] timerEvents;
-	
-	
-	protected override void Awake()
+	public class TimeManager : ManagerBase
 	{
-		base.Awake();
-	}
+		// タイマーイベントオブジェクト設定
+		public TimerEvent[] timerEvents;
+		
+		
+		protected override void Awake()
+		{
+			base.Awake();
+		}
 
-	protected override void Start()
-	{
-		base.Start();
+		protected override void Start()
+		{
+			base.Start();
 
-		// 各タイマー設定
-		timerEvents[0].OnCompleteTimer += OnCompleteGameTimer;
-	}
+			// 各タイマー設定
+			timerEvents[0].OnCompleteTimer += OnCompleteGameTimer;
+		}
 
-	protected override void Update()
-	{
-		base.Update();
-	}
-	
+		protected override void Update()
+		{
+			base.Update();
+		}
+		
 
-	// タイマー完了イベント
-	private void OnCompleteGameTimer(GameObject senderObject)
-	{
-		timerEvents[0].OnCompleteTimer -= OnCompleteGameTimer;
-		AppMain.Instance.sceneStateManager.ChangeState(SceneStateManager.SceneState.RESULT);
+		// タイマー完了イベント
+		private void OnCompleteGameTimer(GameObject senderObject)
+		{
+			timerEvents[0].OnCompleteTimer -= OnCompleteGameTimer;
+			AppMain.Instance.sceneStateManager.ChangeState(SceneStateManager.SceneState.RESULT);
+		}
 	}
 }

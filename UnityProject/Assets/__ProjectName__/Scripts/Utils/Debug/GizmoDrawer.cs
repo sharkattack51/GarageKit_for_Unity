@@ -4,91 +4,93 @@ using System.Collections;
 /*
  * ゲームオブジェクトにギズモを設定する
  */
-
-public class GizmoDrawer : MonoBehaviour
+namespace GarageKit
 {
-	//表示するGizmoのタイプ
-	public enum GIZMO_TYPE
+	public class GizmoDrawer : MonoBehaviour
 	{
-		CUBE = 0,
-		SPHERE
-	}
-	
-	public GIZMO_TYPE gizmoType;
-	
-	public Color color = Color.red;
-	
-	public Vector3 gizmoSize = Vector3.one;
-	public bool centerToCornerX = false;
-	public bool centerToCornerY = false;
-	public bool centerToCornerZ = false;
-	public bool invertCornerX = false;
-	public bool invertCornerY = false;
-	public bool invertCornerZ = false;
-	
-	
-	void OnDrawGizmos()
-	{
-		//色を設定
-		Gizmos.color = color;
-		
-		Draw();
-	}
-	
-	void OnDrawGizmosSelected()
-	{
-		//色を設定
-		Gizmos.color = Color.white;
-		
-		Draw();
-	}
-	
-	/// <summary>
-	/// ギズモを表示
-	/// </summary>
-	private void Draw()
-	{
-		float centerX;
-		float centerY;
-		float centerZ;
-		
-		if(centerToCornerX)
-			centerX = this.transform.position.x + ((gizmoSize.x / 2.0f * this.gameObject.transform.lossyScale.x) * (invertCornerX ? -1.0f : 1.0f));
-		else
-			centerX = this.transform.position.x;
-		
-		if(centerToCornerY)
-			centerY = this.transform.position.y + ((gizmoSize.y / 2.0f * this.gameObject.transform.lossyScale.y) * (invertCornerY ? -1.0f : 1.0f));
-		else
-			centerY = this.transform.position.y;
-		
-		if(centerToCornerZ)
-			centerZ = this.transform.position.z - ((gizmoSize.z / 2.0f * this.gameObject.transform.lossyScale.z) * (invertCornerZ ? -1.0f : 1.0f));
-		else
-			centerZ = this.transform.position.z;
-		
-		Matrix4x4 tempMat = Gizmos.matrix;
-		Matrix4x4 mat = new Matrix4x4();
-		mat.SetTRS(
-			new Vector3(centerX, centerY, centerZ),
-			this.gameObject.transform.rotation,
-			Vector3.one);
-		Gizmos.matrix = mat;
-		
-		switch(gizmoType)
+		// 表示するGizmoのタイプ
+		public enum GIZMO_TYPE
 		{
-			case GIZMO_TYPE.CUBE:
-			Gizmos.DrawWireCube(Vector3.zero, new Vector3(
-				gizmoSize.x * this.gameObject.transform.lossyScale.x,
-				gizmoSize.y * this.gameObject.transform.lossyScale.y,
-				gizmoSize.z * this.gameObject.transform.lossyScale.z));
-				break;
-			case GIZMO_TYPE.SPHERE:
-				Gizmos.DrawWireSphere(Vector3.zero, gizmoSize.x / 2.0f * this.gameObject.transform.lossyScale.x);
-				break;
-			default: break;
+			CUBE = 0,
+			SPHERE
 		}
 		
-		Gizmos.matrix = tempMat;
+		public GIZMO_TYPE gizmoType;
+		
+		public Color color = Color.red;
+		
+		public Vector3 gizmoSize = Vector3.one;
+		public bool centerToCornerX = false;
+		public bool centerToCornerY = false;
+		public bool centerToCornerZ = false;
+		public bool invertCornerX = false;
+		public bool invertCornerY = false;
+		public bool invertCornerZ = false;
+		
+		
+		void OnDrawGizmos()
+		{
+			// 色を設定
+			Gizmos.color = color;
+			
+			Draw();
+		}
+		
+		void OnDrawGizmosSelected()
+		{
+			// 色を設定
+			Gizmos.color = Color.white;
+			
+			Draw();
+		}
+		
+		/// <summary>
+		/// ギズモを表示
+		/// </summary>
+		private void Draw()
+		{
+			float centerX;
+			float centerY;
+			float centerZ;
+			
+			if(centerToCornerX)
+				centerX = this.transform.position.x + ((gizmoSize.x / 2.0f * this.gameObject.transform.lossyScale.x) * (invertCornerX ? -1.0f : 1.0f));
+			else
+				centerX = this.transform.position.x;
+			
+			if(centerToCornerY)
+				centerY = this.transform.position.y + ((gizmoSize.y / 2.0f * this.gameObject.transform.lossyScale.y) * (invertCornerY ? -1.0f : 1.0f));
+			else
+				centerY = this.transform.position.y;
+			
+			if(centerToCornerZ)
+				centerZ = this.transform.position.z - ((gizmoSize.z / 2.0f * this.gameObject.transform.lossyScale.z) * (invertCornerZ ? -1.0f : 1.0f));
+			else
+				centerZ = this.transform.position.z;
+			
+			Matrix4x4 tempMat = Gizmos.matrix;
+			Matrix4x4 mat = new Matrix4x4();
+			mat.SetTRS(
+				new Vector3(centerX, centerY, centerZ),
+				this.gameObject.transform.rotation,
+				Vector3.one);
+			Gizmos.matrix = mat;
+			
+			switch(gizmoType)
+			{
+				case GIZMO_TYPE.CUBE:
+				Gizmos.DrawWireCube(Vector3.zero, new Vector3(
+					gizmoSize.x * this.gameObject.transform.lossyScale.x,
+					gizmoSize.y * this.gameObject.transform.lossyScale.y,
+					gizmoSize.z * this.gameObject.transform.lossyScale.z));
+					break;
+				case GIZMO_TYPE.SPHERE:
+					Gizmos.DrawWireSphere(Vector3.zero, gizmoSize.x / 2.0f * this.gameObject.transform.lossyScale.x);
+					break;
+				default: break;
+			}
+			
+			Gizmos.matrix = tempMat;
+		}
 	}
 }

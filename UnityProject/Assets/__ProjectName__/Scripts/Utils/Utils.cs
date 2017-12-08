@@ -10,7 +10,7 @@ using System;
 /// <summary>
 /// ユーティリティクラス
 /// </summary>
-namespace Utils
+namespace GarageKit
 {
 	/// <summary>
 	/// オブジェクト関係のユーティリティ
@@ -20,8 +20,11 @@ namespace Utils
 		/// <summary>
 		/// 子供のレイヤーを全て変更する
 		/// </summary>
-		public static void SetLayerChildren(GameObject rootObject, int layer)
+		public static void SetLayerChildren(GameObject rootObject, int layer, bool changeParent = false)
 		{
+			if(changeParent)
+				rootObject.layer = layer;
+
 			for(int i = 0; i < rootObject.transform.childCount; i++)
 			{
 				GameObject child = rootObject.transform.GetChild(i).gameObject;

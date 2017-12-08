@@ -5,26 +5,28 @@ using System;
 /*
  * コンテンツ起動時の引数を受け取る
  */
-
-public class ExcuteArgs : MonoBehaviour
-{	
-	private string[] args;
-	public string[] Args { get{ return args; } }
-	
-	
-	void Awake()
-	{
-		//コマンドライン実行引数を取得する
-		if(Application.platform != RuntimePlatform.WindowsEditor)
+namespace GarageKit
+{
+	public class ExcuteArgs : MonoBehaviour
+	{	
+		private string[] args;
+		public string[] Args { get{ return args; } }
+		
+		
+		void Awake()
 		{
-			args = System.Environment.GetCommandLineArgs();
-			
-			for(int i=0; i<args.Length; i++)
+			//コマンドライン実行引数を取得する
+			if(Application.platform != RuntimePlatform.WindowsEditor)
 			{
-				//Debug.Log("excute args [" + i.ToString() + "] : " + args[i]);
-				//DebugConsole.Log("excute args [" + i.ToString() + "] : " + args[i]);
+				args = System.Environment.GetCommandLineArgs();
+				
+				for(int i=0; i<args.Length; i++)
+				{
+					//Debug.Log("excute args [" + i.ToString() + "] : " + args[i]);
+					//DebugConsole.Log("excute args [" + i.ToString() + "] : " + args[i]);
+				}
 			}
 		}
+		
 	}
-	
 }

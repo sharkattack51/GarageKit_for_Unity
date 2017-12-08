@@ -1,64 +1,80 @@
-﻿using UnityEngine;
+﻿//#define USE_STATSMONITOR
+
+using UnityEngine;
 using System.Collections;
 
 /*
  * デバッグ情報を管理する
  */
-[RequireComponent(typeof(VisibleMouseCursor))]
-[RequireComponent(typeof(FrameRateUtil))]
-[RequireComponent(typeof(MemoryProfiler))]
-public class DebugManager : ManagerBase
+namespace GarageKit
 {
-	public bool IsDebug = true;
-	public bool UseDebugConsole = false;
-	
-	
-	protected override void Awake()
+	[RequireComponent(typeof(VisibleMouseCursor))]
+	public class DebugManager : ManagerBase
 	{
-		base.Awake();
-	}
-	
-	protected override void Start()
-	{
-		base.Start();
+		public bool IsDebug = true;
+		public bool UseDebugConsole = false;
 
-		// 設定値を取得
-		IsDebug = ApplicationSetting.Instance.GetBool("IsDebug");
-		
-		// デバッグ用コンソール初期設定
-		UseDebugConsole = ApplicationSetting.Instance.GetBool("UseDebugConsole");
-		DebugConsole.IsOpen = UseDebugConsole;
-		
-		// FPS表示設定
-		FrameRateUtil.useHUD = IsDebug;
-		
-		// メモリチェックの表紙設定
-		MemoryProfiler.useHUD = IsDebug;
-		
-		// マウスカーソル表示設定
-		if(Application.platform == RuntimePlatform.WindowsEditor)
-			VisibleMouseCursor.showCursor = true;
-		else
-			VisibleMouseCursor.showCursor = ApplicationSetting.Instance.GetBool("UseMouse");
-	}
+#if USE_STATSMONITOR
+		private StatsMonitor.StatsMonitor statsMonitor;
+#endif
 
-	protected override void Update()
-	{
-		base.Update();
-	}
+		
+		protected override void Awake()
+		{
+			base.Awake();
+		}
+		
+		protected override void Start()
+		{
+			base.Start();
+
+			// 設定値を取得
+			IsDebug = ApplicationSetting.Instance.GetBool("IsDebug");
+			
+			// デバッグ用コンソール初期設定
+			UseDebugConsole = ApplicationSetting.Instance.GetBool("UseDebugConsole");
+			DebugConsole.IsOpen = UseDebugConsole;
+
+#if USE_STATSMONITOR
+			// StatesMonitor
+			statsMonitor = FindObjectOfType<StatsMonitor.StatsMonitor>();
+			if(statsMonitor != null)
+				statsMonitor.gameObject.SetActive(IsDebug);
+#else
+			this.gameObject.AddComponent<MemoryProfiler>();
+			MemoryProfiler.useHUD = IsDebug;
+			this.gameObject.AddComponent<FrameRateUtil>();
+			FrameRateUtil.useHUD = IsDebug;
+#endif
+			
+			// マウスカーソル表示設定
+			if(Application.platform == RuntimePlatform.WindowsEditor)
+				VisibleMouseCursor.showCursor = true;
+			else
+				VisibleMouseCursor.showCursor = ApplicationSetting.Instance.GetBool("UseMouse");
+		}
+
+		protected override void Update()
+		{
+			base.Update();
+		}
 
 
-	// デバッグ情報のトグル
-	public void ToggleShowDebugView()
-	{
-		// デバッグコンソールの表示
-		if(UseDebugConsole)
-			DebugConsole.IsOpen = !DebugConsole.IsOpen;
-		
-		// FPS表示
-		FrameRateUtil.useHUD = !FrameRateUtil.useHUD;
-		
-		// メモリ表示
-		MemoryProfiler.useHUD = !MemoryProfiler.useHUD;
+		// デバッグ情報のトグル
+		public void ToggleShowDebugView()
+		{
+			// デバッグコンソールの表示
+			if(UseDebugConsole)
+				DebugConsole.IsOpen = !DebugConsole.IsOpen;
+
+#if USE_STATSMONITOR
+			// StatesMonitor
+			if(statsMonitor != null)
+				statsMonitor.gameObject.SetActive(IsDebug);
+#else
+			MemoryProfiler.useHUD = IsDebug;
+			FrameRateUtil.useHUD = IsDebug;
+#endif
+		}
 	}
 }
