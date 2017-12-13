@@ -78,7 +78,8 @@ namespace GarageKit
 
 			if(currentStateInfos == null)
 				return;
-			
+
+			EditorWindow.GetWindow<StateGenerator>().Focus();
 			EditorWindow.GetWindow<StateGenerator>().maximized = false;
 			EditorWindow.GetWindow<StateGenerator>().minSize = new Vector2(430, 250);
 
@@ -234,11 +235,12 @@ namespace GarageKit
 			string src = File.ReadAllText(managedPath["Scripts/Manager/SceneStateManager.cs"]);
 			StringSplitOptions none = StringSplitOptions.None;
 
-			string src_pre = src.Split(new string[]{ "\t{" }, 2, none)[0];
-			string src_enm = src.Split(new string[]{ "\t{" }, 2, none)[1].Split(new string[]{ "\t}" }, 2, none)[0];
-			string src_mid = src.Split(new string[]{ "\t{" }, 2, none)[1].Split(new string[]{ "\t}" }, 2, none)[1].Split(new string[]{ "\t{" }, 2, none)[0];
-			string src_tbl = src.Split(new string[]{ "\t{" }, 2, none)[1].Split(new string[]{ "\t}" }, 2, none)[1].Split(new string[]{ "\t{" }, 2, none)[1].Split(new string[]{ "\t};" }, 2, none)[0];
-			string src_pst = src.Split(new string[]{ "\t{" }, 2, none)[1].Split(new string[]{ "\t}" }, 2, none)[1].Split(new string[]{ "\t{" }, 2, none)[1].Split(new string[]{ "\t};" }, 2, none)[1];
+			string src_nsp = src.Split(new string[]{ "\t{" }, 3, none)[0];
+			string src_pre = src.Split(new string[]{ "\t{" }, 3, none)[1];
+			string src_enm = src.Split(new string[]{ "\t{" }, 3, none)[2].Split(new string[]{ "\t}" }, 2, none)[0];
+			string src_mid = src.Split(new string[]{ "\t{" }, 3, none)[2].Split(new string[]{ "\t}" }, 2, none)[1].Split(new string[]{ "\t{" }, 2, none)[0];
+			string src_tbl = src.Split(new string[]{ "\t{" }, 3, none)[2].Split(new string[]{ "\t}" }, 2, none)[1].Split(new string[]{ "\t{" }, 2, none)[1].Split(new string[]{ "\t};" }, 2, none)[0];
+			string src_pst = src.Split(new string[]{ "\t{" }, 3, none)[2].Split(new string[]{ "\t}" }, 2, none)[1].Split(new string[]{ "\t{" }, 2, none)[1].Split(new string[]{ "\t};" }, 2, none)[1];
 			
 			// enum行の配列
 			List<string> list_enm = new List<string>(src_enm.Trim().Split(new string[]{ "\n" }, none));
@@ -348,16 +350,18 @@ namespace GarageKit
 			
 			// 内容更新
 			string src_out = "";
+			src_out += src_nsp;
+			src_out += "\t{";
 			src_out += src_pre;
 			src_out += "\t{\n";
 			foreach(string e in list_enm)
-				src_out += "\t\t" + e + "\n";
-			src_out += "\t}";
+				src_out += "\t\t\t" + (e.Contains(",") ? e : (e + ",")) + "\n";
+			src_out += "\t\t}";
 			src_out += src_mid;
 			src_out += "\t{\n";
 			foreach(string t in list_tbl)
-				src_out += "\t\t" + t + "\n";
-			src_out += "\t};";
+				src_out += "\t\t\t" + (t.Contains(",") ? t : (t + ",")) + "\n";
+			src_out += "\t\t};";
 			src_out += src_pst;
 
 			// 書き込み
