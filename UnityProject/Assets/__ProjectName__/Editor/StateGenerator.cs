@@ -40,28 +40,28 @@ namespace GarageKit
 
 		public const string STATE_CLASS_TEMPLATE
 	= @"using UnityEngine;
-	using System.Collections;
-	using System.Collections.Generic;
-	using GarageKit;
+using System.Collections;
+using System.Collections.Generic;
+using GarageKit;
 
-	public class {0} : {1}
+public class {0} : {1}
+{
+	public override void StateStart(object context)
 	{
-		public override void StateStart(object context)
-		{
-			base.StateStart(context);
-		}
-		
-		public override void StateUpdate()
-		{
-			base.StateUpdate();
-		}
-		
-		public override void StateExit()
-		{
-			base.StateExit();
-		}
+		base.StateStart(context);
 	}
-	";
+	
+	public override void StateUpdate()
+	{
+		base.StateUpdate();
+	}
+	
+	public override void StateExit()
+	{
+		base.StateExit();
+	}
+}
+";
 
 		[MenuItem("EditorScript/StateGenerator")]
 		public static void WindowOpen()
@@ -143,8 +143,21 @@ namespace GarageKit
 
 					if(GUILayout.Button("Add", GUILayout.Width(50.0f)))
 					{
-						modified = true;
-						AddNewSource(newStateInfo);
+						if(newStateInfo.className != "")
+						{
+							// State名のvalidation
+							newStateInfo.className = newStateInfo.className.Substring(0, 1).ToUpper() + newStateInfo.className.Substring(1, newStateInfo.className.Length - 1);
+							if(newStateInfo.className.Length > 5)
+							{
+								if(newStateInfo.className.Substring(newStateInfo.className.Length - 5, 5) != "State")
+									newStateInfo.className += "State";
+							}
+							else
+								newStateInfo.className += "State";
+							
+							modified = true;
+							AddNewSource(newStateInfo);
+						}
 					}
 				}
 				EditorGUILayout.EndHorizontal();
@@ -187,19 +200,7 @@ namespace GarageKit
 
 		private static void AddNewSource(StateInfo state)
 		{
-			if(state.className == "")
-				return;
-
 			// 新規Stateファイル作成
-			state.className = state.className.Substring(0, 1).ToUpper() + state.className.Substring(1, state.className.Length - 1);
-			if(state.className.Length > 5)
-			{
-				if(state.className.Substring(state.className.Length - 5, 5) != "State")
-					state.className += "State";
-			}
-			else
-				state.className += "State";
-			
 			state.sourcePath = Path.Combine(managedPath["Scripts/States"], state.className + ".cs");
 
 			currentStateInfos.Add(state);
