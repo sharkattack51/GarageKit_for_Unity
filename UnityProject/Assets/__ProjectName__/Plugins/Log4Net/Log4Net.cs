@@ -29,7 +29,7 @@ public class Log4Net : MonoBehaviour
 	public enum LOG_EVENT_TYPE
 	{
 		STARTUP = 0,
-		FINISH,
+		QUIT,
 		ERROR
 	}
 	
@@ -66,11 +66,11 @@ public class Log4Net : MonoBehaviour
 		switch(type)
 		{
 			case LOG_EVENT_TYPE.STARTUP:
-				logger.Info("[STARTUP]"+ "\t" + "application is started");
+				logger.Info("[STARTUP]"+ "\t" + "start application");
 				break;
 			
-			case LOG_EVENT_TYPE.FINISH:
-				logger.Info("[FINISH]"+ "\t" + "application is finished");
+			case LOG_EVENT_TYPE.QUIT:
+				logger.Info("[QUIT]"+ "\t" + "quit application");
 				break;
 			
 			case LOG_EVENT_TYPE.ERROR:
