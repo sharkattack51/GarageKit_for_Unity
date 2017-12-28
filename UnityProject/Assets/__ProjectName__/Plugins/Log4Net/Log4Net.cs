@@ -14,7 +14,8 @@ public class Log4Net : MonoBehaviour
 	public static Log4Net Instance { get{ return instance; } }
 	
 	//設定ファイル
-	public string configFile = ".\\Log\\Log4Net.config";
+	public string configFile = "Log4Net.config";
+	public bool configFromStreamingAssets = true;
 	
 	//有効確認
 	private bool isValid = false;
@@ -28,13 +29,8 @@ public class Log4Net : MonoBehaviour
 	public enum LOG_EVENT_TYPE
 	{
 		STARTUP = 0,
-		LOGIN_COMPLETE,
-		LOGIN_FAILED,
-		GETNODE_COMPLETE,
-		GETNODE_FAILED,
-		CHANGE_LANGUAGE,
-		SELECT,
-		DOWNLOAD
+		FINISH,
+		ERROR
 	}
 	
 	
@@ -45,6 +41,9 @@ public class Log4Net : MonoBehaviour
 	
 	void Start()
 	{
+		if(configFromStreamingAssets)
+			configFile = Path.Combine(Application.streamingAssetsPath, configFile);
+
 		FileInfo fileInfo = new FileInfo(configFile);
 		if(fileInfo.Exists)
 		{
@@ -67,35 +66,15 @@ public class Log4Net : MonoBehaviour
 		switch(type)
 		{
 			case LOG_EVENT_TYPE.STARTUP:
-				logger.Info("[START]"+ "\t" + "River is started.");
+				logger.Info("[STARTUP]"+ "\t" + "application is started");
 				break;
 			
-			case LOG_EVENT_TYPE.LOGIN_COMPLETE:
-				logger.Info("[LOGIN]"+ "\t" + "login complete.");
+			case LOG_EVENT_TYPE.FINISH:
+				logger.Info("[FINISH]"+ "\t" + "application is finished");
 				break;
 			
-			case LOG_EVENT_TYPE.LOGIN_FAILED:
-				logger.Error("[ERROR]"+ "\t" + "login failed.");
-				break;
-			
-			case LOG_EVENT_TYPE.GETNODE_COMPLETE:
-				logger.Info("[LOGIN]"+ "\t" + "get node complete.");
-				break;
-			
-			case LOG_EVENT_TYPE.GETNODE_FAILED:
-				logger.Error("[ERROR]"+ "\t" + "get node failed.");
-				break;
-			
-			case LOG_EVENT_TYPE.CHANGE_LANGUAGE:
-				logger.Info("[CHANGE_LANGUAGE]"+ "\t" + option);
-				break;
-			
-			case LOG_EVENT_TYPE.SELECT:
-				logger.Info("[SELECT]"+ "\t" + option);
-				break;
-			
-			case LOG_EVENT_TYPE.DOWNLOAD:
-				logger.Info("[DOWNLOAD]"+ "\t" + option);
+			case LOG_EVENT_TYPE.ERROR:
+				logger.Error("[ERROR]"+ "\t" + option);
 				break;
 			
 			default: break;

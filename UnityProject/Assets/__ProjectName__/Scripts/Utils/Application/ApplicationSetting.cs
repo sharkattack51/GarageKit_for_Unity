@@ -24,8 +24,9 @@ namespace GarageKit
 		private bool isValid = false;
 		public bool IsValid { get{ return isValid; } }
 		
-		// xmlファイル名を入力する(xmlの場所はexeと同一ディレクトリ,utf-8エンコード)
+		// xmlファイル名
 		public string xmlUrl = "ApplicationSetting.xml";
+		public bool xmlFromStreamingAssets = true;
 		
 		// 読み込み後展開されるアクセス可能なハッシュ
 		public Dictionary<string, string> Data { get{ return dataDict; } }
@@ -51,8 +52,12 @@ namespace GarageKit
 				dataDict = new Dictionary<string, string>();
 				
 				//xml読み込み
-				xml.Load(Path.GetFullPath("./") + xmlUrl);
-				xmlUtf8Str = File.ReadAllText(Path.GetFullPath("./") + xmlUrl, Encoding.UTF8);
+				if(xmlFromStreamingAssets)
+					xmlUrl = Path.Combine(Application.streamingAssetsPath, xmlUrl);
+				else
+					xmlUrl = Path.GetFullPath("./") + xmlUrl;
+				xml.Load(xmlUrl);
+				xmlUtf8Str = File.ReadAllText(xmlUrl, Encoding.UTF8);
 				
 				//xmlをパース
 				ParseXML();
