@@ -26,24 +26,22 @@ namespace GarageKit
 		
 		private bool isRunning = false;
 		public bool IsRunning { get{ return isRunning; } }
-		
+
+		// 残り時間
 		private int currentTime = 0;
 		public int CurrentTime { get{ return currentTime; } }
 
-		public int ElapsedTime { get{ return startTime - currentTime; } }
-		public float ElapsedTimeRaw { get{ return ElapsedTime + Mathf.Min(decimalSec, 0.999999999f); } }
+		// 経過時間
+		private float elapsedTime = 0.0f;
+		public float ElapsedTime { get{ return elapsedTime; } }
 
 		private int startTime;
 		private bool autoDestroy;
-		// private int repeatCount;
-		private float decimalSec = 0.0f;
 		
 		private string timerName;
 		
-		// TODO : OnTimerを秒数指定に変更してリピートできるようにする
 		
-		
-#region Event
+	#region Event
 		
 		/// <summary>
 		/// OnTimerイベント
@@ -68,12 +66,12 @@ namespace GarageKit
 			if(OnCompleteTimer != null)
 				OnCompleteTimer(this.gameObject);
 			
-			// 自動削除
+			//自動削除
 			if(autoDestroy)
 				Destroy(this.gameObject);
 		}
 		
-#endregion
+	#endregion
 		
 		
 		void Awake()
@@ -88,39 +86,41 @@ namespace GarageKit
 		
 		void Update()
 		{
+			if(isRunning)
+			{
+				elapsedTime += Time.deltaTime;
+
+				if(startTime - Mathf.FloorToInt(elapsedTime) != currentTime)
+				{
+					// onTimerイベント
+					InvokeOnTimer();
+				}
+
+				if(startTime - Mathf.FloorToInt(elapsedTime) == -1)
+				{
+					// onCompleteTimerイベント
+					InvokeOnCompleteTimer();
+
+					isRunning = false;
+					currentTime = 0;
+				}
+				else
+					currentTime = startTime - Mathf.FloorToInt(elapsedTime);
+			}
+
 			// オブジェクト名に現在時間を設定
 			this.gameObject.name = timerName + " ["+ currentTime.ToString() + "]";
-
-			// 経過時間少数点以下を加算
-			decimalSec += Time.fixedDeltaTime;
 		}
 		
 		
-#region タイマーの操作
+	#region タイマーの操作
 
-		/// <summary>
-		/// タイマーをスタートする
-		/// </summary>
 		public void StartTimer(int countTime, float delayTime = 0.0f, bool autoDestroy = false)
 		{
 			StartTimer(countTime, autoDestroy);
 
-			StartCoroutine(DelayStart(delayTime));
-		}
-
-		private void StartTimer(int countTime, bool autoDestroy)
-		{
-			this.startTime = countTime;
-			this.currentTime = this.startTime;
-			this.autoDestroy = autoDestroy;
-			
-			if(!isRunning)
-			{
-				isRunning = true;
-				StartCoroutine("CountTimer");
-			}
-			
-			isStarted = true;
+			if(delayTime > 0.0f)
+				StartCoroutine(DelayStart(delayTime));
 		}
 
 		private IEnumerator DelayStart(float delay)
@@ -131,68 +131,38 @@ namespace GarageKit
 
 			ResumeTimer();
 		}
-		
-		/// <summary>
-		/// タイマーを再開する
-		/// </summary>
-		public void ResumeTimer()
+
+		private void StartTimer(int countTime, bool autoDestroy)
 		{
-			StartTimer(currentTime, autoDestroy);
+			this.elapsedTime = 0.0f;
+
+			this.startTime = countTime;
+			this.currentTime = countTime + 1;
+			this.autoDestroy = autoDestroy;
+			
+			this.isRunning = true;
+			this.isStarted = true;
 		}
-		
-		/// <summary>
-		/// タイマーを停止する
-		/// </summary>
+
 		public void StopTimer()
 		{
-			if(isRunning)
-			{
-				isRunning = false;
-				StopCoroutine("CountTimer");
-			}
+			isRunning = false;
 		}
-		
-		/// <summary>
-		/// タイマーをリセットする
-		/// </summary>
-		public void ResetTimer()
+
+		public void ResumeTimer()
 		{
-			StopTimer();
-			
-			if(isStarted)
-				StartTimer(this.startTime, 0.0f, this.autoDestroy);
+			isRunning = true;
 		}
 		
-#endregion
-		
-		
-		/// <summary>
-		/// カウント処理
-		/// </summary>
-		/// <returns>
-		/// A <see cref="IEnumerator"/>
-		/// </returns>
-		IEnumerator CountTimer()
-		{	
-			while(true)
-			{
-				yield return new WaitForSeconds(1.0f);
-				
-				//onTimerイベント
-				InvokeOnTimer();
-				
-				currentTime--;
-				decimalSec = 0.0f;
+		public void ResetTimer(bool andStart)
+		{
+			isRunning = false;
+			elapsedTime = 0.0f;
 			
-				if(currentTime < 0)
-					break;
-			}
-			
-			//時間を0にする
-			currentTime = 0;
-			
-			//onCompleteTimerイベント
-			InvokeOnCompleteTimer();
+			if(andStart)
+				StartTimer(this.startTime, this.autoDestroy);
 		}
+		
+	#endregion
 	}
 }

@@ -9,6 +9,18 @@ namespace GarageKit
 		public float moveSpeed = 5.0f;
 		public float rotateSpeed = 20.0f;
 		public bool updateEnable = true;
+
+		[Header("for GamePad")]
+		public float camMoveSpeedForPad = 0.5f;
+		public float camRotSpeedForPad = 0.5f;
+		public bool invertCamRotXForPad = false;
+		public bool invertCamRotYForPad = false;
+		public enum PadType
+		{
+			DEFAULT = 0,
+			XBOXONE
+		}
+		public PadType padType = PadType.DEFAULT;
 		
 		private CharacterController characterController;
 		private bool isFirstTouch = true;
@@ -63,6 +75,8 @@ namespace GarageKit
 		
 		private void UpdateFlythrough()
 		{
+#region for Mouse
+
 			if(Input.GetMouseButton(0))
 			{
 				// 前進後退
@@ -92,10 +106,57 @@ namespace GarageKit
 				characterController.Move(right * pos_x);
 
 				// 上昇下降
-				float PosY = ( dragY / 100 ) * Time.deltaTime * moveSpeed;
+				float pos_y = (dragY / 100.0f) * Time.deltaTime * moveSpeed;
 				Vector3 up = characterController.gameObject.transform.TransformDirection(Vector3.up);
-				characterController.Move(up * PosY);
+				characterController.Move(up * pos_y);
 			}
+
+#endregion
+
+#region for GamePad
+
+			if((Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftAlt)))
+				return;
+			
+			float camMoveSpeedForPadOnFire = camMoveSpeedForPad * ((Input.GetButton("Fire1") || Input.GetButton("Fire2")) ? 5.0f : 1.0f);
+
+			// 前進後退
+			float pad_pos_z = Input.GetAxisRaw("Vertical") * Time.deltaTime * moveSpeed * camMoveSpeedForPadOnFire;
+			Vector3 pad_forward = this.gameObject.transform.TransformDirection(Vector3.forward);
+			characterController.Move(pad_forward * pad_pos_z);
+
+			// 左右平行移動
+			float pad_pos_x = Input.GetAxisRaw("Horizontal") * Time.deltaTime * moveSpeed * camMoveSpeedForPadOnFire;
+			Vector3 pad_right = characterController.gameObject.transform.TransformDirection(Vector3.right);
+			characterController.Move(pad_right * pad_pos_x);
+
+			// 上昇下降
+			if(padType == PadType.DEFAULT)
+			{
+				float pad_pos_y = Input.GetAxisRaw("Trigger") * Time.deltaTime * moveSpeed * camMoveSpeedForPadOnFire;
+				Vector3 pad_up = characterController.gameObject.transform.TransformDirection(Vector3.up);
+				characterController.Move(pad_up * pad_pos_y);
+			}
+			else if(padType == PadType.XBOXONE)
+			{
+				float pad_pos_y1 = Input.GetAxisRaw("Trigger") * Time.deltaTime * moveSpeed * camMoveSpeedForPadOnFire * 0.5f;
+				Vector3 pad_up1 = characterController.gameObject.transform.TransformDirection(Vector3.up);
+				characterController.Move(pad_up1 * pad_pos_y1);
+
+				float pad_pos_y2 = Input.GetAxisRaw("Trigger2") * Time.deltaTime * moveSpeed * camMoveSpeedForPadOnFire * 0.5f;
+				Vector3 pad_up2 = characterController.gameObject.transform.TransformDirection(Vector3.up);
+				characterController.Move(pad_up2 * pad_pos_y2);
+			}
+
+			// 左右旋回
+			float pad_rot_y = Input.GetAxisRaw("Horizontal2") * Time.deltaTime * rotateSpeed * camRotSpeedForPad * (invertCamRotYForPad ? -1.0f : 1.0f);
+			this.gameObject.transform.Rotate(Vector3.up, pad_rot_y, Space.Self);
+
+			// 上下旋回
+			float pad_rot_x = Input.GetAxisRaw("Vertical2") * Time.deltaTime * rotateSpeed * camRotSpeedForPad * (invertCamRotXForPad ? -1.0f : 1.0f);
+			childCamera.transform.Rotate(Vector3.right, -pad_rot_x, Space.Self);
+
+#endregion
 		}
 		
 		private void ResetInput()

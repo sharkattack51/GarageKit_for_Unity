@@ -82,18 +82,18 @@ namespace GarageKit
 				fader.StartFade(fadeTime, fadeType);
 		}
 		
-		public void StartFade(float fadeTime, FADE_TYPE fadeType)
+		public void StartFade(float fadeTime, FADE_TYPE fadeType, float targetAlpha = 1.0f)
 		{
 			if(UseFade)
 			{
 				this.fadeTime = fadeTime;
 				this.fadeType = fadeType;
 			
-				StartCoroutine(FadeIn());
+				StartCoroutine(FadeIn(targetAlpha));
 			}
 		}
 		
-		IEnumerator FadeIn()
+		IEnumerator FadeIn(float targetAlpha)
 		{
 			float elapsedTime = 0.0f;
 			Color color = fadeColor;
@@ -106,7 +106,7 @@ namespace GarageKit
 				elapsedTime += Time.deltaTime;
 
 				if(fadeType == FADE_TYPE.FADE_IN)
-					color.a = 1.0f - Mathf.Clamp01(elapsedTime / fadeTime);
+					color.a = targetAlpha - Mathf.Clamp01(elapsedTime / fadeTime);
 				else if(fadeType == FADE_TYPE.FADE_OUT)
 					color.a = Mathf.Clamp01(elapsedTime / fadeTime);
 

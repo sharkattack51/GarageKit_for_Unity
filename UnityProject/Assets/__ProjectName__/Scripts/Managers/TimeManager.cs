@@ -12,6 +12,8 @@ namespace GarageKit
 		// タイマーイベントオブジェクト設定
 		public TimerEvent[] timerEvents;
 		
+		public TimerEvent mainTimer { get{ return (timerEvents.Length > 0) ? timerEvents[0] : null; } }
+		
 		
 		protected override void Awake()
 		{

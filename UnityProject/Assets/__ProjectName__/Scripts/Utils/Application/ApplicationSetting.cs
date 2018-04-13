@@ -53,9 +53,15 @@ namespace GarageKit
 				
 				//xml読み込み
 				if(xmlFromStreamingAssets)
-					xmlUrl = Path.Combine(Application.streamingAssetsPath, xmlUrl);
+				{
+					if(File.Exists(Path.Combine(Application.streamingAssetsPath, xmlUrl)))
+						xmlUrl = Path.Combine(Application.streamingAssetsPath, xmlUrl);
+					else
+						xmlUrl = Path.GetFullPath("./") + xmlUrl;
+				}
 				else
 					xmlUrl = Path.GetFullPath("./") + xmlUrl;
+
 				xml.Load(xmlUrl);
 				xmlUtf8Str = File.ReadAllText(xmlUrl, Encoding.UTF8);
 				
