@@ -25,9 +25,6 @@ public class ResultState : AsyncStateBase
 	
 	public override void StateExit()
 	{
-		// フェード機能をON
-		Fader.EnableFade();
-
 		base.StateExit();
 	}
 }

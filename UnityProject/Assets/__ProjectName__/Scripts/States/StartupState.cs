@@ -19,9 +19,6 @@ public class StartupState : StateBase
 
 	public override void StateExit()
 	{
-		// フェード機能をOFF
-		Fader.DisableFade();
-
 		base.StateExit();
 	}
 }

@@ -90,9 +90,9 @@ namespace GarageKit
 				if(sceneStateManager.CurrentState == SceneStateManager.SceneState.STARTUP)
 					sceneStateManager.ChangeState(SceneStateManager.SceneState.WAIT);
 				else if(sceneStateManager.CurrentState == SceneStateManager.SceneState.WAIT)
-					sceneStateManager.ChangeState(SceneStateManager.SceneState.PLAY);
+					sceneStateManager.ChangeAsyncState(SceneStateManager.SceneState.PLAY);
 				else if(sceneStateManager.CurrentState == SceneStateManager.SceneState.PLAY)
-					timeManager.timerEvents[0].StartTimer(ApplicationSetting.Instance.GetInt("GameTime"));
+					timeManager.mainTimer.StartTimer(ApplicationSetting.Instance.GetInt("GameTime"));
 				else if(sceneStateManager.CurrentState == SceneStateManager.SceneState.RESULT)
 					sceneStateManager.ChangeAsyncState(SceneStateManager.SceneState.WAIT);
 			}

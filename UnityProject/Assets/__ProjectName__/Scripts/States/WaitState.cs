@@ -25,9 +25,6 @@ public class WaitState : AsyncStateBase
 	
 	public override void StateExit()
 	{
-		// フェード機能をOFF
-		Fader.DisableFade();
-
 		base.StateExit();
 	}
 }

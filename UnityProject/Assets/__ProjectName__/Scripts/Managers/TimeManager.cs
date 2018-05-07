@@ -23,22 +23,11 @@ namespace GarageKit
 		protected override void Start()
 		{
 			base.Start();
-
-			// 各タイマー設定
-			timerEvents[0].OnCompleteTimer += OnCompleteGameTimer;
 		}
 
 		protected override void Update()
 		{
 			base.Update();
-		}
-		
-
-		// タイマー完了イベント
-		private void OnCompleteGameTimer(GameObject senderObject)
-		{
-			timerEvents[0].OnCompleteTimer -= OnCompleteGameTimer;
-			AppMain.Instance.sceneStateManager.ChangeState(SceneStateManager.SceneState.RESULT);
 		}
 	}
 }

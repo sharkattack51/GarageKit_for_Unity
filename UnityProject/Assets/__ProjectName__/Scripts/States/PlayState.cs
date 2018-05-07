@@ -2,13 +2,20 @@
 using System.Collections;
 using GarageKit;
 
-public class PlayState : StateBase
+public class PlayState : AsyncStateBase
 {
 	public TextMesh sceneText;
 	public TextMesh messageText;
 	public TextMesh timerText;
 	
-	
+
+	void Start()
+	{
+		// タイマー設定
+		AppMain.Instance.timeManager.mainTimer.OnCompleteTimer += OnCompleteGameTimer;
+	}
+
+
 	public override void StateStart(object context)
 	{
 		base.StateStart(context);
@@ -21,8 +28,8 @@ public class PlayState : StateBase
 	{
 		base.StateUpdate();
 		
-		if(AppMain.Instance.timeManager.timerEvents[0].IsRunning)
-			timerText.text = AppMain.Instance.timeManager.timerEvents[0].CurrentTime.ToString();
+		if(AppMain.Instance.timeManager.mainTimer.IsRunning)
+			timerText.text = AppMain.Instance.timeManager.mainTimer.CurrentTime.ToString();
 		else
 			timerText.text = "";
 	}
@@ -30,5 +37,12 @@ public class PlayState : StateBase
 	public override void StateExit()
 	{
 		base.StateExit();
+	}
+
+
+	// タイマー完了イベント
+	private void OnCompleteGameTimer(GameObject sender)
+	{
+		AppMain.Instance.sceneStateManager.ChangeAsyncState(SceneStateManager.SceneState.RESULT);
 	}
 }

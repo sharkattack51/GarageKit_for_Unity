@@ -283,7 +283,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fadeTime: 2
-  fadeColor: {r: 0.01, g: 0.01, b: 0.01, a: 1}
+  fadeColor: {r: 1, g: 1, b: 1, a: 1}
   fadeMaterial: {fileID: 2100000, guid: 0f7e34f32dc027e4398cccff656d705a, type: 2}
   fadeType: 0
 --- !u!1 &18
