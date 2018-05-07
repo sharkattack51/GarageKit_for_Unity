@@ -116,7 +116,7 @@ https://gist.github.com/darktable/1411710
 
 /Scripts/Utils/Network
 
-- SerialPortController.cs
+- TinyHttpServer.cs
 - UDPReciever.cs
 - UDPSender.cs
 
@@ -127,7 +127,8 @@ https://gist.github.com/darktable/1411710
 - AutoScale.cs
 - AutoUVScroll.cs
 - Billbord.cs
-- FadeObject.cs
+- Fader.cs
+- FpsCounter.cs
 - LineObject.cs
 - MeterObject.cs
 - NineGridMesh.cs

@@ -37,6 +37,20 @@ namespace GarageKit
 
 		void Start()
 		{
+			if(this.GetComponent<Camera>() != null)
+			{
+				Debug.LogWarning("UrbanViewerLikeCamera :: This script attaches to the parent object of the camera.");
+				this.enabled = false;
+				return;
+			}
+
+			if(childCamera == null)
+			{
+				Camera cam = this.gameObject.GetComponentInChildren<Camera>();
+				if(cam != null)
+					childCamera = cam;
+			}
+
 			characterController = this.gameObject.AddComponent<CharacterController>();
 		}
 		
