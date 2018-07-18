@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿//#define USE_TOUCH_SCRIPT
+using UnityEngine;
 using System.Collections;
 
 /*
@@ -127,7 +128,11 @@ namespace GarageKit
 #if UNITY_STANDALONE_WIN
 			else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 			{
+#if !USE_TOUCH_SCRIPT
+				if(Input.touchCount >= grabTouchNum)
+#else
 				if(TouchScript.TouchManager.Instance.PressedPointersCount >= grabTouchNum)
+#endif
 				{
 					// カメラ操作のロック
 					if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
@@ -142,11 +147,16 @@ namespace GarageKit
 					}
 					
 					// ドラッグ量を計算
+#if !USE_TOUCH_SCRIPT
+					float touchesPosX = (Input.touches[0].position.x + Input.touches[1].position.x + Input.touches[2].position.x) / 3.0f;
+					float touchesPosY = (Input.touches[0].position.y + Input.touches[1].position.y + Input.touches[2].position.y) / 3.0f;
+#else
 					TouchScript.Pointers.Pointer tp0 = TouchScript.TouchManager.Instance.PressedPointers[0];
 					TouchScript.Pointers.Pointer tp1 = TouchScript.TouchManager.Instance.PressedPointers[1];
 					TouchScript.Pointers.Pointer tp2 = TouchScript.TouchManager.Instance.PressedPointers[2];
 					float touchesPosX = (tp0.Position.x + tp1.Position.x + tp2.Position.x) / 3.0f;
 					float touchesPosY = (tp0.Position.y + tp1.Position.y + tp2.Position.y) / 3.0f;
+#endif
 					Vector3 currentWorldTouchPos = renderCamera.ScreenToWorldPoint(new Vector3(touchesPosX, touchesPosY, 1000.0f));
 					
 					if(isFirstTouch)

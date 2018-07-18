@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿//#define USE_TOUCH_SCRIPT
+using UnityEngine;
 using System.Collections;
 using System;
 
@@ -135,9 +136,30 @@ namespace GarageKit
 			
 			// for WinTouch
 			if(inputType == INPUT_TYPE.WTOUCH)
-			{
-				
+			{				
 #if UNITY_STANDALONE_WIN
+
+#if !USE_TOUCH_SCRIPT
+				touchCount = Input.touchCount;
+
+				// 1点目を入力として受付
+				if(touchCount >= 1)
+				{
+					Rect wrect = WindowsUtil.GetApplicationWindowRect(); // not work in Editor.
+					touchPosition = new Vector2(
+						(int)(((Input.touches[0].position.x / Screen.width) * Screen.currentResolution.width) - wrect.x),
+						Screen.height + (int)(((Input.touches[0].position.x / Screen.height) * Screen.currentResolution.height) - wrect.y));
+					
+					if(Input.touches[0].deltaPosition != Vector2.zero)
+					{
+						if(isPressed)
+							phase = INPUT_PHASE.Moved;
+						else
+							phase = INPUT_PHASE.Began;
+					}
+					else
+						phase = INPUT_PHASE.Moved;
+#else
 				touchCount = TouchScript.TouchManager.Instance.PressedPointersCount;
 
 				// 1点目を入力として受付
@@ -157,9 +179,8 @@ namespace GarageKit
 							phase = INPUT_PHASE.Began;
 					}
 					else
-					{
 						phase = INPUT_PHASE.Moved;
-					}
+#endif
 				}
 				else
 				{
@@ -175,8 +196,7 @@ namespace GarageKit
 						isTouch = false;
 					}
 				}
-#endif
-				
+#endif		
 			}
 			
 			// for Mobile

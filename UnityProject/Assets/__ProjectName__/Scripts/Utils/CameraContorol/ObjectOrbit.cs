@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿//#define USE_TOUCH_SCRIPT
+using UnityEngine;
 using System.Collections;
 
 /*
@@ -94,11 +95,26 @@ namespace GarageKit
 #if UNITY_STANDALONE_WIN
 			else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 			{
+#if !USE_TOUCH_SCRIPT
+				if(Input.touchCount == 1)
+				{
+					if(Input.touches[0].deltaPosition != Vector2.zero)
+					{
+						moveVector = (Vector3)(Input.touches[0].deltaPosition / 10.0f);
+						isClicked = true;
+					}
+					else
+						ResetInput();
+				}
+				else if(Input.touchCount == 0)
+					ResetInput();
+#else
 				if(TouchScript.TouchManager.Instance.PressedPointersCount == 1)
 				{
 					TouchScript.Pointers.Pointer tp = TouchScript.TouchManager.Instance.PressedPointers[0];
 					if(tp.Position != tp.PreviousPosition)
 					{
+
 						moveVector = (Vector3)((tp.PreviousPosition - tp.Position) / 10.0f);
 						isClicked = true;
 					}
@@ -107,6 +123,7 @@ namespace GarageKit
 				}
 				else if(TouchScript.TouchManager.Instance.PressedPointersCount == 0)
 					ResetInput();
+#endif
 			}
 #endif
 			

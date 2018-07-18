@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿//#define USE_TOUCH_SCRIPT
+using UnityEngine;
 using System.Collections;
 
 /// <summary>
@@ -89,7 +90,11 @@ namespace GarageKit
 				// for WTouch
 				else if(inputType == INPUT_TYPE.WTOUCH)
 				{
+#if !USE_TOUCH_SCRIPT
+					if(Input.touchCount > 0)					
+#else
 					if(TouchScript.TouchManager.Instance.PressedPointersCount > 0)
+#endif	
 						DisableScreenSaver();
 				}
 			

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿//#define USE_TOUCH_SCRIPT
+using UnityEngine;
 using System.Collections;
 
 /*
@@ -121,6 +122,17 @@ namespace GarageKit
 #if UNITY_STANDALONE_WIN
 			else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 			{
+#if !USE_TOUCH_SCRIPT
+				if(Input.touchCount == 1)
+				{
+					if(Input.touches[0].deltaPosition != Vector2.zero)
+						moveVector = (Vector3)((Input.touches[0].deltaPosition) / 10.0f);
+					else
+						ResetInput();
+				}
+				else if(Input.touchCount == 0)
+					ResetInput();
+#else
 				if(TouchScript.TouchManager.Instance.PressedPointersCount == 1)
 				{
 					TouchScript.Pointers.Pointer tp = TouchScript.TouchManager.Instance.PressedPointers[0];
@@ -131,6 +143,7 @@ namespace GarageKit
 				}
 				else if(TouchScript.TouchManager.Instance.PressedPointersCount == 0)
 					ResetInput();
+#endif
 			}
 #endif
 			
@@ -182,6 +195,15 @@ namespace GarageKit
 #if UNITY_STANDALONE_WIN
 			else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 			{
+#if !USE_TOUCH_SCRIPT
+				if(Input.touchCount == 2)
+				{
+					if(lastFingerVec == Vector3.zero)
+					{
+						lastFingerVec = (Input.touches[0].position - Input.touches[1].position).normalized;
+						lastFingerPos = (Input.touches[0].position + Input.touches[1].position) / 2.0f;
+					}
+#else
 				if(TouchScript.TouchManager.Instance.PressedPointersCount == 2)
 				{
 					TouchScript.Pointers.Pointer pt0 = TouchScript.TouchManager.Instance.PressedPointers[0];
@@ -192,12 +214,17 @@ namespace GarageKit
 						lastFingerVec = (pt0.Position - pt1.Position).normalized;
 						lastFingerPos = (pt0.Position + pt1.Position) / 2.0f;
 					}
+#endif
 					else
 					{
 						moveVector = Vector3.zero;
 
 						// 回転
+#if !USE_TOUCH_SCRIPT
+						Vector3 now_vec = (Input.touches[0].position - Input.touches[1].position).normalized;
+#else
 						Vector3 now_vec = (pt0.Position - pt1.Position).normalized;
+#endif
 						moveVector.x += Mathf.Rad2Deg * (Mathf.Atan2(lastFingerVec.y, lastFingerVec.x) - Mathf.Atan2(now_vec.y, now_vec.x));
 
 						float rot_x_max = 10.0f;
@@ -206,7 +233,11 @@ namespace GarageKit
 						lastFingerVec = now_vec;
 
 						// 傾き
+#if !USE_TOUCH_SCRIPT
+						Vector3 now_pos = (Input.touches[0].position + Input.touches[1].position) / 2.0f;
+#else
 						Vector3 now_pos = (pt0.Position + pt1.Position) / 2.0f;
+#endif
 						moveVector.y += (-100.0f * ((now_pos - lastFingerPos).y / Screen.height));
 						lastFingerPos = now_pos;
 					}

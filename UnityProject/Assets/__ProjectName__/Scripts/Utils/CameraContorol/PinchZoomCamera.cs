@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿//#define USE_TOUCH_SCRIPT
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -267,7 +268,11 @@ namespace GarageKit
 #if UNITY_STANDALONE_WIN
 			else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 			{
+#if !USE_TOUCH_SCRIPT
+				if(Input.touchCount == 2)
+#else
 				if(TouchScript.TouchManager.Instance.PressedPointersCount == 2)
+#endif
 				{
 					// カメラ操作のロック
 					if(flyThroughCamera != null) flyThroughCamera.LockInput(this.gameObject);
@@ -279,7 +284,15 @@ namespace GarageKit
 						if(component != null)
 							component.enabled = false;
 					}
+#if !USE_TOUCH_SCRIPT
+					// ピンチセンターを設定
+					pinchCenter = (
+						Input.touches[0].position + Input.touches[1].position) / 2.0f;
 					
+					// ピンチ距離を計算
+					currentDistance = Vector3.Distance(
+						Input.touches[0].position, Input.touches[1].position);
+#else
 					// ピンチセンターを設定
 					pinchCenter = (
 						TouchScript.TouchManager.Instance.PressedPointers[0].Position + TouchScript.TouchManager.Instance.PressedPointers[1].Position) / 2.0f;
@@ -288,6 +301,7 @@ namespace GarageKit
 					currentDistance = Vector3.Distance(
 						TouchScript.TouchManager.Instance.PressedPointers[0].Position,
 						TouchScript.TouchManager.Instance.PressedPointers[1].Position);
+#endif
 					
 					if(isFirstTouch)
 					{

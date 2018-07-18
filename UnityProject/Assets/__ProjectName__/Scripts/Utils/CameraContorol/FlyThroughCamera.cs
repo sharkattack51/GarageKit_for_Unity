@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿//#define USE_TOUCH_SCRIPT
+using UnityEngine;
 using System.Collections;
 
 /*
@@ -161,11 +162,17 @@ namespace GarageKit
 #if UNITY_STANDALONE_WIN
 			else if(Application.platform == RuntimePlatform.WindowsPlayer && winTouch)
 			{
+#if !USE_TOUCH_SCRIPT
+				if(Input.touchCount == 1)
+				{	
+					// ドラッグ量を計算
+					Vector3 currentScrTouchPos = Input.touches[0].position;
+#else
 				if(TouchScript.TouchManager.Instance.PressedPointersCount == 1)
 				{	
 					// ドラッグ量を計算
 					Vector3 currentScrTouchPos = TouchScript.TouchManager.Instance.PressedPointers[0].Position;
-					
+#endif
 					if(isFirstTouch)
 					{
 						oldScrTouchPos = currentScrTouchPos;
@@ -182,7 +189,6 @@ namespace GarageKit
 					ResetInput();
 			}
 #endif
-
 			// for Mouse
 			else
 			{

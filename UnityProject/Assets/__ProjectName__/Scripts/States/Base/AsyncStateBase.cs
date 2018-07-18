@@ -32,9 +32,16 @@ namespace GarageKit
 			else
 				OnFaded();
 		}
+
+		protected virtual void StateExitAsync()
+		{
+			
+		}
 			
 		private void OnFaded()
 		{
+			StateExitAsync();
+
 			// フェードOUT完了でState切り替えを実行 同期してStateを切り替え
 			AppMain.Instance.sceneStateManager.SyncState();
 		}

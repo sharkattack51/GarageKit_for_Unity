@@ -8,7 +8,7 @@ namespace GarageKit
 {
 	public class SetAppResolution : MonoBehaviour
 	{
-		//解像度設定タイプ
+		// 解像度設定タイプ
 		public enum APP_RESOLUTION
 		{
 			CURRENT_FULLSCREEN = 0,
@@ -19,13 +19,13 @@ namespace GarageKit
 		
 		public APP_RESOLUTION resolutionType = APP_RESOLUTION.CURRENT_FULLSCREEN;
 		
-		//フルスクリーン設定
+		// フルスクリーン設定
 		public bool fullScreen = true;
 		
-		//ディスプレイ対応解像度指定時のID
+		// ディスプレイ対応解像度指定時のID
 		public int resolutionID = 0;
 		
-		//カスタムタイプ時の指定解像度
+		// カスタムタイプ時の指定解像度
 		public int customW = 0;
 		public int customH = 0;
 
@@ -39,7 +39,7 @@ namespace GarageKit
 		void Start()
 		{
 			if(Application.platform == RuntimePlatform.WindowsPlayer
-			|| Application.platform == RuntimePlatform.OSXPlayer)
+				|| Application.platform == RuntimePlatform.OSXPlayer)
 			{
 				int setWidth = 0;
 				int setHeight = 0;
@@ -71,7 +71,7 @@ namespace GarageKit
 						break;
 				}
 				
-				//解像度を変更
+				// 解像度を変更
 				if(resolutionType == APP_RESOLUTION.CUSTOM_RESOLUTION_POPUPWINDOW)
 					GarageKit.WindowsUtil.SetPopupWindow(setWidth, setHeight);
 				else
@@ -84,7 +84,7 @@ namespace GarageKit
 		void LateUpdate()
 		{
 			if(Application.platform == RuntimePlatform.WindowsPlayer
-			|| Application.platform == RuntimePlatform.OSXPlayer)
+				|| Application.platform == RuntimePlatform.OSXPlayer)
 			{
 				if(!fullScreen && useFixAspect && !changing)
 				{
