@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 /*
- * Unity5の解像度設定の不具合を回避する。
+ * StandalonePlayerの解像度設定の不具合を回避する。
  * レジストリから該当keyを削除
  */
 
@@ -12,24 +16,35 @@ using Microsoft.Win32;
 
 namespace GarageKit
 {
-	public class Unity5ResolutionHelper : MonoBehaviour
+	[ExecuteInEditMode]
+	public class StandalonePlayerResolutionHelper : MonoBehaviour
 	{
 		/*
-		 * ビルド設定のPlayerSettingsよりCompanyNameを入力してください
-		 */
+		* ビルド設定のPlayerSettingsよりCompanyNameを入力してください
+		*/
 		public string playerSettingsCompanyName = "";
 		
 		/*
-		 *　ビルド設定のPlayerSettingsよりProductNameを入力してください
-		 */
+		*　ビルド設定のPlayerSettingsよりProductNameを入力してください
+		*/
 		public string playerSettingsProductName = "";
+		
 		
 		void Start()
 		{
-			
+#if UNITY_EDITOR
+			if(Application.platform == RuntimePlatform.WindowsEditor)
+			{
+				if(playerSettingsCompanyName == "" || playerSettingsCompanyName != PlayerSettings.companyName)
+					playerSettingsCompanyName = PlayerSettings.companyName;
+
+				if(playerSettingsProductName == "" || playerSettingsProductName != PlayerSettings.productName)
+					playerSettingsProductName = PlayerSettings.productName;
+			}
+#endif
 		}
 		
-#if UNITY_STANDALONE_WIN
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
 		void OnApplicationQuit()
 		{
 			RegistryKey key = Registry.CurrentUser;

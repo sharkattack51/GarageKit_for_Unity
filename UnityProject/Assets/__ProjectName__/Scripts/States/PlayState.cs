@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using GarageKit;
 
 public class PlayState : AsyncStateBase
 {
-	public TextMesh sceneText;
-	public TextMesh messageText;
-	public TextMesh timerText;
+	public Text sceneText;
+	public Text timerText;
+	public Text messageText;
 	
-
+	
 	void Start()
 	{
 		// タイマー設定

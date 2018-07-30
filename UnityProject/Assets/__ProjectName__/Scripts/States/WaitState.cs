@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using GarageKit;
 
 public class WaitState : AsyncStateBase
 {
-	public TextMesh sceneText;
-	public TextMesh messageText;
-	public TextMesh timerText;
+	public Text sceneText;
+	public Text timerText;
+	public Text messageText;
 	
 	
 	public override void StateStart(object context)
@@ -14,8 +15,8 @@ public class WaitState : AsyncStateBase
 		base.StateStart(context);
 		
 		sceneText.text = "this is [Wait] scene.";
-		messageText.text = "push [Space] : next scene";
 		timerText.text = "";
+		messageText.text = "push [Space] : next scene";
 	}
 	
 	public override void StateUpdate()
