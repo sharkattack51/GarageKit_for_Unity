@@ -44,8 +44,9 @@ http://itween.pixelplacement.com/index.php
 - JPGEncoder  
 https://code.google.com/p/unity-jpeg-encoder/source/browse/tags/Version1/UnityProject/Assets/JPGEncoder.cs?spec=svn21&r=21
 
-- TouchScript  
-https://www.assetstore.unity3d.com/jp/#!/content/7394
+~~- TouchScript
+https://www.assetstore.unity3d.com/jp/#!/content/7394~~
+(UnityEngine.Input.Touch works in Windows !!)
 
 - MiniJson  
 https://gist.github.com/darktable/1411710
@@ -69,7 +70,7 @@ https://gist.github.com/darktable/1411710
 - ExternalProcess.cs
 - SetAntiAliasing.cs
 - SetAppResoution.cs
-- Unity4ResolutionHelper.cs
+- StandaloneResolutionHelper.cs
 
 /Scripts/Utils/Button
 
@@ -94,6 +95,7 @@ https://gist.github.com/darktable/1411710
 /Scripts/Utils/Debug
 
 - CameraGizmoDrawer.cs
+- LookAtGizmoDrawer.cs
 - EditorHide.cs
 - FrameRateUtil.cs
 - GizmoDrawer.cs
@@ -130,11 +132,8 @@ https://gist.github.com/darktable/1411710
 - Fader.cs
 - FpsCounter.cs
 - LineObject.cs
-- MeterObject.cs
-- NineGridMesh.cs
 - ScreenAnchor.cs
 - ScreenPositionFollower.cs
-- ScreenSaverObject.cs
 - TransformFollower.cs
 - WebCamPlateObject.cs
 
