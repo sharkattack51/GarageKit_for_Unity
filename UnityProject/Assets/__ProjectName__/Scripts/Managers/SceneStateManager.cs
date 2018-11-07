@@ -16,7 +16,8 @@ namespace GarageKit
 			STARTUP = 0,
 			WAIT,
 			PLAY,
-			RESULT
+			RESULT,
+			TIMELINED_EXAMPLE // for example scene
 		}
 		
 		private Dictionary<SceneState, Type> stateTable = new Dictionary<SceneState, Type>()
@@ -24,8 +25,12 @@ namespace GarageKit
 			{ SceneState.STARTUP, typeof(StartupState) },
 			{ SceneState.WAIT, typeof(WaitState) },
 			{ SceneState.PLAY, typeof(PlayState) },
-			{ SceneState.RESULT, typeof(ResultState) }
+			{ SceneState.RESULT, typeof(ResultState) },
+			{ SceneState.TIMELINED_EXAMPLE, typeof(TimelinedExampleState) } // for example scene
 		};
+
+		// initial state
+		public string initStateName = "STARTUP";
 
 		private SceneState currentState;
 		public SceneState CurrentState { get{ return currentState; } }
@@ -67,8 +72,9 @@ namespace GarageKit
 		// アプリケーションをスタートする
 		public void InitState()
 		{
-			// スタートアップシーン
-			ChangeState(SceneState.STARTUP);
+			// 初期State
+			SceneState state = (SceneState)Enum.Parse(typeof(SceneState), initStateName);
+			ChangeState(state);
 		}
 
 		// Stateを変更する

@@ -4,9 +4,16 @@ using System.Collections.Generic;
 
 namespace GarageKit
 {
-	public class AsyncStateBase : MonoBehaviour, IState
+	public class AsyncStateBase : MonoBehaviour, IState, IAsyncState
 	{
-		private float fadeTime = 1.0f;
+		protected Fader[] faders;
+		protected float fadeTime = 1.0f;
+
+
+		private void Awake()
+		{
+			faders = FindObjectsOfType<Fader>();
+		}
 		
 		
 		public virtual void StateStart(object context)
@@ -33,7 +40,7 @@ namespace GarageKit
 				OnFaded();
 		}
 
-		protected virtual void StateExitAsync()
+		public virtual void StateExitAsync()
 		{
 			
 		}

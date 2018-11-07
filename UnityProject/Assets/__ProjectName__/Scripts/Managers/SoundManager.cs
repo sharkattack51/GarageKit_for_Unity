@@ -146,5 +146,56 @@ namespace GarageKit
 			if(audioSource_BGM.isPlaying)
 				audioSource_BGM.Stop();
 		}
+
+#region Fade
+
+		public void FadeInAllSound(float time = 1.0f)
+		{
+			FadeBGM(0.0f, volBGM, time);
+			FadeSE(0.0f, volSE, time);
+		}
+
+		public void FadeOutAllSound(float time = 1.0f)
+		{
+			FadeBGM(volBGM, 0.0f, time);
+			FadeSE(volSE, 0.0f, time);
+
+			Invoke("StopBGM", time);
+			Invoke("StopSE", time);
+		}
+
+		public void FadeBGM(float fromVol, float toVol, float time)
+		{
+			iTween.ValueTo(this.gameObject,
+				iTween.Hash(
+					"from", fromVol,
+					"to", toVol,
+					"time", time,
+					"onupdate", "volume_bgm_updated",
+					"onupdatetarget", this.gameObject));
+		}
+
+		private void volume_bgm_updated(float newValue)
+		{
+			audioSource_BGM.volume = newValue;
+		}
+
+		public void FadeSE(float fromVol, float toVol, float time)
+		{
+			iTween.ValueTo(this.gameObject,
+				iTween.Hash(
+					"from", fromVol,
+					"to", toVol,
+					"time", time,
+					"onupdate", "volume_se_updated",
+					"onupdatetarget", this.gameObject));
+		}
+
+		private void volume_se_updated(float newValue)
+		{
+			audioSource_SE.volume = newValue;
+		}
+		
+#endregion
 	}
 }

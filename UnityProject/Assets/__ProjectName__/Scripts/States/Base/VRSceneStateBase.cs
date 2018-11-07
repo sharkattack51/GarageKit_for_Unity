@@ -1,0 +1,134 @@
+﻿using UnityEngine;
+using UnityEngine.VR;
+using System.Collections;
+using System.Collections.Generic;
+using System;
+
+namespace GarageKit
+{
+	public class VRSceneStateBase : TimelinedSceneStateBase, IVRSceneState
+	{
+		[Header("VRSceneStateBase")]
+		public GameObject viewReferenceObj;
+		public GameObject viewGuideTarget;
+		public StageControlledObject[] enableStageObjs;
+
+		public Action OnAppFinish;
+		private static bool isNotifiedForQuit = false;
+		private static bool fromOnDestory = false;
+
+
+		// アプリケーションの終了処理
+		public void FinishApplication()
+		{
+			if(isNotifiedForQuit)
+				return;
+			
+			isNotifiedForQuit = true;
+
+			Debug.Log("application finish process");
+
+			if(!fromOnDestory)
+			{
+				StartCoroutine(LazyFinishApplicationCoroutine());
+			}
+			else
+			{
+				if(OnAppFinish != null)
+					OnAppFinish();
+				
+				Debug.Log("quit");
+			}
+		}
+
+		private IEnumerator LazyFinishApplicationCoroutine()
+		{
+			while(true)
+			{
+				yield return new WaitForSeconds(2.0f);
+
+				if(OnAppFinish != null)
+					OnAppFinish();
+
+				Application.Quit();
+				Debug.Log("quit");
+				break;
+			}
+		}
+
+		void OnDestroy()
+		{
+			fromOnDestory = true;
+
+			// 通常動作ではここからは呼ばれない
+			if(!isNotifiedForQuit)
+				FinishApplication();
+		}
+
+
+		public override void StateStart(object context)
+		{
+			base.StateStart(context);
+
+			// 表示オブジェクト切替
+			SetStagingObjects();
+
+			// 音声フェードIn
+			if(AppMain.Instance.soundManager != null)
+				AppMain.Instance.soundManager.FadeInAllSound(this.fadeTime);
+		}
+
+		public override void StateUpdate()
+		{
+			base.StateUpdate();
+		}
+
+		public override void StateExit()
+		{
+			base.StateExit();
+
+			// 音声フェードOut
+			if(AppMain.Instance.soundManager != null)
+				AppMain.Instance.soundManager.FadeOutAllSound(this.fadeTime);
+		}
+		
+
+		public virtual void ToNextState()
+		{
+
+		}
+
+		public virtual void ToPrevState()
+		{
+
+		}
+
+		public virtual void ResetCurrentState()
+		{
+			
+		}
+
+		// 表示オブジェクト切替
+		public void SetStagingObjects()
+		{
+			StageControlledObject.AllOff();
+			foreach(StageControlledObject ctrObj in enableStageObjs)
+			{
+				if(ctrObj != null)
+					ctrObj.On();
+			}
+		}
+
+		// 視線方向のEditor表示
+		protected virtual void OnDrawGizmos()
+		{
+			if(viewReferenceObj != null && viewGuideTarget != null)
+			{
+				Color tempColor = Gizmos.color;
+				Gizmos.color = Color.green;
+				Gizmos.DrawLine(viewReferenceObj.transform.position, viewGuideTarget.transform.position);
+				Gizmos.color = tempColor;
+			}
+		}
+	}
+}

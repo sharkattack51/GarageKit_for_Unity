@@ -20,7 +20,10 @@ public class UILineRenderer : MonoBehaviour
 	{
 		var canvasRenderer = GetComponent<CanvasRenderer>();
 
-		List<UIVertex> vertices = new List<UIVertex>();
+		List<Vector3> vertices = new List<Vector3>();
+		List<Vector2> uvs = new List<Vector2>();
+		List<Color> colors = new List<Color>();
+
 
 		var vertex = new UIVertex();
 		vertex.color = color;
@@ -43,25 +46,29 @@ public class UILineRenderer : MonoBehaviour
 			var normal1 = CalcNormal(point0, point1, point2);
 			var normal2 = CalcNormal(point1, point2, point3);
 
-			vertex.position = point1 - normal1 * width;
-			vertex.uv0 = new Vector2(0, 0);
-			vertices.Add(vertex);
+			vertices.Add(point1 - normal1 * width);
+			uvs.Add(new Vector2(0, 0));
+			colors.Add(color);
 
-			vertex.position = point2 - normal2 * width;
-			vertex.uv0 = new Vector2(1, 0);
-			vertices.Add(vertex);
+			vertices.Add(point2 - normal2 * width);
+			uvs.Add(new Vector2(1, 0));
+			colors.Add(color);
 
-			vertex.position = point2 + normal2 * width;
-			vertex.uv0 = new Vector2(1, 1);
-			vertices.Add(vertex);
+			vertices.Add(point2 + normal2 * width);
+			uvs.Add(new Vector2(1, 1));
+			colors.Add(color);
 
-			vertex.position = point1 + normal1 * width;
-			vertex.uv0 = new Vector2(0, 1);
-			vertices.Add(vertex);
+			vertices.Add(point1 + normal1 * width);
+			uvs.Add(new Vector2(0, 1));
+			colors.Add(color);
 		}
 
 		// 頂点を設定
-		canvasRenderer.SetVertices(vertices);
+		Mesh mesh = new Mesh();
+		mesh.SetVertices(vertices);
+		mesh.SetUVs(0, uvs);
+		mesh.SetColors(colors);
+		canvasRenderer.SetMesh(mesh);
 		canvasRenderer.SetMaterial(material, Texture2D.whiteTexture);
 	}
 
