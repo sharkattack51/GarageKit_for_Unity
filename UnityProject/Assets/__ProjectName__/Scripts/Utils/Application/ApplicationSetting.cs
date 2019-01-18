@@ -52,18 +52,19 @@ namespace GarageKit
 				dataDict = new Dictionary<string, string>();
 				
 				//xml読み込み
+				string path = "";
 				if(xmlFromStreamingAssets)
 				{
 					if(File.Exists(Path.Combine(Application.streamingAssetsPath, xmlUrl)))
-						xmlUrl = Path.Combine(Application.streamingAssetsPath, xmlUrl);
+						path = Path.Combine(Application.streamingAssetsPath, xmlUrl);
 					else
-						xmlUrl = Path.GetFullPath("./") + xmlUrl;
+						path = Path.GetFullPath("./") + xmlUrl;
 				}
 				else
-					xmlUrl = Path.GetFullPath("./") + xmlUrl;
+					path = Path.GetFullPath("./") + xmlUrl;
 
-				xml.Load(xmlUrl);
-				xmlUtf8Str = File.ReadAllText(xmlUrl, Encoding.UTF8);
+				xml.Load(path);
+				xmlUtf8Str = File.ReadAllText(path, Encoding.UTF8);
 				
 				//xmlをパース
 				ParseXML();
