@@ -13,7 +13,6 @@ Log/*.log
 .vscode
 
 /Assets/Require
-/Assets/__ProjectName__/Editor/EditorEnhancements
 
 # for Mac
 .DS_Store

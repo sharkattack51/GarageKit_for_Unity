@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System;
 
@@ -8,32 +10,25 @@ using System;
  */
 namespace GarageKit
 {
+	[Serializable]
+	public class SoundClipData
+	{
+		public string name;
+		public AudioClip clip;
+	}
+
+	[Serializable]
+	public class SoundData
+	{
+		public bool use = true;
+		public float volume = 1.0f;
+		public SoundClipData[] clips;
+	}
+
 	public class SoundManager : ManagerBase
 	{
-		// SE選択用
-		public enum SE
-		{
-			CLICK = 0,
-			CANCEL
-		}
-		
-		// BGM選択用
-		public enum BGM
-		{
-			WAIT = 0,
-			PLAY
-		}
-
-		public bool useBGM = true;
-		public bool useSE = true;
-		
-		public float volBGM = 1.0f;
-		public float volSE = 1.0f;
-		
-		public AudioClip BGM_Wait;
-		public AudioClip BGM_Play;
-		public AudioClip SE_Click;
-		public AudioClip SE_Cancel;
+		public SoundData sound_BGM;
+		public SoundData sound_SE;
 		
 		private AudioSource audioSource_BGM;
 		private AudioSource audioSource_SE;
@@ -49,10 +44,10 @@ namespace GarageKit
 			base.Start();
 
 			// 設定値を取得
-			useBGM = ApplicationSetting.Instance.GetBool("UseBGM");
-			useSE = ApplicationSetting.Instance.GetBool("UseSE");
-			volBGM = ApplicationSetting.Instance.GetFloat("VolBGM");
-			volSE = ApplicationSetting.Instance.GetFloat("VolSE");
+			sound_BGM.use = ApplicationSetting.Instance.GetBool("UseBGM");
+			sound_SE.use = ApplicationSetting.Instance.GetBool("UseSE");
+			sound_BGM.volume = ApplicationSetting.Instance.GetFloat("VolBGM");
+			sound_SE.volume = ApplicationSetting.Instance.GetFloat("VolSE");
 
 			// AudioSourceを設定
 			audioSource_SE = this.gameObject.AddComponent<AudioSource>();
@@ -66,9 +61,9 @@ namespace GarageKit
 		
 
 		// SEの再生
-		public void PlaySE(SE type, bool overlap = false)
+		public void PlaySE(string clipName, bool overlap = false)
 		{
-			if(useSE)
+			if(sound_SE.use)
 			{
 				if(!overlap)
 				{
@@ -76,22 +71,11 @@ namespace GarageKit
 						audioSource_SE.Stop();
 				}
 				
-				audioSource_SE.volume = volSE;
+				audioSource_SE.volume = sound_SE.volume;
 				
-				switch(type)
-				{
-					case SE.CLICK:
-						if(SE_Click != null)
-							audioSource_SE.PlayOneShot(SE_Click);
-						break;
-					
-					case SE.CANCEL:
-						if(SE_Cancel != null)
-							audioSource_SE.PlayOneShot(SE_Cancel);
-						break;
-					
-					default: break;
-				}
+				SoundClipData clipData = sound_SE.clips.First(c => c.name == clipName);
+				if(clipData != null)
+					audioSource_SE.PlayOneShot(clipData.clip);
 			}
 		}
 
@@ -103,9 +87,9 @@ namespace GarageKit
 		}
 
 		// BGMの再生
-		public void PlayBGM(BGM type, bool loop = true, bool overlap = false)
+		public void PlayBGM(string clipName, bool loop = true, bool overlap = false)
 		{
-			if(useBGM)
+			if(sound_BGM.use)
 			{
 				if(!overlap)
 				{
@@ -113,29 +97,14 @@ namespace GarageKit
 						audioSource_BGM.Stop();
 				}
 				
-				audioSource_BGM.volume = volBGM;
-				
-				switch(type)
+				audioSource_BGM.volume = sound_BGM.volume;
+
+				SoundClipData clipData = sound_BGM.clips.First(c => c.name == clipName);
+				if(clipData != null)
 				{
-					case BGM.WAIT:
-						if(BGM_Wait != null)
-						{
-							audioSource_BGM.clip = BGM_Wait;
-							audioSource_BGM.loop = loop;
-							audioSource_BGM.Play();
-						}
-						break;
-					
-					case BGM.PLAY:
-						if(BGM_Play != null)
-						{
-							audioSource_BGM.clip = BGM_Play;
-							audioSource_BGM.loop = loop;
-							audioSource_BGM.Play();
-						}
-						break;
-					
-					default: break;
+					audioSource_BGM.clip = clipData.clip;
+					audioSource_BGM.loop = loop;
+					audioSource_BGM.Play();
 				}
 			}
 		}
@@ -151,14 +120,14 @@ namespace GarageKit
 
 		public void FadeInAllSound(float time = 1.0f)
 		{
-			FadeBGM(0.0f, volBGM, time);
-			FadeSE(0.0f, volSE, time);
+			FadeBGM(0.0f, sound_BGM.volume, time);
+			FadeSE(0.0f, sound_SE.volume, time);
 		}
 
 		public void FadeOutAllSound(float time = 1.0f)
 		{
-			FadeBGM(volBGM, 0.0f, time);
-			FadeSE(volSE, 0.0f, time);
+			FadeBGM(sound_BGM.volume, 0.0f, time);
+			FadeSE(sound_SE.volume, 0.0f, time);
 
 			Invoke("StopBGM", time);
 			Invoke("StopSE", time);
