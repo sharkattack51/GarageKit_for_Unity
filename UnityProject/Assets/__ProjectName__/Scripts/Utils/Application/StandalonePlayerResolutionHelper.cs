@@ -11,6 +11,15 @@ using UnityEditor;
  */
 
 #if UNITY_STANDALONE_WIN
+/*
+ * Unity2018 or Newer
+ * 1) Download nuget package
+ *     https://www.nuget.org/packages/Microsoft.Win32.Registry/4.5.0
+ * 2) Rename .zip and unzip
+ * 3) Copy /lib/net461/Microsoft.Win32.Registry.dll to Plugins
+ * 4) Player settings ScriptingRuntimeVersion to [.NET 4.x Equivalent]
+ * 5) Player settings ApiCompatibilityLevel to [.NET 4.x]
+ */
 using Microsoft.Win32;
 #endif
 
@@ -40,6 +49,14 @@ namespace GarageKit
 
 				if(playerSettingsProductName == "" || playerSettingsProductName != PlayerSettings.productName)
 					playerSettingsProductName = PlayerSettings.productName;
+
+#if UNITY_2018_3_OR_NEWER
+				if(PlayerSettings.scriptingRuntimeVersion != ScriptingRuntimeVersion.Latest)
+					Debug.LogError("StandalonePlayerResolutionHelper :: PlayerSettings.scriptingRuntimeVersion is Lagacy");
+
+				if(PlayerSettings.GetApiCompatibilityLevel(BuildTargetGroup.Standalone) != ApiCompatibilityLevel.NET_4_6)
+					Debug.LogError("StandalonePlayerResolutionHelper :: PlayerSettings.ApiCompatibilityLevel is Low");
+#endif
 			}
 #endif
 		}
@@ -48,13 +65,24 @@ namespace GarageKit
 		void OnApplicationQuit()
 		{
 			RegistryKey key = Registry.CurrentUser;
-			key = key.OpenSubKey("Software" + @"\" + playerSettingsCompanyName + @"\" + playerSettingsProductName, true);
-			key.DeleteValue("Screenmanager Is Fullscreen mode_h3981298716", false);
-			key.DeleteValue("Screenmanager Resolution Height_h2627697771", false);
-			key.DeleteValue("Screenmanager Resolution Width_h182942802", false);
-			key.DeleteValue("UnityGraphicsQuality_h1669003810", false);
-			key.DeleteValue("UnitySelectMonitor_h17969598", false);
-			key.Close();
+			if(key == null)
+				Debig.LogError("StandalonePlayerResolutionHelper :: Registry.CurrentUser is Null");
+			else
+			{
+				string subkey = "Software" + @"\" + playerSettingsCompanyName + @"\" + playerSettingsProductName;
+				key = key.OpenSubKey(subkey, true);
+				if(key == null)
+					Debig.LogError("StandalonePlayerResolutionHelper :: don't open sub key [" + subkey + "]");
+				else
+				{
+					key.DeleteValue("Screenmanager Is Fullscreen mode_h3981298716", false);
+					key.DeleteValue("Screenmanager Resolution Height_h2627697771", false);
+					key.DeleteValue("Screenmanager Resolution Width_h182942802", false);
+					key.DeleteValue("UnityGraphicsQuality_h1669003810", false);
+					key.DeleteValue("UnitySelectMonitor_h17969598", false);
+					key.Close();
+				}
+			}
 		}
 #endif
 	}
