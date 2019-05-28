@@ -509,6 +509,9 @@ namespace GarageKit
 		private static extern IntPtr FindWindowByCaption(IntPtr zeroOnly, string lpWindowName);
 
 		[DllImport("user32.dll")]
+		private static extern IntPtr GetActiveWindow();
+
+		[DllImport("user32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool SetForegroundWindow(IntPtr hwnd);
 
@@ -666,6 +669,12 @@ namespace GarageKit
 		public static void MinimizeWindow(string className, string windowName)
 		{
 			IntPtr hWnd = FindWindow(className, windowName);
+			ShowWindow(hWnd, SW_MINIMIZE);
+		}
+
+		public static void MinimizeWindow()
+		{
+			IntPtr hWnd = GetActiveWindow();
 			ShowWindow(hWnd, SW_MINIMIZE);
 		}
 	}

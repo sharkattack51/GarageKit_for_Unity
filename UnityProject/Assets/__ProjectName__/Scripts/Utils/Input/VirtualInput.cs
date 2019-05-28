@@ -91,7 +91,7 @@ namespace GarageKit
 		private const int VK_L_CONTROL = 0xA2;
 		private const int VK_R_CONTROL = 0xA3;
 		private const int VK_BACKSPACE = 0x08;
-		private const int 	VK_TAB = 0x09;
+		private const int VK_TAB = 0x09;
 		private const int VK_RETURN = 0x0D;
 		private const int VK_ALT = 0x12;
 		private const int VK_ESCAPE = 0x1B;
@@ -194,6 +194,51 @@ namespace GarageKit
 			SendInput(num, ref inp[0], Marshal.SizeOf(inp[0]));
 
 			Debug.Log("VirtualInput :: KeyDown [" + code + "]");
+		}
+
+		// キーを押す
+		public static void KeyDown(int code1, int code2)
+		{
+			// キーボード操作実行用のデータ
+			const int num = 4;
+			INPUT[] inp = new INPUT[num];
+			
+			// キー1を押す
+			inp[0].type = INPUT_KEYBOARD;
+			inp[0].ki.wVk = (short)code1;
+			inp[0].ki.wScan = (short)MapVirtualKey(inp[0].ki.wVk, 0);
+			inp[0].ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYDOWN;
+			inp[0].ki.dwExtraInfo = 0;
+			inp[0].ki.time = 0;
+
+			// キー2を押す
+			inp[1].type = INPUT_KEYBOARD;
+			inp[1].ki.wVk = (short)code2;
+			inp[1].ki.wScan = (short)MapVirtualKey(inp[1].ki.wVk, 0);
+			inp[1].ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYDOWN;
+			inp[1].ki.dwExtraInfo = 0;
+			inp[1].ki.time = 0;
+			
+			//  キー2を離す
+			inp[2].type = INPUT_KEYBOARD;
+			inp[2].ki.wVk = (short)code2;
+			inp[2].ki.wScan = (short)MapVirtualKey(inp[2].ki.wVk, 0);
+			inp[2].ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP;
+			inp[2].ki.dwExtraInfo = 0;
+			inp[2].ki.time = 0;
+			
+			//  キー1を離す
+			inp[3].type = INPUT_KEYBOARD;
+			inp[3].ki.wVk = (short)code1;
+			inp[3].ki.wScan = (short)MapVirtualKey(inp[3].ki.wVk, 0);
+			inp[3].ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP;
+			inp[3].ki.dwExtraInfo = 0;
+			inp[3].ki.time = 0;
+			
+			// キーボード操作実行
+			SendInput(num, ref inp[0], Marshal.SizeOf(inp[0]));
+
+			Debug.Log("VirtualInput :: KeyDown [" + code1 + "," + code2 + "]");
 		}
 
 #endregion
