@@ -66,16 +66,21 @@ namespace GarageKit
 		{
 			RegistryKey key = Registry.CurrentUser;
 			if(key == null)
-				Debig.LogError("StandalonePlayerResolutionHelper :: Registry.CurrentUser is Null");
+				Debug.LogError("StandalonePlayerResolutionHelper :: Registry.CurrentUser is Null");
 			else
 			{
 				string subkey = "Software" + @"\" + playerSettingsCompanyName + @"\" + playerSettingsProductName;
 				key = key.OpenSubKey(subkey, true);
 				if(key == null)
-					Debig.LogError("StandalonePlayerResolutionHelper :: don't open sub key [" + subkey + "]");
+					Debug.LogError("StandalonePlayerResolutionHelper :: don't open sub key [" + subkey + "]");
 				else
 				{
+#if UNITY_2018_3_OR_NEWER
+					key.DeleteValue("Screenmanager Fullscreen mode_h3630240806", false);
+					key.DeleteValue("Screenmanager Resolution Use Native_h1405027254", false);
+#else
 					key.DeleteValue("Screenmanager Is Fullscreen mode_h3981298716", false);
+#endif
 					key.DeleteValue("Screenmanager Resolution Height_h2627697771", false);
 					key.DeleteValue("Screenmanager Resolution Width_h182942802", false);
 					key.DeleteValue("UnityGraphicsQuality_h1669003810", false);
