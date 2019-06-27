@@ -9,7 +9,7 @@ namespace GarageKit
 	public class TimelinedSceneStateBase : AsyncStateBase, ITimelinedSceneState
 	{
 		[Header("TimelinedSceneStateBase")]
-		public int durationSec = 30;
+		public int durationSec = -1;
 
 		// イベントAction
 		protected List<TimelineEventAction> actionList = new List<TimelineEventAction>();
@@ -39,8 +39,11 @@ namespace GarageKit
 			actionList = new List<TimelineEventAction>();
 
 			// タイマー設定
-			AppMain.Instance.timeManager.mainTimer.OnCompleteTimer += OnStateTimer;
-			AppMain.Instance.timeManager.mainTimer.StartTimer(durationSec);
+			if(durationSec > 0)
+			{
+				AppMain.Instance.timeManager.mainTimer.OnCompleteTimer += OnStateTimer;
+				AppMain.Instance.timeManager.mainTimer.StartTimer(durationSec);
+			}
 		}
 
 		public override void StateUpdate()
