@@ -15,14 +15,19 @@ namespace GarageKit
 		public bool isZup = false;
 		public bool asGroup = true;
 		
-		void Start()
+		IEnumerator Start()
 		{
+			yield return new WaitForEndOfFrame();
+
 			if(target == null)
-				target = Camera.main.gameObject.transform;
+				target = Camera.main.transform;
 		}
 		
 		void Update()
 		{
+			if(target == null)
+				return;
+			
 			if(asGroup)
 			{
 				for(int i = 0; i < this.gameObject.transform.childCount; i++)
