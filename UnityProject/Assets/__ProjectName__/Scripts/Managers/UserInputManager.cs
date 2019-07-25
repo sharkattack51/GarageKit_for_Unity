@@ -3,11 +3,11 @@ using System.Collections;
 using System;
 
 /*
- * キーボード入力を管理する
+ * ユーザー入力を管理する
  */
 namespace GarageKit
 {
-	public class KeyInputManager : ManagerBase
+	public class UserInputManager : ManagerBase
 	{
 		protected override void Awake()
 		{

@@ -16,7 +16,7 @@ namespace GarageKit
 		public SceneStateManager sceneStateManager;
 		public TimeManager timeManager;
 		public SoundManager soundManager;
-		public KeyInputManager keyInputManager;
+		public UserInputManager userInputManager;
 		public DebugManager debugManager;
 
 

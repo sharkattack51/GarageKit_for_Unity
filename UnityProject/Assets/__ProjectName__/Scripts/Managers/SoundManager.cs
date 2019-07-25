@@ -74,7 +74,7 @@ namespace GarageKit
 		{
 			if(sound_BGM.use)
 			{
-				SoundClipData clipData = sound_BGM.clips.First(c => c.name == clipName);
+				SoundClipData clipData = sound_BGM.clips.FirstOrDefault(c => c.name == clipName);
 				if(clipData == null)
 					return;
 
@@ -103,7 +103,7 @@ namespace GarageKit
 		{
 			if(sound_SE.use)
 			{
-				SoundClipData clipData = sound_SE.clips.First(c => c.name == clipName);
+				SoundClipData clipData = sound_SE.clips.FirstOrDefault(c => c.name == clipName);
 				if(clipData == null)
 					return;
 
@@ -122,7 +122,7 @@ namespace GarageKit
 		{
 			if(sound_SE3D.use)
 			{
-				SoundSourceData sourceData = sound_SE3D.sources.First(c => c.name == sourceName);
+				SoundSourceData sourceData = sound_SE3D.sources.FirstOrDefault(c => c.name == sourceName);
 				if(sourceData == null)
 					return;
 				
