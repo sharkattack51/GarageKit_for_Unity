@@ -28,7 +28,7 @@ namespace GarageKit
 		
 		protected virtual void Update()
 		{
-			TimelinedSceneStateBase stateObj = AppMain.Instance.sceneStateManager.CurrentStateObj as TimelinedSceneStateBase;
+			TimelinedSceneStateBase stateObj = AppMain.Instance.sceneStateManager.CurrentState.StateObj as TimelinedSceneStateBase;
 			if(stateObj == null || stateObj.IsPaused)
 				return;
 

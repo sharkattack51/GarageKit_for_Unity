@@ -1,9 +1,9 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 /*
- * ユーザー入力を管理する
+ * Manage all user input
  */
 namespace GarageKit
 {
@@ -29,11 +29,8 @@ namespace GarageKit
 				Debug.Log("press key ESC : Application Quit");
 				DebugConsole.Log("press key ESC : Application Quit");
 				
-				if(Application.platform != RuntimePlatform.WindowsEditor)
-				{				
-					// アプリケーション終了
+				if(Application.platform != RuntimePlatform.WindowsEditor)			
 					Application.Quit();
-				}
 			}
 			
 			// D
@@ -42,7 +39,6 @@ namespace GarageKit
 				Debug.Log("press key D : Visible Debug View");
 				DebugConsole.Log("press key D : Visible Debug View");
 				
-				// デバッグ表示のトグル
 				DebugManager debugManager = AppMain.Instance.debugManager;
 				debugManager.IsDebug = !debugManager.IsDebug;
 				debugManager.ToggleShowDebugView();
@@ -54,7 +50,6 @@ namespace GarageKit
 				Debug.Log("press key C : Clear DebugConsole");
 				DebugConsole.Log("press key C : Clear DebugConsole");
 				
-				// デバッグコンソールのクリア
 				DebugConsole.Clear();
 			}
 			
@@ -64,7 +59,6 @@ namespace GarageKit
 				Debug.Log("press key G : System GC Collect");
 				DebugConsole.Log("press key G : System GC Collect");
 				
-				// 強制CG
 				System.GC.Collect();
 			}
 			
@@ -74,27 +68,26 @@ namespace GarageKit
 				Debug.Log("press key R : Reload ApplicationSetting");
 				DebugConsole.Log("press key R : Reload ApplicationSetting");
 				
-				// 設定ファイルの再読み込み
+				// Reload settings
 				ApplicationSetting.Instance.LoadXML();
 			}
 			
 			// Space
 			if(Input.GetKeyDown(KeyCode.Space))
 			{
-				Debug.Log("press key Space : Change Stage");
-				DebugConsole.Log("press key Space : Change Stage");
+				Debug.Log("press key Space : Change State");
+				DebugConsole.Log("press key Space : Change State");
 				
-				// ステージの変更
 				SceneStateManager sceneStateManager = AppMain.Instance.sceneStateManager;
 				TimeManager timeManager = AppMain.Instance.timeManager;
-				if(sceneStateManager.CurrentState == SceneStateManager.SceneState.STARTUP)
-					sceneStateManager.ChangeState(SceneStateManager.SceneState.WAIT);
-				else if(sceneStateManager.CurrentState == SceneStateManager.SceneState.WAIT)
-					sceneStateManager.ChangeAsyncState(SceneStateManager.SceneState.PLAY);
-				else if(sceneStateManager.CurrentState == SceneStateManager.SceneState.PLAY)
+				if(sceneStateManager.CurrentState.StateName == "STARTUP")
+					sceneStateManager.ChangeState("WAIT");
+				else if(sceneStateManager.CurrentState.StateName == "WAIT")
+					sceneStateManager.ChangeAsyncState("PLAY");
+				else if(sceneStateManager.CurrentState.StateName == "PLAY")
 					timeManager.mainTimer.StartTimer(ApplicationSetting.Instance.GetInt("GameTime"));
-				else if(sceneStateManager.CurrentState == SceneStateManager.SceneState.RESULT)
-					sceneStateManager.ChangeAsyncState(SceneStateManager.SceneState.WAIT);
+				else if(sceneStateManager.CurrentState.StateName == "RESULT")
+					sceneStateManager.ChangeAsyncState("WAIT");
 			}
 		}
 		

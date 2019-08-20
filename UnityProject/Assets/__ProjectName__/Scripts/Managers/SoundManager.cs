@@ -5,7 +5,7 @@ using System;
 using UnityEngine;
 
 /*
- * 音声再生を管理する
+ * Manage all sound controll in scene
  */
 namespace GarageKit
 {

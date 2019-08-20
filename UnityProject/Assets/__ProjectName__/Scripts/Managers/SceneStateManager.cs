@@ -1,42 +1,33 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine;
 
 /*
- * シーンStateを管理する
+ * Manage scene state transitions
  */
 namespace GarageKit
 {
+	[Serializable]
+	public class SceneStateData
+	{
+		[SerializeField] private string stateName = "";
+		public string StateName { get{ return stateName; } }
+
+		[SerializeField] private IStateBehaviour stateObj = null;
+		public IState StateObj { get{ return stateObj; } }
+
+		[SerializeField] private bool asInitial = false;
+		public bool AsInitial { get{ return asInitial; } }
+	}
+
 	public class SceneStateManager : ManagerBase
 	{
-		// State管理用
-		public enum SceneState
-		{
-			STARTUP = 0,
-			WAIT,
-			PLAY,
-			RESULT,
-			TIMELINED_EXAMPLE // for example scene
-		}
-		
-		private Dictionary<SceneState, Type> stateTable = new Dictionary<SceneState, Type>()
-		{
-			{ SceneState.STARTUP, typeof(StartupState) },
-			{ SceneState.WAIT, typeof(WaitState) },
-			{ SceneState.PLAY, typeof(PlayState) },
-			{ SceneState.RESULT, typeof(ResultState) },
-			{ SceneState.TIMELINED_EXAMPLE, typeof(TimelinedExampleState) } // for example scene
-		};
+		[Header("Scnene States")]
+		public List<SceneStateData> sceneStateTable;
 
-		// initial state
-		public string initStateName = "STARTUP";
-
-		private SceneState currentState;
-		public SceneState CurrentState { get{ return currentState; } }
-
-		private IState stateObj = null;
-		public IState CurrentStateObj { get{ return stateObj; } }
+		private SceneStateData currentState;
+		public SceneStateData CurrentState { get{ return currentState; } }
 
 		private bool stateChanging = false;
 		public bool StateChanging { get{ return stateChanging; } }
@@ -47,6 +38,12 @@ namespace GarageKit
 		protected override void Awake()
 		{
 			base.Awake();
+
+			foreach(SceneStateData state in sceneStateTable)
+			{
+				if(state.StateName == "" || state.StateObj == null)
+					Debug.LogError("SceneStateManager :: StateName or StateObj is empty.");
+			}
 		}
 
 		protected override void Start()
@@ -58,80 +55,69 @@ namespace GarageKit
 		{
 			base.Update();
 
-			// シーン名表示
-			this.gameObject.name = "SceneStateManager [" + currentState.ToString() + "]";
+			// Display current state name
+			this.gameObject.name = "SceneStateManager [" + currentState.StateName + "]";
 
-			// Stateの更新処理
-			if(stateObj != null)
-				stateObj.StateUpdate();
+			// Update curent state
+			if(currentState.StateObj != null)
+				currentState.StateObj.StateUpdate();
 		}
 		
 		
-#region Stageの管理
-
-		// アプリケーションをスタートする
+#region Management for State
 		public void InitState()
 		{
-			// 初期State
-			SceneState state = (SceneState)Enum.Parse(typeof(SceneState), initStateName);
-			ChangeState(state);
+			// Initial state
+			SceneStateData state = sceneStateTable.Find((s) => { return s.AsInitial; });
+			if(state == null)
+				state = sceneStateTable[0];
+			
+			ChangeState(state.StateName);
 		}
 
-		// Stateを変更する
-		public void ChangeState(SceneState sceneState, object context = null)
+		public void ChangeState(string stateName, object context = null)
 		{
 			isAsync = false;
 
-			StartCoroutine(ChangeStateCoroutine(sceneState, context));
+			StartCoroutine(ChangeStateCoroutine(stateName, context));
 		}
 
-		// Stateを変更する
-		public void ChangeAsyncState(SceneState sceneState, object context = null)
+		public void ChangeAsyncState(string stateName, object context = null)
 		{
 			if(!stateChanging)
 			{
 				isAsync = true;
 				stateChanging = true;
 
-				StartCoroutine(ChangeStateCoroutine(sceneState, context));
+				StartCoroutine(ChangeStateCoroutine(stateName, context));
 			}
 		}
 
-		private IEnumerator ChangeStateCoroutine(SceneState sceneState, object context)
+		private IEnumerator ChangeStateCoroutine(string stateName, object context)
 		{
-			// 前Stateの終了処理
-			if(stateObj != null)
-				stateObj.StateExit();
+			// Exit previous state
+			if(currentState != null)
+				currentState.StateObj.StateExit();
 			
 			while(isAsync)
 				yield return null;
 			
-			currentState = sceneState;
-
-			// 新規Stateのセット
-			stateObj = this.gameObject.GetComponentInChildren(stateTable[sceneState]) as IState;
-
-			// 新規Stateの初期化処理
-			stateObj.StateStart(context);
+			// Set new state
+			currentState = sceneStateTable.Find((s) => { return s.StateName == stateName; });
+			if(currentState == null)
+			{
+				Debug.LogError("SceneStateManager :: not found StateName.");
+				yield break;
+			}
+			
+			// Start new state
+			currentState.StateObj.StateStart(context);
 
 			stateChanging = false;
-		}
-
-		// Stateをリセットする
-		public void ResetState()
-		{
-			// 強制GC
-			System.GC.Collect();
-			Resources.UnloadUnusedAssets();
-			
-			//StateをWaitに変更
-			ChangeState(SceneState.WAIT);
-		}
-		
+		}	
 #endregion
 
-
-		// 非同期でのステート変更用
+		// for Async func
 		public void SyncState()
 		{
 			isAsync = false;

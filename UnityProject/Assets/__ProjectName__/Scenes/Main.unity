@@ -1700,7 +1700,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d397d05a48abc234392984d069f04270, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initStateName: STARTUP
+  sceneStateTable:
+  - stateName: STARTUP
+    stateObj: {fileID: 1238598510}
+    asInitial: 1
+  - stateName: WAIT
+    stateObj: {fileID: 268099109}
+    asInitial: 0
+  - stateName: PLAY
+    stateObj: {fileID: 363352732}
+    asInitial: 0
+  - stateName: RESULT
+    stateObj: {fileID: 90704203}
+    asInitial: 0
 --- !u!1 &1583199106
 GameObject:
   m_ObjectHideFlags: 0

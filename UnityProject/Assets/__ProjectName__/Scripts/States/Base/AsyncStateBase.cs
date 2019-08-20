@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace GarageKit
 {
-	public class AsyncStateBase : MonoBehaviour, IState, IAsyncState
+	public class AsyncStateBase :IStateBehaviour, IAsyncState
 	{
 		protected Fader[] faders;
 		protected float fadeTime = 1.0f;
@@ -16,20 +16,24 @@ namespace GarageKit
 		}
 		
 		
-		public virtual void StateStart(object context)
+		public override void StateStart(object context)
 		{
+			base.StateStart(context);
+
 			// フェードINを開始
 			if(Fader.UseFade)
 				Fader.StartFadeAll(fadeTime, Fader.FADE_TYPE.FADE_IN);
 		}
 
-		public virtual void StateUpdate()
+		public override void StateUpdate()
 		{
-			
+			base.StateUpdate();
 		}
 
-		public virtual void StateExit()
+		public override void StateExit()
 		{
+			base.StateExit();
+
 			// フェードOUTを開始
 			if(Fader.UseFade)
 			{

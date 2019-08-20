@@ -1,9 +1,7 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-/*
- * Managerのベースクラス
- */
 namespace GarageKit
 {
 	public class ManagerBase : MonoBehaviour

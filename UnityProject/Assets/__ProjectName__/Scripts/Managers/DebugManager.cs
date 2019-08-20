@@ -1,10 +1,11 @@
 ﻿//#define USE_STATSMONITOR
 
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 /*
- * デバッグ情報を管理する
+ * Manage debug information
  */
 namespace GarageKit
 {
@@ -28,15 +29,13 @@ namespace GarageKit
 		{
 			base.Start();
 
-			// 設定値を取得
 			IsDebug = ApplicationSetting.Instance.GetBool("IsDebug");
 			
-			// デバッグ用コンソール初期設定
 			UseDebugConsole = ApplicationSetting.Instance.GetBool("UseDebugConsole");
 			DebugConsole.IsOpen = UseDebugConsole;
 
 #if USE_STATSMONITOR
-			// StatesMonitor
+			// Display StatesMonitor
 			statsMonitor = FindObjectOfType<StatsMonitor.StatsMonitor>();
 			if(statsMonitor != null)
 				statsMonitor.gameObject.SetActive(IsDebug);
@@ -47,7 +46,7 @@ namespace GarageKit
 			FrameRateUtil.useHUD = IsDebug;
 #endif
 			
-			// マウスカーソル表示設定
+			// Display mouse cursor
 			if(Application.platform == RuntimePlatform.WindowsEditor)
 				VisibleMouseCursor.showCursor = true;
 			else
@@ -60,15 +59,15 @@ namespace GarageKit
 		}
 
 
-		// デバッグ情報のトグル
+		// Toggle debug infomation
 		public void ToggleShowDebugView()
 		{
-			// デバッグコンソールの表示
+			// Display DebugConsole
 			if(UseDebugConsole)
 				DebugConsole.IsOpen = !DebugConsole.IsOpen;
 
 #if USE_STATSMONITOR
-			// StatesMonitor
+			// Display StatesMonitor
 			if(statsMonitor != null)
 				statsMonitor.gameObject.SetActive(IsDebug);
 #else

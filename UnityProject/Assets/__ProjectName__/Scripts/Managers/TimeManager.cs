@@ -1,15 +1,15 @@
-﻿using UnityEngine;
-using System;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 /*
- * タイマーを管理する
+ * Manage all timer controll in scene
  */
 namespace GarageKit
 {
 	public class TimeManager : ManagerBase
 	{
-		// タイマーイベントオブジェクト設定
+		[Header("Scene timers")]
 		public TimerEvent[] timerEvents;
 		
 		public TimerEvent mainTimer { get{ return (timerEvents.Length > 0) ? timerEvents[0] : null; } }

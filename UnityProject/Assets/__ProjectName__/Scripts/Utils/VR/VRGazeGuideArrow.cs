@@ -61,7 +61,7 @@ namespace GarageKit
 		
 		void Update()
 		{
-			VRSceneStateBase state = AppMain.Instance.sceneStateManager.CurrentStateObj as VRSceneStateBase;
+			VRSceneStateBase state = AppMain.Instance.sceneStateManager.CurrentState.StateObj as VRSceneStateBase;
 			if(XRDevice.isPresent
 				&& useArrow
 				&& !AppMain.Instance.sceneStateManager.StateChanging

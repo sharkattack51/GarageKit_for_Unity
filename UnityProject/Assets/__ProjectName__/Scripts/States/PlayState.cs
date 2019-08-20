@@ -41,9 +41,9 @@ public class PlayState : AsyncStateBase
 	}
 
 
-	// タイマー完了イベント
+	// Timer Event
 	private void OnCompleteGameTimer(GameObject sender)
 	{
-		AppMain.Instance.sceneStateManager.ChangeAsyncState(SceneStateManager.SceneState.RESULT);
+		AppMain.Instance.sceneStateManager.ChangeAsyncState("RESULT");
 	}
 }

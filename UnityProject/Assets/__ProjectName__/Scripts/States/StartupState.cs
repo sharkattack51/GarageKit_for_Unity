@@ -8,8 +8,8 @@ public class StartupState : StateBase
 	{
 		base.StateStart(context);
 		
-		// StateをWAITに変更
-		AppMain.Instance.sceneStateManager.ChangeState(SceneStateManager.SceneState.WAIT);
+		// to WAIT state
+		AppMain.Instance.sceneStateManager.ChangeState("WAIT");
 	}
 	
 	public override void StateUpdate()
