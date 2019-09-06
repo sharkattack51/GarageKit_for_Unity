@@ -6,6 +6,8 @@ namespace GarageKit
 {
 	public class UIFadeTelop : UIFadeGroupComponent
 	{
+		public bool resizeBg = true;
+
 		private Text uiText;
 		private Image uiTextBg;
 
@@ -27,7 +29,7 @@ namespace GarageKit
 		{
 			base.Update();
 
-			if(uiTextBg != null)
+			if(resizeBg && uiTextBg != null)
 			{
 				uiTextBg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, uiText.preferredWidth + 50.0f);
 				uiTextBg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, uiText.preferredHeight + 20.0f);

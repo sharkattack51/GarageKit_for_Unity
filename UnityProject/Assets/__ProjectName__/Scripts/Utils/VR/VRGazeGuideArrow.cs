@@ -7,7 +7,7 @@ namespace GarageKit
 {
 	public class VRGazeGuideArrow : MonoBehaviour
 	{
-		public Camera uiCamera;
+		public Camera viewCamera;
 		public float smoothTime = 0.3f;
 		public float screenRatio = 0.9f;
 		public GameObject[] arrows;
@@ -34,10 +34,15 @@ namespace GarageKit
 			
 		}
 
-		void Start()
+		IEnumerator Start()
 		{
+			yield return new WaitUntil(() => Camera.main != null);
+			
+			if(viewCamera == null)
+				viewCamera = Camera.main;
+
 			directionRoot = new GameObject("GuideArrowTarget [Direction Root]");
-			directionRoot.transform.parent = uiCamera.transform;
+			directionRoot.transform.parent = viewCamera.transform;
 			directionRoot.transform.localRotation = Quaternion.Euler(new Vector3(-90.0f, 0.0f, 0.0f));
 
 			billbording = new GameObject("GuideArrowTarget [Billbording]");
@@ -61,12 +66,15 @@ namespace GarageKit
 		
 		void Update()
 		{
+			if(viewCamera == null || directionRoot == null || billbording == null
+				|| guideArrowRotRoot == null || canvsGroup == null)
+				return;
+			
 			VRSceneStateBase state = AppMain.Instance.sceneStateManager.CurrentState.StateObj as VRSceneStateBase;
 			if(XRDevice.isPresent
 				&& useArrow
 				&& !AppMain.Instance.sceneStateManager.StateChanging
-				&& state != null && state.viewGuideTarget != null
-				&& guideArrowRotRoot != null && canvsGroup != null)
+				&& state != null && state.viewGuideTarget != null)
 			{
 				Vector3 viewPt = Camera.main.WorldToViewportPoint(state.viewGuideTarget.transform.position);
 				

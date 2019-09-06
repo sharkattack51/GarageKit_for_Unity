@@ -1,34 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.IO;
-using System;
 
-/// <summary>
-/// Log4Netのラッパークラス
-/// </summary>
-
+// Log4Netのラッパークラス
 public class Log4Net : MonoBehaviour
 {
-	//singleton
-	private static Log4Net instance;
-	public static Log4Net Instance { get{ return instance; } }
+	private static Log4Net logger;
+	public static Log4Net Logger { get{ return logger; } }
+
+	public string outputLogDir = "./Log";
 	
-	//設定ファイル
-	public string configFile = "Log4Net.config";
-	public bool configFromStreamingAssets = true;
+	// Loggerオブジェクト
+	private log4net.ILog nativeLogger;
+	public log4net.ILog NativeLogger { get{ return nativeLogger; } }
 	
-	//有効確認
-	private bool isValid = false;
-	public bool IsValid { get{ return isValid; } }
-	
-	//Loggerオブジェクト
-	private log4net.ILog logger;
-	public log4net.ILog Logger { get{ return logger; } }
-	
-	//ログイベントタイプ
+	// ログイベントタイプ
 	public enum LOG_EVENT_TYPE
 	{
 		STARTUP = 0,
+		INFO,
 		QUIT,
 		ERROR
 	}
@@ -36,48 +26,75 @@ public class Log4Net : MonoBehaviour
 	
 	void Awake()
 	{
-		instance = this;
+		logger = this;
 	}
 	
 	void Start()
 	{
-		if(configFromStreamingAssets)
-			configFile = Path.Combine(Application.streamingAssetsPath, configFile);
+		InitializeLog4Net();
+	}
 
-		FileInfo fileInfo = new FileInfo(configFile);
-		if(fileInfo.Exists)
-		{
-			//設定ファイルの読み込み
-			log4net.Config.XmlConfigurator.ConfigureAndWatch(fileInfo);
-			
-			//Loggerオブジェクトを作成
-			logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-			
-			isValid = true;
-		}
+	void Update()
+	{
+
+	}
+
+	void OnDestroy()
+	{
+		log4net.LogManager.Shutdown();
+		nativeLogger = null;
+	}
+
+	
+	private void InitializeLog4Net()
+	{
+		// ログローテーション設定
+		nativeLogger = log4net.LogManager.GetLogger("Logger");
+		
+		log4net.Appender.RollingFileAppender rollingFileAppender = new log4net.Appender.RollingFileAppender();
+		rollingFileAppender.RollingStyle = log4net.Appender.RollingFileAppender.RollingMode.Date;
+		rollingFileAppender.AppendToFile = true;
+		rollingFileAppender.StaticLogFileName = false;
+		rollingFileAppender.File = Path.GetFullPath(outputLogDir) + "/";
+		rollingFileAppender.DatePattern = "yyyyMMdd\".log\"";
+		rollingFileAppender.Layout = new log4net.Layout.PatternLayout("%date{yyyy/MM/dd  HH:mm:ss} %message%newline");
+		log4net.Filter.LevelRangeFilter filter = new log4net.Filter.LevelRangeFilter();
+		filter.LevelMin = log4net.Core.Level.Info;
+		filter.LevelMax = log4net.Core.Level.Fatal;
+		rollingFileAppender.AddFilter(filter);
+		
+		rollingFileAppender.ActivateOptions();
+		((log4net.Repository.Hierarchy.Logger)nativeLogger.Logger).AddAppender(rollingFileAppender);
+		((log4net.Repository.Hierarchy.Logger)nativeLogger.Logger).Hierarchy.Configured = true;
 	}
 	
-	
-	/// <summary>
-	/// ログ出力
-	/// </summary>
-	public void WriteLog(LOG_EVENT_TYPE type, string option = "")
+	// ログ出力
+	public void Log(LOG_EVENT_TYPE type, string message = "")
 	{	
 		switch(type)
 		{
 			case LOG_EVENT_TYPE.STARTUP:
-				logger.Info("[STARTUP]"+ "\t" + "start application");
+				nativeLogger.Info("[STARTUP]"+ "\t" + message);
+				break;
+
+			case LOG_EVENT_TYPE.INFO:
+				nativeLogger.Info("[INFO]"+ "\t" + message);
 				break;
 			
 			case LOG_EVENT_TYPE.QUIT:
-				logger.Info("[QUIT]"+ "\t" + "quit application");
+				nativeLogger.Info("[QUIT]"+ "\t" + message);
 				break;
 			
 			case LOG_EVENT_TYPE.ERROR:
-				logger.Error("[ERROR]"+ "\t" + option);
+				nativeLogger.Error("[ERROR]"+ "\t" + message);
 				break;
 			
 			default: break;
 		}
+	}
+
+	public void Log(string message)
+	{
+		 Log(LOG_EVENT_TYPE.INFO, message);
 	}
 }
