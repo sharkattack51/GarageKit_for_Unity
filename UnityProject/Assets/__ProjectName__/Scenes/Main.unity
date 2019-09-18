@@ -852,26 +852,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff945832c6b3fa944a39b95991d13bdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sound_BGM:
-    use: 1
-    volume: 1
-    clips:
-    - name: WAIT
-      clip: {fileID: 0}
-    - name: PLAY
-      clip: {fileID: 0}
-  sound_SE:
-    use: 1
-    volume: 1
-    clips:
-    - name: CLICK
-      clip: {fileID: 8300000, guid: 448f0c6799fff764f8447a813949b194, type: 3}
-    - name: CANCEL
-      clip: {fileID: 8300000, guid: e0129baba26f87244b9f3e7efc651143, type: 3}
-  sound_SE3D:
-    use: 1
-    volume: 1
-    sources: []
+  soundLayers:
+  - layerName: BGM
+    soundData:
+      use: 1
+      volume: 1
+      clips:
+      - clipName: WAIT
+        clip: {fileID: 0}
+      - clipName: PLAY
+        clip: {fileID: 0}
+  - layerName: SE
+    soundData:
+      use: 1
+      volume: 1
+      clips:
+      - clipName: CLICK
+        clip: {fileID: 8300000, guid: 448f0c6799fff764f8447a813949b194, type: 3}
+      - clipName: CANCEL
+        clip: {fileID: 8300000, guid: e0129baba26f87244b9f3e7efc651143, type: 3}
+  soundLayers3D: []
 --- !u!114 &53
 MonoBehaviour:
   m_ObjectHideFlags: 0

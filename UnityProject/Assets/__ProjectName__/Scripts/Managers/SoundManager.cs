@@ -9,10 +9,11 @@ using UnityEngine;
  */
 namespace GarageKit
 {
+#region 2D sound
 	[Serializable]
 	public class SoundClipData
 	{
-		public string name;
+		public string clipName = "";
 		public AudioClip clip;
 	}
 
@@ -20,14 +21,23 @@ namespace GarageKit
 	public class SoundData
 	{
 		public bool use = true;
-		public float volume = 1.0f;
+		[Range(0.0f, 1.0f)] public float volume = 1.0f;
 		public SoundClipData[] clips;
 	}
 
 	[Serializable]
+	public class SoundLayerData
+	{
+		public string layerName = "";
+		public SoundData soundData;
+	}
+#endregion
+
+#region 3D sound
+	[Serializable]
 	public class SoundSourceData
 	{
-		public string name;
+		public string sourceName = "";
 		public AudioSource source;
 	}
 
@@ -35,19 +45,25 @@ namespace GarageKit
 	public class Sound3dData
 	{
 		public bool use = true;
-		public float volume = 1.0f;
+		[Range(0.0f, 1.0f)] public float volume = 1.0f;
 		public SoundSourceData[] sources;
 	}
 
+	[Serializable]
+	public class Sound3dLayerData
+	{
+		public string layerName = "";
+		public Sound3dData soundData;
+	}
+#endregion
+
 	public class SoundManager : ManagerBase
 	{
-		public SoundData sound_BGM;
-		public SoundData sound_SE;
-		public Sound3dData sound_SE3D;
-		
-		private AudioSource audioSource_BGM;
-		private AudioSource audioSource_SE;
-		
+		public SoundLayerData[] soundLayers;
+		public Sound3dLayerData[] soundLayers3D;
+
+		private Dictionary<string, AudioSource> audioSources2D;
+
 		
 		protected override void Awake()
 		{
@@ -59,8 +75,14 @@ namespace GarageKit
 			base.Start();
 
 			// 2D AudioSourceを設定
-			audioSource_SE = this.gameObject.AddComponent<AudioSource>();
-			audioSource_BGM = this.gameObject.AddComponent<AudioSource>();
+			audioSources2D = new Dictionary<string, AudioSource>();
+			foreach(SoundLayerData soundLayer in soundLayers)
+			{
+				GameObject go = new GameObject(string.Format("AudioSource 2D [{0}]", soundLayer.layerName));
+				go.transform.parent = this.gameObject.transform;
+				AudioSource source = go.AddComponent<AudioSource>();
+				audioSources2D.Add(soundLayer.layerName, source);
+			}
 		}
 
 		protected override void Update()
@@ -69,60 +91,82 @@ namespace GarageKit
 		}
 		
 
-#region BGM
-		public void PlayBGM(string clipName, bool loop = true, bool overlap = false)
+#region 2D sound
+		public void Play(string layerName, string clipName, bool overlap = false)
 		{
-			if(sound_BGM.use)
+			Play(layerName, clipName, overlap, false, true);
+		}
+
+		public void Play(string layerName, string clipName, bool overlap, bool loop, bool asOneShot)
+		{
+			if(!audioSources2D.ContainsKey(layerName))
+				return;
+			
+			SoundLayerData layer = soundLayers.FirstOrDefault(l => l.layerName == layerName);
+			if(layer == null)
+				return;
+
+			if(layer.soundData.use)
 			{
-				SoundClipData clipData = sound_BGM.clips.FirstOrDefault(c => c.name == clipName);
+				SoundClipData clipData = layer.soundData.clips.FirstOrDefault(c => c.clipName == clipName);
 				if(clipData == null)
 					return;
 
 				if(!overlap)
 				{
-					if(audioSource_BGM.isPlaying)
-						audioSource_BGM.Stop();
+					if(audioSources2D[layerName].isPlaying)
+						audioSources2D[layerName].Stop();
 				}
 				
-				audioSource_BGM.volume = sound_BGM.volume;
-				audioSource_BGM.clip = clipData.clip;
-				audioSource_BGM.loop = loop;
-				audioSource_BGM.Play();
+				audioSources2D[layerName].volume = layer.soundData.volume;
+				audioSources2D[layerName].clip = clipData.clip;
+
+				if(asOneShot)
+					audioSources2D[layerName].PlayOneShot(clipData.clip);
+				else
+				{
+					audioSources2D[layerName].loop = loop;
+					audioSources2D[layerName].Play();
+				}
 			}
 		}
 
-		public void StopBGM()
+		public void Stop(string layerName = "")
 		{
-			if(audioSource_BGM.isPlaying)
-				audioSource_BGM.Stop();
+			if(layerName != "")
+			{
+				if(!audioSources2D.ContainsKey(layerName))
+					return;
+				
+				if(audioSources2D[layerName].isPlaying)
+					audioSources2D[layerName].Stop();
+			}
+			else
+			{
+				foreach(SoundLayerData layer in soundLayers)
+				{
+					if(audioSources2D[layer.layerName].isPlaying)
+						audioSources2D[layer.layerName].Stop();
+				}
+			}
 		}
 #endregion
 
-#region SE
-		public void PlaySE(string clipName, bool overlap = false)
+#region 3D sound
+		public void Play3D(string layerName, string sourceName, bool overlap = false)
 		{
-			if(sound_SE.use)
-			{
-				SoundClipData clipData = sound_SE.clips.FirstOrDefault(c => c.name == clipName);
-				if(clipData == null)
-					return;
-
-				if(!overlap)
-				{
-					if(audioSource_SE.isPlaying)
-						audioSource_SE.Stop();
-				}
-				
-				audioSource_SE.volume = sound_SE.volume;
-				audioSource_SE.PlayOneShot(clipData.clip);
-			}
+			Play3D(layerName, sourceName, overlap, false, true);
 		}
 
-		public void PlaySE3D(string sourceName, bool overlap = false)
+		public void Play3D(string layerName, string sourceName, bool overlap, bool loop, bool asOneShot)
 		{
-			if(sound_SE3D.use)
+			Sound3dLayerData layer = soundLayers3D.FirstOrDefault(l => l.layerName == layerName);
+			if(layer == null)
+				return;
+
+			if(layer.soundData.use)
 			{
-				SoundSourceData sourceData = sound_SE3D.sources.FirstOrDefault(c => c.name == sourceName);
+				SoundSourceData sourceData = layer.soundData.sources.FirstOrDefault(c => c.sourceName == sourceName);
 				if(sourceData == null)
 					return;
 				
@@ -132,20 +176,54 @@ namespace GarageKit
 						sourceData.source.Stop();
 				}
 				
-				sourceData.source.volume = sound_SE3D.volume;
-				sourceData.source.PlayOneShot(sourceData.source.clip);
+				sourceData.source.volume = layer.soundData.volume;
+
+				if(asOneShot)
+					sourceData.source.PlayOneShot(sourceData.source.clip);
+				else
+				{
+					sourceData.source.loop = loop;
+					sourceData.source.Play();
+				}
 			}
 		}
 
-		public void StopSE()
+		public void Stop3D(string layerName = "", string sourceName = "")
 		{
-			if(audioSource_SE.isPlaying)
-				audioSource_SE.Stop();
-
-			foreach(SoundSourceData sourceData in sound_SE3D.sources)
+			if(layerName != "")
 			{
-				if(sourceData.source.isPlaying)
-					sourceData.source.Stop();
+				Sound3dLayerData layer = soundLayers3D.FirstOrDefault(l => l.layerName == layerName);
+				if(layer == null)
+					return;
+				
+				if(sourceName == "")
+				{
+					foreach(SoundSourceData sourceData in layer.soundData.sources)
+					{
+						if(sourceData.source.isPlaying)
+							sourceData.source.Stop();
+					}
+				}
+				else
+				{
+					SoundSourceData sourceData = layer.soundData.sources.FirstOrDefault(c => c.sourceName == sourceName);
+					if(sourceData == null)
+						return;
+
+					if(sourceData.source.isPlaying)
+						sourceData.source.Stop();
+				}
+			}
+			else
+			{
+				foreach(Sound3dLayerData layer in soundLayers3D)
+				{
+					foreach(SoundSourceData sourceData in layer.soundData.sources)
+					{
+						if(sourceData.source.isPlaying)
+							sourceData.source.Stop();
+					}
+				}
 			}
 		}
 #endregion
@@ -153,70 +231,89 @@ namespace GarageKit
 #region Fade
 		public void FadeInAllSound(float time = 1.0f)
 		{
-			FadeBGM(0.0f, sound_BGM.volume, time);
-			FadeSE(0.0f, sound_SE.volume, time);
-			FadeSE3D(0.0f, sound_SE3D.volume, time);
+			foreach(SoundLayerData layer in soundLayers)
+				Fade(layer.layerName, 0.0f, layer.soundData.volume, time);
+			foreach(Sound3dLayerData layer in soundLayers3D)
+			{
+				foreach(SoundSourceData source in layer.soundData.sources)
+					Fade3D(layer.layerName, source.sourceName, 0.0f, layer.soundData.volume, time);
+			}
 		}
 
 		public void FadeOutAllSound(float time = 1.0f)
 		{
-			FadeBGM(sound_BGM.volume, 0.0f, time);
-			FadeSE(sound_SE.volume, 0.0f, time);
-			FadeSE3D(sound_SE3D.volume, 0.0f, time);
+			foreach(SoundLayerData layer in soundLayers)
+				Fade(layer.layerName, layer.soundData.volume, 0.0f, time);
+			foreach(Sound3dLayerData layer in soundLayers3D)
+			{
+				foreach(SoundSourceData source in layer.soundData.sources)
+					Fade3D(layer.layerName, source.sourceName, layer.soundData.volume, 0.0f, time);
+			}
 
-			Invoke("StopBGM", time);
-			Invoke("StopSE", time);
-			Invoke("StopSE3D", time);
+			Invoke("Stop", time);
+			Invoke("Stop3D", time);
 		}
 
-		public void FadeBGM(float fromVol, float toVol, float time)
+		public void Fade(string layerName, float fromVol, float toVol, float time)
 		{
-			iTween.ValueTo(this.gameObject,
+			if(audioSources2D.ContainsKey(layerName))
+			{
+				GameObject target = audioSources2D[layerName].gameObject;
+				SoundFadeCallbackBehabiour cb = target.AddComponent<SoundFadeCallbackBehabiour>();
+				cb.audioSource = audioSources2D[layerName];
+
+				iTween.ValueTo(target,
+					iTween.Hash(
+						"from", fromVol,
+						"to", toVol,
+						"time", time,
+						"onupdate", "fade_updated",
+						"onupdatetarget", target,
+						"oncomplete", "fade_completed",
+						"oncompletetarget", target));
+			}
+		}
+
+		public void Fade3D(string layerName, string sourceName, float fromVol, float toVol, float time)
+		{
+			Sound3dLayerData layer = soundLayers3D.FirstOrDefault(l => l.layerName == layerName);
+			if(layer == null)
+				return;
+
+			SoundSourceData sourceData = layer.soundData.sources.FirstOrDefault(c => c.sourceName == sourceName);
+			if(sourceData == null)
+				return;
+
+			GameObject target = sourceData.source.gameObject;
+			SoundFadeCallbackBehabiour cb = target.AddComponent<SoundFadeCallbackBehabiour>();
+			cb.audioSource = sourceData.source;
+
+			iTween.ValueTo(target,
 				iTween.Hash(
 					"from", fromVol,
 					"to", toVol,
 					"time", time,
-					"onupdate", "volume_bgm_updated",
-					"onupdatetarget", this.gameObject));
-		}
-
-		private void volume_bgm_updated(float newValue)
-		{
-			audioSource_BGM.volume = newValue;
-		}
-
-		public void FadeSE(float fromVol, float toVol, float time)
-		{
-			iTween.ValueTo(this.gameObject,
-				iTween.Hash(
-					"from", fromVol,
-					"to", toVol,
-					"time", time,
-					"onupdate", "volume_se_updated",
-					"onupdatetarget", this.gameObject));
-		}
-
-		private void volume_se_updated(float newValue)
-		{
-			audioSource_SE.volume = newValue;
-		}
-
-		public void FadeSE3D(float fromVol, float toVol, float time)
-		{
-			iTween.ValueTo(this.gameObject,
-				iTween.Hash(
-					"from", fromVol,
-					"to", toVol,
-					"time", time,
-					"onupdate", "volume_se3d_updated",
-					"onupdatetarget", this.gameObject));
-		}
-
-		private void volume_se3d_updated(float newValue)
-		{
-			foreach(SoundSourceData sourceData in sound_SE3D.sources)
-				sourceData.source.volume = newValue;
+					"onupdate", "fade_updated",
+					"onupdatetarget", target,
+					"oncomplete", "fade_completed",
+					"oncompletetarget", target));
 		}
 #endregion
+	}
+
+	// fade callbacks
+	public class SoundFadeCallbackBehabiour : MonoBehaviour
+	{
+		public AudioSource audioSource;
+
+		private void fade_updated(float newValue)
+		{
+			audioSource.volume = newValue;
+		}
+
+		private void fade_completed()
+		{
+			SoundFadeCallbackBehabiour.Destroy(this);
+		}
 	}
 }

@@ -77,7 +77,11 @@ namespace GarageKit
 			{
 				Debug.Log("press key Space : Change State");
 				DebugConsole.Log("press key Space : Change State");
+
+				// SE
+				AppMain.Instance.soundManager.Play("SE", "CLICK");
 				
+				// change state
 				SceneStateManager sceneStateManager = AppMain.Instance.sceneStateManager;
 				TimeManager timeManager = AppMain.Instance.timeManager;
 				if(sceneStateManager.CurrentState.StateName == "STARTUP")
