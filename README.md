@@ -16,10 +16,6 @@ http://debuglog.tumblr.com/post/100742681354/garagekit-for-unity
 2. and press the play.
 3. and customize your project.
 
-you can add or delete the `SceneState` class using the `StateGenerator` of the editor script.
-
-`Menu -> EditorScript -> StateGenerator`
-
 ## Require Modules
 
 /Editor
