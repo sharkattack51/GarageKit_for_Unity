@@ -3,21 +3,21 @@ using System.Collections;
 
 namespace GarageKit
 {
-	public class StateBase : IStateBehaviour
+	public class StateBase : MonoBehaviour, IState
 	{
-		public override void StateStart(object context)
+		public virtual void StateStart(object context)
 		{
-			base.StateStart(context);
+
 		}
 
-		public override void StateUpdate()
+		public virtual void StateUpdate()
 		{
-			base.StateUpdate();
+
 		}
 
-		public override void StateExit()
+		public virtual void StateExit()
 		{
-			base.StateExit();
+			
 		}
 	}
 }

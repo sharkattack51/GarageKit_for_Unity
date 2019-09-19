@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace GarageKit
 {
-	public class AsyncStateBase :IStateBehaviour, IAsyncState
+	public class AsyncStateBase : StateBase, IAsyncState
 	{
 		protected Fader[] faders;
 		protected float fadeTime = 1.0f;

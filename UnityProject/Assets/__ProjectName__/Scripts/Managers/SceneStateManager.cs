@@ -14,7 +14,7 @@ namespace GarageKit
 		[SerializeField] private string stateName = "";
 		public string StateName { get{ return stateName; } }
 
-		[SerializeField] private IStateBehaviour stateObj = null;
+		[SerializeField] private StateBase stateObj = null;
 		public IState StateObj { get{ return stateObj; } }
 
 		[SerializeField] private bool asInitial = false;
@@ -28,6 +28,9 @@ namespace GarageKit
 
 		private SceneStateData currentState;
 		public SceneStateData CurrentState { get{ return currentState; } }
+
+		private string fromStateName = "";
+		public string FromStateName { get{ return fromStateName; } }
 
 		private bool stateChanging = false;
 		public bool StateChanging { get{ return stateChanging; } }
@@ -79,6 +82,9 @@ namespace GarageKit
 		{
 			isAsync = false;
 
+			if(currentState != null)
+				fromStateName = currentState.StateName;
+
 			StartCoroutine(ChangeStateCoroutine(stateName, context));
 		}
 
@@ -88,6 +94,9 @@ namespace GarageKit
 			{
 				isAsync = true;
 				stateChanging = true;
+				
+				if(currentState != null)
+					fromStateName = currentState.StateName;
 
 				StartCoroutine(ChangeStateCoroutine(stateName, context));
 			}

@@ -53,7 +53,10 @@ namespace GarageKit
 
         public void Reset()
         {
-            currentAnim.time = 0.0f;
+            anim.Rewind();
+            anim.Play();
+            
+            targetTime = 0.0f;
         }
 
         public void SetSeconds(float sec)

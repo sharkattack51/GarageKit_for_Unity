@@ -30,6 +30,9 @@ namespace GarageKit
 	{
 		public string layerName = "";
 		public SoundData soundData;
+
+		private bool ignoreAllMethod = false;
+		public bool IgnoreAllMethod { get; set; }
 	}
 #endregion
 
@@ -54,6 +57,9 @@ namespace GarageKit
 	{
 		public string layerName = "";
 		public Sound3dData soundData;
+
+		private bool ignoreAllMethod = false;
+		public bool IgnoreAllMethod { get; set; }
 	}
 #endregion
 
@@ -63,6 +69,11 @@ namespace GarageKit
 		public Sound3dLayerData[] soundLayers3D;
 
 		private Dictionary<string, AudioSource> audioSources2D;
+
+		private Dictionary<string, SoundLayerData> soundLayersTable;
+		public Dictionary<string, SoundLayerData> SoundLayers { get{ return soundLayersTable; } }
+		private Dictionary<string, Sound3dLayerData> soundLayers3DTable;
+		public Dictionary<string, Sound3dLayerData> SoundLayers3D { get{ return soundLayers3DTable; } }
 
 		
 		protected override void Awake()
@@ -74,15 +85,24 @@ namespace GarageKit
 		{
 			base.Start();
 
-			// 2D AudioSourceを設定
 			audioSources2D = new Dictionary<string, AudioSource>();
-			foreach(SoundLayerData soundLayer in soundLayers)
+			soundLayersTable = new Dictionary<string, SoundLayerData>();
+			soundLayers3DTable = new Dictionary<string, Sound3dLayerData>();
+
+			foreach(SoundLayerData layer in soundLayers)
 			{
-				GameObject go = new GameObject(string.Format("AudioSource 2D [{0}]", soundLayer.layerName));
+				soundLayersTable.Add(layer.layerName, layer);
+
+				// 2D AudioSourceを設定
+				GameObject go = new GameObject(string.Format("AudioSource 2D [{0}]", layer.layerName));
 				go.transform.parent = this.gameObject.transform;
 				AudioSource source = go.AddComponent<AudioSource>();
-				audioSources2D.Add(soundLayer.layerName, source);
+				source.playOnAwake = false;
+				audioSources2D.Add(layer.layerName, source);
 			}
+
+			foreach(Sound3dLayerData layer in soundLayers3D)
+				soundLayers3DTable.Add(layer.layerName, layer);
 		}
 
 		protected override void Update()
@@ -133,6 +153,16 @@ namespace GarageKit
 
 		public void Stop(string layerName = "")
 		{
+			InternalStop(layerName, false);
+		}
+
+		public void StopAll(string layerName = "")
+		{
+			InternalStop(layerName, true);
+		}
+
+		private void InternalStop(string layerName, bool asAll)
+		{
 			if(layerName != "")
 			{
 				if(!audioSources2D.ContainsKey(layerName))
@@ -145,8 +175,11 @@ namespace GarageKit
 			{
 				foreach(SoundLayerData layer in soundLayers)
 				{
-					if(audioSources2D[layer.layerName].isPlaying)
-						audioSources2D[layer.layerName].Stop();
+					if(asAll && !layer.IgnoreAllMethod)
+					{
+						if(audioSources2D[layer.layerName].isPlaying)
+							audioSources2D[layer.layerName].Stop();
+					}
 				}
 			}
 		}
@@ -190,6 +223,16 @@ namespace GarageKit
 
 		public void Stop3D(string layerName = "", string sourceName = "")
 		{
+			InternalStop3D(layerName, sourceName, false);
+		}
+
+		public void Stop3DAll(string layerName = "")
+		{
+			InternalStop3D(layerName, "", true);
+		}
+
+		private void InternalStop3D(string layerName, string sourceName, bool asAll)
+		{
 			if(layerName != "")
 			{
 				Sound3dLayerData layer = soundLayers3D.FirstOrDefault(l => l.layerName == layerName);
@@ -218,10 +261,13 @@ namespace GarageKit
 			{
 				foreach(Sound3dLayerData layer in soundLayers3D)
 				{
-					foreach(SoundSourceData sourceData in layer.soundData.sources)
+					if(asAll && !layer.IgnoreAllMethod)
 					{
-						if(sourceData.source.isPlaying)
-							sourceData.source.Stop();
+						foreach(SoundSourceData sourceData in layer.soundData.sources)
+						{
+							if(sourceData.source.isPlaying)
+								sourceData.source.Stop();
+						}
 					}
 				}
 			}
@@ -232,26 +278,45 @@ namespace GarageKit
 		public void FadeInAllSound(float time = 1.0f)
 		{
 			foreach(SoundLayerData layer in soundLayers)
-				Fade(layer.layerName, 0.0f, layer.soundData.volume, time);
+			{
+				if(!layer.IgnoreAllMethod)
+					Fade(layer.layerName, 0.0f, layer.soundData.volume, time);
+			}
 			foreach(Sound3dLayerData layer in soundLayers3D)
 			{
-				foreach(SoundSourceData source in layer.soundData.sources)
-					Fade3D(layer.layerName, source.sourceName, 0.0f, layer.soundData.volume, time);
+				if(!layer.IgnoreAllMethod)
+				{
+					foreach(SoundSourceData source in layer.soundData.sources)
+						Fade3D(layer.layerName, source.sourceName, 0.0f, layer.soundData.volume, time);
+				}
 			}
 		}
 
 		public void FadeOutAllSound(float time = 1.0f)
 		{
 			foreach(SoundLayerData layer in soundLayers)
-				Fade(layer.layerName, layer.soundData.volume, 0.0f, time);
+			{
+				if(!layer.IgnoreAllMethod)
+					Fade(layer.layerName, layer.soundData.volume, 0.0f, time);
+			}
 			foreach(Sound3dLayerData layer in soundLayers3D)
 			{
-				foreach(SoundSourceData source in layer.soundData.sources)
-					Fade3D(layer.layerName, source.sourceName, layer.soundData.volume, 0.0f, time);
+				if(!layer.IgnoreAllMethod)
+				{
+					foreach(SoundSourceData source in layer.soundData.sources)
+						Fade3D(layer.layerName, source.sourceName, layer.soundData.volume, 0.0f, time);
+				}
 			}
 
-			Invoke("Stop", time);
-			Invoke("Stop3D", time);
+			StartCoroutine(FadeOutAllSoundCoroutine(time));
+		}
+
+		private IEnumerator FadeOutAllSoundCoroutine(float time)
+		{
+			yield return new WaitForSeconds(time);
+
+			StopAll();
+			Stop3DAll();
 		}
 
 		public void Fade(string layerName, float fromVol, float toVol, float time)
@@ -313,6 +378,9 @@ namespace GarageKit
 
 		private void fade_completed()
 		{
+			if(audioSource.isPlaying)
+				audioSource.Stop();
+
 			SoundFadeCallbackBehabiour.Destroy(this);
 		}
 	}
