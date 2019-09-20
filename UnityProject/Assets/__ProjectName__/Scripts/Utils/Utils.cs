@@ -521,8 +521,24 @@ namespace GarageKit
 		[DllImport("user32.dll")]
 		private static extern IntPtr GetTopWindow(IntPtr hwnd);
 
+		[DllImport("user32.dll", SetLastError = true)]
+		private static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
+
 		[DllImport("user32.dll")]
-		private static extern IntPtr GetNextWindow(IntPtr hwnd, uint wCmd);
+        private static extern bool EnumWindows(EnumWindowsDelegate lpEnumFunc, IntPtr lParam);
+		private static List<IntPtr> EnumWindowsList;
+		private static List<IntPtr> GetEnumWindowsList()
+		{
+			EnumWindowsList = new List<IntPtr>();
+			EnumWindows(EnumerateWindows, IntPtr.Zero);
+			return EnumWindowsList;
+		}
+		private delegate bool EnumWindowsDelegate(IntPtr hWnd, IntPtr lParam);
+		private static bool EnumerateWindows(IntPtr hWnd, IntPtr lParam)
+        {
+			EnumWindowsList.Add(hWnd);
+            return true;            
+        }
 
 		[DllImport("user32.dll")]
 		private static extern uint GetWindowThreadProcessId(IntPtr hWnd, ref uint lpdwProcessId);
@@ -575,15 +591,14 @@ namespace GarageKit
 		private const uint WS_THICKFRAME = 0x00040000;
 		private const uint WS_POPUPWINDOW = WS_BORDER | WS_POPUP | WS_SYSMENU;
 		
-		//private static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
-		//private static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
-		//private static readonly IntPtr HWND_TOP = new IntPtr(0);
+		private static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
+		private static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
+		private static readonly IntPtr HWND_TOP = new IntPtr(0);
 		private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
 
 		private const uint SWP_NOSIZE = 0x0001;
         private const uint SWP_NOMOVE = 0x0002;
 		private const uint SWP_FRAMECHANGED = 0x0020;
-		private const uint TOPMOST_FLAGS = (SWP_NOSIZE | SWP_NOMOVE);
 
 		private const int SW_MINIMIZE = 6;
 		
@@ -604,21 +619,14 @@ namespace GarageKit
 		{
 			int currentProcID = Process.GetCurrentProcess().Id;
 
-			//IntPtr hWnd = GetTopWindow(IntPtr.Zero);
-			IntPtr hWnd = GetForegroundWindow();
-			do
+			foreach(IntPtr hWnd in GetEnumWindowsList())
 			{
-				if((GetWindowLong(hWnd, GWL_HWNDPARENT) != 0) || !IsWindowVisible(hWnd))
-					continue;
-
 				uint procID = 0;
 				GetWindowThreadProcessId(hWnd, ref procID);
+				
 				if(procID == currentProcID)
 					return hWnd;
-
-				hWnd = GetNextWindow(hWnd, GW_HWNDNEXT);
 			}
-			while(hWnd != IntPtr.Zero);
 
 			return IntPtr.Zero;
 		}
@@ -641,7 +649,9 @@ namespace GarageKit
 		public static void SetForeGroundApplicationWindow()
 		{
 			IntPtr hWnd = GetApplicationWindowHandle();
-			SetForegroundWindow(hWnd);
+
+			if(hWnd != IntPtr.Zero)
+				SetForegroundWindow(hWnd);
 		}
 
 		/// <summary>

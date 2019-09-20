@@ -31,7 +31,6 @@ namespace GarageKit
 		public string layerName = "";
 		public SoundData soundData;
 
-		private bool ignoreAllMethod = false;
 		public bool IgnoreAllMethod { get; set; }
 	}
 #endregion
