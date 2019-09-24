@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using UnityEngine.VR;
+﻿//#define USE_VRTK
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -106,6 +107,28 @@ namespace GarageKit
 		public virtual void ResetCurrentState()
 		{
 			
+		}
+
+
+		// 視点リセット
+		public void ResetPosition(Transform trans = null)
+		{
+#if USE_VRTK
+			if(trans == null)
+			{
+				VRTKUtil_Alias.Instance.VrRig.position = Vector3.zero;
+				VRTKUtil_Alias.Instance.VrRig.rotation = Quaternion.identity;
+				VRTKUtil_Alias.Instance.VrRig.localScale = Vector3.one;
+			}
+			else
+			{
+				VRTKUtil_Alias.Instance.VrRig.position = trans.position;
+				VRTKUtil_Alias.Instance.VrRig.rotation = trans.rotation;
+				VRTKUtil_Alias.Instance.VrRig.localScale = trans.localScale;
+			}
+#else
+			// do something
+#endif
 		}
 
 		// 表示オブジェクト切替

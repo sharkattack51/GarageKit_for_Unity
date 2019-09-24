@@ -12,7 +12,7 @@ namespace GarageKit
 		public int durationSec = 30;
 
 		// イベントAction
-		protected List<TimelineEventAction> actionList = new List<TimelineEventAction>();
+		protected TimelineEventActionList actionList;
 		private float actionTime = 0.0f;
 		public float CurrentActionTime { get{ return actionTime;} }
 
@@ -36,7 +36,7 @@ namespace GarageKit
 			isPlay = true;
 			isPaused = false;
 
-			actionList = new List<TimelineEventAction>();
+			actionList = new TimelineEventActionList();
 
 			// タイマー設定
 			if(durationSec > 0)
@@ -52,28 +52,15 @@ namespace GarageKit
 		{
 			base.StateUpdate();
 
-			// イベントAction実行
-			actionTime = AppMain.Instance.timeManager.mainTimer.ElapsedTime;
-			foreach(TimelineEventAction action in actionList)
-			{
-				if(!action.IsDone && actionTime >= action.time)
-				{
-					if(action.action != null)
-						action.action();
-
-					action.Done();
-				}
-			}
+			// Timelineイベント実行
+			actionList.Update(AppMain.Instance.timeManager.mainTimer.ElapsedTime);
 		}
 
 		public override void StateExit()
 		{
 			base.StateExit();
 
-			// イベントActionリセット
-			foreach(TimelineEventAction action in actionList)
-				action.Reset();
-			actionList = new List<TimelineEventAction>();
+			actionList.Clear();
 
 			isPlay = false;
 			isPaused = false;

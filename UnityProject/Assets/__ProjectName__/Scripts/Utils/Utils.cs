@@ -651,7 +651,10 @@ namespace GarageKit
 			IntPtr hWnd = GetApplicationWindowHandle();
 
 			if(hWnd != IntPtr.Zero)
+			{
 				SetForegroundWindow(hWnd);
+				SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_FRAMECHANGED);
+			}
 		}
 
 		/// <summary>
