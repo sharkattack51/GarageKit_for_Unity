@@ -12,8 +12,6 @@ Log/*.log
 /*.userprefs
 .vscode
 
-/Assets/Require
-
 # for Mac
 .DS_Store
 

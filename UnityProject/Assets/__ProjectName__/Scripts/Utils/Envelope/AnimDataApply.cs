@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 
-using MiniJSON;
-
 /*
  * Cinema4Dのキーフレームjsonデータをアニメーションカーブに変換する
  */
@@ -63,14 +61,14 @@ namespace GarageKit
 		// アニメーションデータ反映トラック
 		public AnimationTrack[] animTracks;
 		
-		private object rawData;
-		public object RawData { get{ return rawData; } }
+		private Dictionary<string, List<float>> data;
+		public Dictionary<string, List<float>> Data { get{ return data; } }
 
 
 		void Awake()
 		{
 			// ファイルの読み込み
-			rawData = Json.Deserialize(File.ReadAllText(filePath));
+			data = JsonUtility.FromJson<Dictionary<string, List<float>>>(File.ReadAllText(filePath));
 		}
 
 		void Start()
@@ -88,23 +86,20 @@ namespace GarageKit
 		// アニメーションカーブを初期化
 		private void InitAnimCurve()
 		{
-			IDictionary data = rawData as IDictionary;
-			
 			foreach(AnimationTrack track in animTracks)
 			{
-				if(data.Contains(track.GetTrackName()))
+				if(data.ContainsKey(track.GetTrackName()))
 				{
-					List<float> keys = new List<float>();
-					IList rawKeys = data[track.GetTrackName()] as IList;
+					List<float> keyframes = new List<float>();
 					
 					//C4Dの座標系を変換してキーフレームを取得
-					foreach(object key in rawKeys)
-						keys.Add(ConvertC4DSpace(track.type, Convert.ToSingle(key)));
+					foreach(float keyframe in data[track.GetTrackName()])
+						keyframes.Add(ConvertC4DSpace(track.type, keyframe));
 					
 					//アニメーションカーブに反映
 					track.curve = new AnimationCurve();
-					for(int i = 0; i < keys.Count; i++)
-						track.curve.AddKey((float)i / (float)keys.Count, keys[i]);
+					for(int i = 0; i < keyframes.Count; i++)
+						track.curve.AddKey((float)i / (float)keyframes.Count, keyframes[i]);
 				}
 			}
 		}

@@ -6,13 +6,13 @@ You can start the project immediately in Unity using GarageKit.
 
 ## What is it?
 
-GaraegKit is framework that uses the Unity C#. I provide the template scene, some manager scripts, state scripts, utility scripts and directory structure.
+GaraegKit is Unity C# framework. provide the template scene, some manager scripts, state scripts, utility scripts and directory structure.
 
 http://debuglog.tumblr.com/post/100742681354/garagekit-for-unity
 
 ## How to use?
 
-1. open Main.unity
+1. open /Scenes/Main.unity
 2. and press the play.
 3. and customize your project.
 
@@ -20,9 +20,12 @@ http://debuglog.tumblr.com/post/100742681354/garagekit-for-unity
 
 /Editor
 
-- Editor enhancements  
+- Editor enhancements
+https://github.com/sharkattack51/UnityEditorEnhancements
+
+fork of
+https://bitbucket.org/Tenebrous/unityeditorenhancements/
 http://forum.unity3d.com/threads/free-editor-enhancements-extensions-in-project-window-components-in-heirarchy.149569/
-https://bitbucket.org/Tenebrous/unityeditorenhancements/commits/all
 
 /Plugins/Log4Net
 
@@ -37,33 +40,55 @@ https://gist.github.com/darktable/1412228
 - iTween  
 http://itween.pixelplacement.com/index.php
 
-- JPGEncoder  
-https://code.google.com/p/unity-jpeg-encoder/source/browse/tags/Version1/UnityProject/Assets/JPGEncoder.cs?spec=svn21&r=21
-
 ~~- TouchScript
 https://www.assetstore.unity3d.com/jp/#!/content/7394~~
 (UnityEngine.Input.Touch works in Windows !!)
 
-- MiniJson  
-https://gist.github.com/darktable/1411710
+## Examples
+
+/Scenes/Examples
+
+- ApplicationSettingExample.unity
+- CameraControllExample.unity
+- TimelinedStateExample.unity
+- VRGuiExample.unity
+
+## Main Scripts
+
+- AppMain.cs
+
+/Scripts/Managers
+
+- DebugManager.cs
+- SceneStateManager.cs
+- SoundManager.cs
+- TimeManager.cs
+- UserInputManager.cs
+
+/Scripts/States/Base
+
+- AsyncStateBase.cs
+- StateBase.cs
+- TimelinedStateBase.cs
+- VRSceneStateBase.cs
 
 ## Utility Scripts
 
 /Editor
 
 - AssetPostprocessUTF8Encode.cs
-- CreateCuntomPlane.cs
-- StateGenerator.cs
 
 /Scripts/Utils
 
 - Utils.cs
+- AndroidUtil.cs
 
 /Scripts/Utils/Application
   
 - ApplicationSetting.cs
 - ExecuteArgs.cs
 - ExternalProcess.cs
+- RemotePrefs.cs
 - SetAntiAliasing.cs
 - SetAppResoution.cs
 - StandaloneResolutionHelper.cs
@@ -80,6 +105,7 @@ https://gist.github.com/darktable/1411710
 - ObjectOrbit.cs
 - ObjectOrbit2.cs
 - OrbitCamera.cs
+- Panorama360Camera.cs
 - PinchZoomCamera.cs
 
 /Scripts/Utils/DataLoader
@@ -91,10 +117,10 @@ https://gist.github.com/darktable/1411710
 /Scripts/Utils/Debug
 
 - CameraGizmoDrawer.cs
-- LookAtGizmoDrawer.cs
 - EditorHide.cs
 - FrameRateUtil.cs
 - GizmoDrawer.cs
+- LookAtGizmoDrawer.cs
 - MemoryProfiler.cs
 - VisibleMouseCursor.cs
 
@@ -105,7 +131,10 @@ https://gist.github.com/darktable/1411710
 
 /Scripts/Utils/Event
 
+- TimelineEventAction.cs
+- TimelineEventActionList.cs
 - AnimationEventDelegate.cs
+- ColliderHandler.cs
 - TimerEvent.cs
 
 /Scripts/Utils/Input
@@ -120,6 +149,7 @@ https://gist.github.com/darktable/1411710
 
 /Scripts/Utils/Object
 
+- AnimationByStep.cs
 - AutoBrink.cs
 - AutoRotate.cs
 - AutoScale.cs
@@ -132,6 +162,7 @@ https://gist.github.com/darktable/1411710
 - ScreenPositionFollower.cs
 - TransformFollower.cs
 - WebCamPlateObject.cs
+- ZsortOrderGroup.cs
 
 /Scripts/Utils/Render
 
@@ -142,6 +173,17 @@ https://gist.github.com/darktable/1411710
 /Scripts/Utils/Texture
 
 - NumberTexture.cs
+- SequenceSprite.cs
 - SequenceTexture.cs
+
+/Scripts/Utils/UI
+
+- UIFadeGroupComponent.cs
+- UIFadeTelop.cs
+- UILineRenderer.cs
+
+/Scripts/Utils/VR
+
+- VRGazeGuideArrow.cs
 
 ...TBA

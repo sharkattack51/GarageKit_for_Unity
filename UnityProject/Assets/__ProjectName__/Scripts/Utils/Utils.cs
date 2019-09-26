@@ -461,37 +461,32 @@ namespace GarageKit
 	/// <summary>
 	/// スクリーンキャプチャ関連のユーティリティ
 	/// </summary>
-	public class CaptureUtil : MonoBehaviour
+	public class CaptureUtil
 	{	
 		/// <summary>
-		/// 範囲指定をしてPNGで保存
+		/// 範囲指定をして保存
 		/// </summary>
-		public static IEnumerator CaptureRangeJPG(string dirPath, string fileName, Rect range)
+		public static void CaptureRect(string dirPath, string fileName, Rect rect)
 		{
-			yield return new WaitForEndOfFrame();
-			
 			//範囲でキャプチャをする
-			Texture2D screenShot = new Texture2D((int)range.width, (int)range.height);
-			screenShot.ReadPixels(range, 0, 0);
+			Texture2D screenShot = new Texture2D((int)rect.width, (int)rect.height);
+			screenShot.ReadPixels(rect, 0, 0);
 			
 			//保存先の確認
 			if(!Directory.Exists(dirPath))
 				Directory.CreateDirectory(dirPath);
 			
 			//拡張子の確認
-			if(Path.GetExtension(fileName).ToUpper() != ".JPG")
-				fileName = Path.GetFileNameWithoutExtension(fileName) + ".jpg";
-			
-			//JPEGエンコード
-			JPGEncoder encoder = new JPGEncoder(screenShot, 100.0f);
-			encoder.doEncoding();
-			while(!encoder.isDone)
-				yield return 0;
+			string ext = Path.GetExtension(fileName).ToLower();
+			byte[] bytes = new byte[0];
+			if(ext == ".jpg" || ext == ".JPG" || ext == ".jpeg" || ext == ".Jpeg")
+				bytes = screenShot.EncodeToJPG();
+			else if(ext == ".png" || ext == ".PNG")
+				bytes = screenShot.EncodeToPNG();
 			
 			//保存
-			File.WriteAllBytes(Path.Combine(dirPath, fileName), encoder.GetBytes());
+			File.WriteAllBytes(Path.Combine(dirPath, fileName), bytes);
 			
-			encoder = null;
 			Texture2D.Destroy(screenShot);
 		}
 	}
