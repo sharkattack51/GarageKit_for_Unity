@@ -53,7 +53,8 @@ namespace GarageKit
 			base.StateUpdate();
 
 			// Timelineイベント実行
-			actionList.Update(AppMain.Instance.timeManager.mainTimer.ElapsedTime);
+			actionTime = AppMain.Instance.timeManager.mainTimer.ElapsedTime;
+			actionList.Update(actionTime);
 		}
 
 		public override void StateExit()

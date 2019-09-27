@@ -14,9 +14,9 @@ public class ResultState : AsyncStateBase
 	{
 		base.StateStart(context);
 		
-		sceneText.text = "this is [Result] scene.";
+		sceneText.text = "this is [Result] state.";
 		timerText.text = "timer is end";
-		messageText.text = "push [Space] return to [Wait] scene.";
+		messageText.text = "push [Space] return to [Wait] state.";
 	}
 	
 	public override void StateUpdate()

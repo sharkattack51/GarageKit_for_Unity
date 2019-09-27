@@ -14,9 +14,9 @@ public class WaitState : AsyncStateBase
 	{
 		base.StateStart(context);
 		
-		sceneText.text = "this is [Wait] scene.";
+		sceneText.text = "this is [Wait] state.";
 		timerText.text = "";
-		messageText.text = "push [Space] : next scene";
+		messageText.text = "push [Space] : next state";
 	}
 	
 	public override void StateUpdate()

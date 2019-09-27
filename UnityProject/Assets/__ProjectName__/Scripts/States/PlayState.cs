@@ -21,7 +21,7 @@ public class PlayState : AsyncStateBase
 	{
 		base.StateStart(context);
 		
-		sceneText.text = "this is [Play] scene.";
+		sceneText.text = "this is [Play] state.";
 		messageText.text = "push [Space] : timer start";
 	}
 	
