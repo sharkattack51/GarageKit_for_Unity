@@ -1,0 +1,37 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using GarageKit;
+
+public class {className} : VRSceneStateBase
+{
+    public override void StateStart(object context)
+    {
+        base.StateStart(context);
+    }
+
+    public override void StateUpdate()
+    {
+        base.StateUpdate();
+    }
+
+    public override void StateExit()
+    {
+        base.StateExit();
+    }
+
+    public override void ToNextState()
+    {
+        base.ToNextState();
+    }
+
+    public override void ToPrevState()
+    {
+        base.ToPrevState();
+    }
+
+    public override void ResetCurrentState()
+    {
+        base.ResetCurrentState();
+    }
+}

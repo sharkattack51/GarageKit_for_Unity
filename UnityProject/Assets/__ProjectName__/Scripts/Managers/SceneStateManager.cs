@@ -14,11 +14,18 @@ namespace GarageKit
 		[SerializeField] private string stateName = "";
 		public string StateName { get{ return stateName; } }
 
-		[SerializeField] private StateBase stateObj = null;
+		[SerializeField] private IState stateObj = null;
 		public IState StateObj { get{ return stateObj; } }
 
 		[SerializeField] private bool asInitial = false;
 		public bool AsInitial { get{ return asInitial; } }
+
+		public SceneStateData(string stateName, IState stateObj, bool asInitial)
+		{
+			this.stateName = StateName;
+			this.stateObj = stateObj;
+			this.asInitial = asInitial;
+		}
 	}
 
 	public class SceneStateManager : ManagerBase

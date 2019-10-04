@@ -1,0 +1,27 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using GarageKit;
+
+public class {className} : AsyncStateBase
+{
+    public override void StateStart(object context)
+    {
+        base.StateStart(context);
+    }
+
+    public override void StateUpdate()
+    {
+        base.StateUpdate();
+    }
+
+    public override void StateExit()
+    {
+        base.StateExit();
+    }
+
+    public override void StateExitAsync()
+    {
+        base.StateExitAsync();
+    }
+}
