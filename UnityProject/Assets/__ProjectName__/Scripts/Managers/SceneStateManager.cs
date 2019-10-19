@@ -14,13 +14,13 @@ namespace GarageKit
 		[SerializeField] private string stateName = "";
 		public string StateName { get{ return stateName; } }
 
-		[SerializeField] private IState stateObj = null;
-		public IState StateObj { get{ return stateObj; } }
+		[SerializeField] private StateBase stateObj = null;
+		public StateBase StateObj { get{ return stateObj; } }
 
 		[SerializeField] private bool asInitial = false;
 		public bool AsInitial { get{ return asInitial; } }
 
-		public SceneStateData(string stateName, IState stateObj, bool asInitial)
+		public SceneStateData(string stateName, StateBase stateObj, bool asInitial)
 		{
 			this.stateName = StateName;
 			this.stateObj = stateObj;
@@ -97,15 +97,23 @@ namespace GarageKit
 
 		public void ChangeAsyncState(string stateName, object context = null)
 		{
-			if(!stateChanging)
+			if(currentState.StateObj is AsyncStateBase)
 			{
-				isAsync = true;
-				stateChanging = true;
-				
-				if(currentState != null)
-					fromStateName = currentState.StateName;
+				if(!stateChanging)
+				{
+					isAsync = true;
+					stateChanging = true;
+					
+					if(currentState != null)
+						fromStateName = currentState.StateName;
 
-				StartCoroutine(ChangeStateCoroutine(stateName, context));
+					StartCoroutine(ChangeStateCoroutine(stateName, context));
+				}
+			}
+			else
+			{
+				Debug.LogWarning("SceneStateManager :: target state class is not AsyncStateBase. to transition using ChangeState().");
+				ChangeState(stateName, context);
 			}
 		}
 

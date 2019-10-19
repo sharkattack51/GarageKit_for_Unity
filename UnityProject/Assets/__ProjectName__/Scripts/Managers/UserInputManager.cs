@@ -84,9 +84,7 @@ namespace GarageKit
 				// change state
 				SceneStateManager sceneStateManager = AppMain.Instance.sceneStateManager;
 				TimeManager timeManager = AppMain.Instance.timeManager;
-				if(sceneStateManager.CurrentState.StateName == "STARTUP")
-					sceneStateManager.ChangeState("WAIT");
-				else if(sceneStateManager.CurrentState.StateName == "WAIT")
+				if(sceneStateManager.CurrentState.StateName == "WAIT")
 					sceneStateManager.ChangeAsyncState("PLAY");
 				else if(sceneStateManager.CurrentState.StateName == "PLAY")
 					timeManager.mainTimer.StartTimer(ApplicationSetting.Instance.GetInt("GameTime"));
