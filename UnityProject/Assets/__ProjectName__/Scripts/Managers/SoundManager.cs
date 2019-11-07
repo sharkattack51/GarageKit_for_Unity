@@ -149,6 +149,14 @@ namespace GarageKit
 			}
 		}
 
+		public bool IsPlay2D(string layerName)
+		{
+			if(!audioSources2D.ContainsKey(layerName))
+				return false;
+
+			return audioSources2D[layerName].isPlaying;
+		}
+
 		public void Stop(string layerName = "")
 		{
 			InternalStop(layerName, false);
@@ -217,6 +225,24 @@ namespace GarageKit
 					sourceData.source.Play();
 				}
 			}
+		}
+
+		public bool IsPlay3D(string layerName, string sourceName)
+		{
+			Sound3dLayerData layer = soundLayers3D.FirstOrDefault(l => l.layerName == layerName);
+			if(layer == null)
+				return false;
+
+			if(layer.soundData.use)
+			{
+				SoundSourceData sourceData = layer.soundData.sources.FirstOrDefault(c => c.sourceName == sourceName);
+				if(sourceData == null)
+					return false;
+
+				return sourceData.source.isPlaying;
+			}
+			else
+				return false;
 		}
 
 		public void Stop3D(string layerName = "", string sourceName = "")
