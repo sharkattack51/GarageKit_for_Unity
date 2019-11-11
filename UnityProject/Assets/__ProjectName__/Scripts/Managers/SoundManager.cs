@@ -22,14 +22,14 @@ namespace GarageKit
 	{
 		public bool use = true;
 		[Range(0.0f, 1.0f)] public float volume = 1.0f;
-		public SoundClipData[] clips;
+		public List<SoundClipData> clips = new List<SoundClipData>();
 	}
 
 	[Serializable]
 	public class SoundLayerData
 	{
 		public string layerName = "";
-		public SoundData soundData;
+		public SoundData soundData = new SoundData();
 
 		public bool IgnoreAllMethod { get; set; }
 	}
@@ -44,18 +44,18 @@ namespace GarageKit
 	}
 
 	[Serializable]
-	public class Sound3dData
+	public class Sound3DData
 	{
 		public bool use = true;
 		[Range(0.0f, 1.0f)] public float volume = 1.0f;
-		public SoundSourceData[] sources;
+		public List<SoundSourceData> sources = new List<SoundSourceData>();
 	}
 
 	[Serializable]
-	public class Sound3dLayerData
+	public class Sound3DLayerData
 	{
 		public string layerName = "";
-		public Sound3dData soundData;
+		public Sound3DData soundData = new Sound3DData();
 
 		public bool IgnoreAllMethod { get; set; }
 	}
@@ -63,15 +63,15 @@ namespace GarageKit
 
 	public class SoundManager : ManagerBase
 	{
-		public SoundLayerData[] soundLayers;
-		public Sound3dLayerData[] soundLayers3D;
+		public List<SoundLayerData> soundLayers;
+		public List<Sound3DLayerData> soundLayers3D;
 
 		private Dictionary<string, AudioSource> audioSources2D;
 
 		private Dictionary<string, SoundLayerData> soundLayersTable;
 		public Dictionary<string, SoundLayerData> SoundLayers { get{ return soundLayersTable; } }
-		private Dictionary<string, Sound3dLayerData> soundLayers3DTable;
-		public Dictionary<string, Sound3dLayerData> SoundLayers3D { get{ return soundLayers3DTable; } }
+		private Dictionary<string, Sound3DLayerData> soundLayers3DTable;
+		public Dictionary<string, Sound3DLayerData> SoundLayers3D { get{ return soundLayers3DTable; } }
 
 		
 		protected override void Awake()
@@ -85,9 +85,25 @@ namespace GarageKit
 
 			audioSources2D = new Dictionary<string, AudioSource>();
 			soundLayersTable = new Dictionary<string, SoundLayerData>();
-			soundLayers3DTable = new Dictionary<string, Sound3dLayerData>();
+			soundLayers3DTable = new Dictionary<string, Sound3DLayerData>();
 
 			foreach(SoundLayerData layer in soundLayers)
+				AddLayer(layer);
+
+			foreach(Sound3DLayerData layer in soundLayers3D)
+				AddLayer3D(layer);
+		}
+
+		protected override void Update()
+		{
+			base.Update();
+		}
+		
+
+#region 2D sound
+		public void AddLayer(SoundLayerData layer)
+		{
+			if(!soundLayersTable.ContainsKey(layer.layerName))
 			{
 				soundLayersTable.Add(layer.layerName, layer);
 
@@ -98,18 +114,31 @@ namespace GarageKit
 				source.playOnAwake = false;
 				audioSources2D.Add(layer.layerName, source);
 			}
-
-			foreach(Sound3dLayerData layer in soundLayers3D)
-				soundLayers3DTable.Add(layer.layerName, layer);
+			else
+				Debug.LogWarning("SoundManager :: layer is already exists.");
 		}
 
-		protected override void Update()
+		public void AddClip(string layerName, string clipName, AudioClip clip)
 		{
-			base.Update();
-		}
-		
+			if(!soundLayersTable.ContainsKey(layerName))
+			{
+				SoundLayerData layer = new SoundLayerData();
+				layer.layerName = layerName;
+				AddLayer(layer);
+			}
 
-#region 2D sound
+			SoundClipData exist = soundLayersTable[layerName].soundData.clips.Find((c) => c.clipName == clipName);
+			if(exist == null)
+			{
+				SoundClipData clipData = new SoundClipData();
+				clipData.clipName = clipName;
+				clipData.clip = clip;
+				soundLayersTable[layerName].soundData.clips.Add(clipData);
+			}
+			else
+				Debug.LogWarning("SoundManager :: clip is already exists.");
+		}
+
 		public void Play(string layerName, string clipName, bool overlap = false)
 		{
 			Play(layerName, clipName, overlap, false, true);
@@ -149,7 +178,7 @@ namespace GarageKit
 			}
 		}
 
-		public bool IsPlay2D(string layerName)
+		public bool IsPlay(string layerName)
 		{
 			if(!audioSources2D.ContainsKey(layerName))
 				return false;
@@ -192,6 +221,35 @@ namespace GarageKit
 #endregion
 
 #region 3D sound
+		public void AddLayer3D(Sound3DLayerData layer)
+		{
+			if(!soundLayers3DTable.ContainsKey(layer.layerName))
+				soundLayers3DTable.Add(layer.layerName, layer);
+			else
+				Debug.LogWarning("SoundManager :: layer is already exists.");
+		}
+
+		public void AddSource3D(string layerName, string sourceName, AudioSource source)
+		{
+			if(!soundLayers3DTable.ContainsKey(layerName))
+			{
+				Sound3DLayerData layer = new Sound3DLayerData();
+				layer.layerName = layerName;
+				AddLayer3D(layer);
+			}
+
+			SoundSourceData exist = soundLayers3DTable[layerName].soundData.sources.Find((s) => s.sourceName == sourceName);
+			if(exist == null)
+			{
+				SoundSourceData sourceData = new SoundSourceData();
+				sourceData.sourceName = sourceName;
+				sourceData.source = source;
+				soundLayers3DTable[layerName].soundData.sources.Add(sourceData);
+			}
+			else
+				Debug.LogWarning("SoundManager :: source is already exists.");
+		}
+
 		public void Play3D(string layerName, string sourceName, bool overlap = false)
 		{
 			Play3D(layerName, sourceName, overlap, false, true);
@@ -199,7 +257,7 @@ namespace GarageKit
 
 		public void Play3D(string layerName, string sourceName, bool overlap, bool loop, bool asOneShot)
 		{
-			Sound3dLayerData layer = soundLayers3D.FirstOrDefault(l => l.layerName == layerName);
+			Sound3DLayerData layer = soundLayers3D.FirstOrDefault(l => l.layerName == layerName);
 			if(layer == null)
 				return;
 
@@ -229,7 +287,7 @@ namespace GarageKit
 
 		public bool IsPlay3D(string layerName, string sourceName)
 		{
-			Sound3dLayerData layer = soundLayers3D.FirstOrDefault(l => l.layerName == layerName);
+			Sound3DLayerData layer = soundLayers3D.FirstOrDefault(l => l.layerName == layerName);
 			if(layer == null)
 				return false;
 
@@ -259,7 +317,7 @@ namespace GarageKit
 		{
 			if(layerName != "")
 			{
-				Sound3dLayerData layer = soundLayers3D.FirstOrDefault(l => l.layerName == layerName);
+				Sound3DLayerData layer = soundLayers3D.FirstOrDefault(l => l.layerName == layerName);
 				if(layer == null)
 					return;
 				
@@ -283,7 +341,7 @@ namespace GarageKit
 			}
 			else
 			{
-				foreach(Sound3dLayerData layer in soundLayers3D)
+				foreach(Sound3DLayerData layer in soundLayers3D)
 				{
 					if(asAll && !layer.IgnoreAllMethod)
 					{
@@ -306,7 +364,7 @@ namespace GarageKit
 				if(!layer.IgnoreAllMethod)
 					Fade(layer.layerName, 0.0f, layer.soundData.volume, time);
 			}
-			foreach(Sound3dLayerData layer in soundLayers3D)
+			foreach(Sound3DLayerData layer in soundLayers3D)
 			{
 				if(!layer.IgnoreAllMethod)
 				{
@@ -323,7 +381,7 @@ namespace GarageKit
 				if(!layer.IgnoreAllMethod)
 					Fade(layer.layerName, layer.soundData.volume, 0.0f, time);
 			}
-			foreach(Sound3dLayerData layer in soundLayers3D)
+			foreach(Sound3DLayerData layer in soundLayers3D)
 			{
 				if(!layer.IgnoreAllMethod)
 				{
@@ -365,7 +423,7 @@ namespace GarageKit
 
 		public void Fade3D(string layerName, string sourceName, float fromVol, float toVol, float time)
 		{
-			Sound3dLayerData layer = soundLayers3D.FirstOrDefault(l => l.layerName == layerName);
+			Sound3DLayerData layer = soundLayers3D.FirstOrDefault(l => l.layerName == layerName);
 			if(layer == null)
 				return;
 
