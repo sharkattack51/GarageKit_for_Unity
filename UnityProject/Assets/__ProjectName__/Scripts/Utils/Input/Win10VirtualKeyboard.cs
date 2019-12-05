@@ -114,7 +114,7 @@ namespace GarageKit
                     }
                 }
             }
-        }
 #endif
+        }
     }
 }

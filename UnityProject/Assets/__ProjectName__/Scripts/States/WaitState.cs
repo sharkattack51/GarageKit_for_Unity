@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using GarageKit;
 
-public class WaitState : AsyncStateBase
+public class WaitState : AsyncStateBase, ISequentialState
 {
 	public Text sceneText;
 	public Text timerText;
@@ -27,5 +27,16 @@ public class WaitState : AsyncStateBase
 	public override void StateExit()
 	{
 		base.StateExit();
+	}
+
+
+	public void ToNextState()
+	{
+		AppMain.Instance.sceneStateManager.ChangeAsyncState("PLAY");
+	}
+
+	public void ToPrevState()
+	{
+		// pass
 	}
 }

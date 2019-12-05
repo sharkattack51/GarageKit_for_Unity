@@ -81,15 +81,16 @@ namespace GarageKit
 				// SE
 				AppMain.Instance.soundManager.Play("SE", "CLICK");
 				
-				// change state
-				SceneStateManager sceneStateManager = AppMain.Instance.sceneStateManager;
-				TimeManager timeManager = AppMain.Instance.timeManager;
-				if(sceneStateManager.CurrentState.StateName == "WAIT")
-					sceneStateManager.ChangeAsyncState("PLAY");
-				else if(sceneStateManager.CurrentState.StateName == "PLAY")
-					timeManager.mainTimer.StartTimer(ApplicationSetting.Instance.GetInt("GameTime"));
-				else if(sceneStateManager.CurrentState.StateName == "RESULT")
-					sceneStateManager.ChangeAsyncState("WAIT");
+				// change State or Timer start
+				PlayState state = AppMain.Instance.sceneStateManager.CurrentState.StateObj as PlayState;
+				if(state != null)
+					state.StartTimer(); // PLAY state
+				else
+				{
+					ISequentialState seqState = AppMain.Instance.sceneStateManager.CurrentState.StateObj as ISequentialState;
+					if(seqState != null)
+						seqState.ToNextState(); // WAIT or RESULT state
+				}
 			}
 		}
 		

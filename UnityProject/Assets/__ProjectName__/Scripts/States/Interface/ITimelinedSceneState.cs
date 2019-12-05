@@ -1,9 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-/*
- * VRSceneState用のインターフェース
- */
 namespace GarageKit
 {
 	public interface ITimelinedSceneState

@@ -7,7 +7,7 @@ using System;
 
 namespace GarageKit
 {
-	public class VRSceneStateBase : TimelinedSceneStateBase, IVRSceneState
+	public class VRSceneStateBase : TimelinedSceneStateBase, ISequentialState, IVRSceneState
 	{
 		[Header("VRSceneStateBase")]
 		public GameObject viewReferenceObj;
