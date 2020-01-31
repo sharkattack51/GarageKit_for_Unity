@@ -43,7 +43,7 @@ namespace GarageKit
         void Start()
         {
             udpReceiver = this.gameObject.GetComponent<UDPReceiver>();
-            udpReceiver.OnReceived += OnJsonReceived;
+            udpReceiver.OnReceived = OnJsonReceived;
 
             Debug.LogWarning(string.Format("RemotePrefs :: receive json port is [:{0}].", udpReceiver.port)
                 + " send json like this {\"command\": \"set\", \"key\": \"SAMPLE\", \"value_type\": \"int\", \"int_value\": 123}");
@@ -56,13 +56,13 @@ namespace GarageKit
 
         void OnDisable()
         {
-            udpReceiver.OnReceived -= OnJsonReceived;
+            udpReceiver.OnReceived = null;
             udpReceiver.Close();
             udpReceiver = null;
         }
 
 
-        private void OnJsonReceived(GameObject go, string json)
+        private void OnJsonReceived(string json)
         {
             RemotePrefsData data = null;
             

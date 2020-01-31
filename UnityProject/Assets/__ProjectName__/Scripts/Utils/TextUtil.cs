@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -281,6 +282,23 @@ namespace GarageKit
 			}
 			
 			textMesh.text = processedText;
+		}
+
+		/// <summary>
+		/// IPアドレスとポートに分割して文字列パースする
+		/// </summary>
+		public static bool ParseIpAndPort(string ipStr, out string ip, out int port)
+		{
+			string[] ipStrs = ipStr.Split(new string[]{ ":" }, StringSplitOptions.None);
+			if(ipStrs.Length == 2)
+			{
+				ip = ipStrs[0];
+				return int.TryParse(ipStrs[1], out port);
+			}
+
+			ip = "";
+			port = 0;
+			return false;
 		}
 	}
 }

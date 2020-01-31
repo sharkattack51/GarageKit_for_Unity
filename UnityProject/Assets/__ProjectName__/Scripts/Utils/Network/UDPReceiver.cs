@@ -26,13 +26,7 @@ namespace GarageKit
 		private volatile bool isDataReceived = false;
 		
 		// データ受信イベント
-		public delegate void OnReceivedDelegate(GameObject senderObject, string receivedStr);
-		public event OnReceivedDelegate OnReceived;
-		private void InvokeOnReceived(string receivedStr)
-		{
-			if(OnReceived != null)
-				OnReceived(this.gameObject, receivedStr);
-		}
+		public Action<string> OnReceived;
 		
 		private UdpClient udpClient = null;
 		private Thread receiveThread = null;
@@ -55,7 +49,8 @@ namespace GarageKit
 			// 受信イベントをメインスレッドで実行
 			if(isDataReceived)
 			{
-				InvokeOnReceived(receivedDataStr);
+				if(OnReceived != null)
+					OnReceived(receivedDataStr);
 				isDataReceived = false;
 			}
 		}
