@@ -109,6 +109,8 @@ namespace GarageKit
 
 					StartCoroutine(ChangeStateCoroutine(stateName, context));
 				}
+				else
+					Debug.LogWarning("SceneStateManager :: AsyncState has already started. nesting and consecutive ChangeAsyncState() are ignored.");
 			}
 			else
 			{
