@@ -6,13 +6,13 @@ namespace GarageKit
 {
 	public class AsyncStateBase : StateBase, IAsyncState
 	{
-		protected Fader[] faders;
-		protected float fadeTime = 1.0f;
+		[Header("AsyncStateBase")]
+		public float fadeTime = 1.0f;
 
 
 		private void Awake()
 		{
-			faders = FindObjectsOfType<Fader>();
+		
 		}
 		
 		

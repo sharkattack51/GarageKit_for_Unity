@@ -21,12 +21,15 @@ namespace GarageKit
 		// 受信データ
 		private string receivedDataStr = "";
 		public string ReceivedDataStr { get{ return receivedDataStr; } }
+		private byte[] receivedDataBytes = new byte[0];
+		public byte[] ReceivedDataBytes { get{ return receivedDataBytes; } }
 		
 		// スレッド処理でのデータ受信フラグ
 		private volatile bool isDataReceived = false;
 		
 		// データ受信イベント
 		public Action<string> OnReceived;
+		public Action<byte[]> OnReceivedBytes;
 		
 		private UdpClient udpClient = null;
 		private Thread receiveThread = null;
@@ -51,6 +54,9 @@ namespace GarageKit
 			{
 				if(OnReceived != null)
 					OnReceived(receivedDataStr);
+				if(OnReceivedBytes != null)
+					OnReceivedBytes(receivedDataBytes);
+				
 				isDataReceived = false;
 			}
 		}
@@ -106,6 +112,7 @@ namespace GarageKit
 						byte[] data = udpClient.Receive(ref ipEndPoint);
 						
 						receivedDataStr = Encoding.UTF8.GetString(data);
+						receivedDataBytes = data;
 						isDataReceived = true;
 					}
 				}

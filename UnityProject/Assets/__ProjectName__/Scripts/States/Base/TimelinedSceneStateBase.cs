@@ -120,7 +120,7 @@ namespace GarageKit
 			}
 
 			// フェードINを開始
-			foreach(Fader fader in this.faders)
+			foreach(Fader fader in Fader.Faders)
 				fader.StartFade(0.1f, Fader.FADE_TYPE.FADE_IN, 0.3f);
 		}
 
@@ -154,7 +154,7 @@ namespace GarageKit
 			managedPausingAnimators = new List<Animator>();
 
 			// フェードOUTを開始
-			foreach(Fader fader in this.faders)
+			foreach(Fader fader in Fader.Faders)
 				fader.StartFade(0.1f, Fader.FADE_TYPE.FADE_OUT, 0.3f);
 		}
 	}

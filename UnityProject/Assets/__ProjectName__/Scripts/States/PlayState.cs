@@ -5,6 +5,7 @@ using GarageKit;
 
 public class PlayState : AsyncStateBase, ISequentialState
 {
+	[Header("PlayState")]
 	public Text sceneText;
 	public Text timerText;
 	public Text messageText;

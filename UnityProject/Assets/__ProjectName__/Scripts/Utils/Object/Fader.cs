@@ -15,7 +15,8 @@ namespace GarageKit
 		private static bool useFade = true;
 		public static bool UseFade { get{ return useFade && (Faders.Count > 0); } }
 
-		private static List<Fader> Faders = new List<Fader>();
+		private static List<Fader> faders = new List<Fader>();
+		public static List<Fader> Faders { get{ return faders; } }
 		
 		public float fadeTime = 1.0f;
 		public Color fadeColor = new Color(0.0f, 0.0f, 0.0f, 1.0f);
@@ -35,6 +36,9 @@ namespace GarageKit
 		void Awake()
 		{
 			Faders.Add(this);
+
+			if(fadeMaterial == null)
+				fadeMaterial = new Material(Shader.Find("Custom/ShaderLib/Unlit/MaterialAlpha"));
 			fadeMaterial.color = fadeColor;
 		}
 		
@@ -76,12 +80,23 @@ namespace GarageKit
 		}
 		
 		// Fadeの開始
+		public static void StartFadeAll(FADE_TYPE fadeType)
+		{
+			foreach(Fader fader in Fader.faders)
+				fader.StartFade(fader.fadeTime, fadeType);
+		}
+
 		public static void StartFadeAll(float fadeTime, FADE_TYPE fadeType)
 		{
-			foreach(Fader fader in Faders)
+			foreach(Fader fader in Fader.faders)
 				fader.StartFade(fadeTime, fadeType);
 		}
 		
+		public void StartFade(FADE_TYPE fadeType, float targetAlpha = 1.0f)
+		{
+			StartFade(fadeTime, fadeType, targetAlpha);
+		}
+
 		public void StartFade(float fadeTime, FADE_TYPE fadeType, float targetAlpha = 1.0f)
 		{
 			if(UseFade)
