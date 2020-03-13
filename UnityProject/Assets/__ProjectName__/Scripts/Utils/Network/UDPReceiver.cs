@@ -52,8 +52,10 @@ namespace GarageKit
 			// 受信イベントをメインスレッドで実行
 			if(isDataReceived)
 			{
-				OnReceived(receivedDataStr);
-				OnReceivedBytes(receivedDataBytes);
+				if(OnReceived != null)
+					OnReceived(receivedDataStr);
+				if(OnReceivedBytes != null)
+					OnReceivedBytes(receivedDataBytes);
 				
 				isDataReceived = false;
 			}
