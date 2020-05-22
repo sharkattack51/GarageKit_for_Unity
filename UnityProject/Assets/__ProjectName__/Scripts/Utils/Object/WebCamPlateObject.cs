@@ -8,6 +8,7 @@ using System;
  */
 namespace GarageKit
 {
+    [RequireComponent(typeof(Renderer))]
     public class WebCamPlateObject : MonoBehaviour
     {
         // デバイス設定
@@ -17,17 +18,19 @@ namespace GarageKit
         public int requestedHeight = 720;
         public int requestedFPS = 30;
         public int anisoLevel = 9;
-        public string propertyName = "_MainTex";
+        public string texturePropName = "_MainTex";
         public FilterMode filteMode = FilterMode.Bilinear;
         public TextureWrapMode wrapMode = TextureWrapMode.Clamp;
         public bool isAutoAspect = true;
         public bool isMirror = false;
+        public bool isMobileCameraRotation = false;
         public OBJECTAXIS_Y vertical = OBJECTAXIS_Y.Z;
         
         private WebCamDevice[] devices;
         private WebCamTexture webCamTexture;
         public WebCamTexture GetWebCamTexture() { return webCamTexture; }
         
+        private Renderer rend;
         private Vector3 defaultAspect;
         
         public enum OBJECTAXIS_Y
@@ -42,8 +45,11 @@ namespace GarageKit
         
         }
         
-        void Start()
+        IEnumerator Start()
         {
+            rend = this.gameObject.GetComponent<Renderer>();
+            rend.enabled = false;
+
             // Webカメラを開く
             try
             {
@@ -58,13 +64,13 @@ namespace GarageKit
                 webCamTexture.filterMode = filteMode;
                 webCamTexture.wrapMode = wrapMode;
                 webCamTexture.mipMapBias = -1.0f;
-                
-                Debug.Log("usb camera opened : " + webCamTexture.deviceName + " : " + webCamTexture.requestedWidth.ToString() + " : " + webCamTexture.requestedHeight.ToString());
+
+                Debug.Log("webcam requested: " + webCamTexture.deviceName + " : " + webCamTexture.requestedWidth.ToString() + " : " + webCamTexture.requestedHeight.ToString());
             }
             catch(Exception e)
             {
-                Debug.Log("usb camera open error : " + e.Message);
-                return;
+                Debug.Log("webcam open error: " + e.Message);
+                yield break;
             }
             
             // アスペクト調整用の初期値を保存
@@ -94,10 +100,24 @@ namespace GarageKit
             }
             
             // テクスチャを適用
-            this.GetComponent<Renderer>().material.SetTexture(propertyName, webCamTexture);
+            rend.material.SetTexture(texturePropName, webCamTexture);
             
             // 映像の更新を開始
             webCamTexture.Play();
+
+            yield return new WaitUntil(() =>{ return IsWebCamPlaySuccess(); });
+
+            Debug.Log("webcam opened: " + webCamTexture.deviceName + " : " + webCamTexture.width.ToString() + " : " + webCamTexture.height.ToString());
+            Debug.Log("webcam video rotation angle: " + webCamTexture.videoRotationAngle.ToString());
+            Debug.Log("webcam video virtical mirror: " + webCamTexture.videoVerticallyMirrored.ToString());
+
+            // モバイルデバイスのカメラ回転設定
+            if(isMobileCameraRotation && webCamTexture.videoRotationAngle > 0)
+                this.gameObject.transform.rotation = Quaternion.Euler(0, 0, -webCamTexture.videoRotationAngle);
+
+            rend.enabled = true;
+
+            yield break;
         }
 
         void OnDisable()
@@ -109,15 +129,20 @@ namespace GarageKit
             }
         }
         
-        /// <summary>
-        /// 現在使用しているWebカメラ映像を取得
-        /// </summary>
+        // 現在使用しているWebカメラ映像を取得
         public WebCamTexture GetTexture()
         {
             if(webCamTexture != null)
                 return webCamTexture;
             else
                 return null;
+        }
+
+        // WebCamがPlayされた後に正常に開かれたかどうか
+        public bool IsWebCamPlaySuccess()
+        {
+            return webCamTexture != null && webCamTexture.isPlaying
+                && webCamTexture.width > 16 && webCamTexture.height > 16;
         }
     }
 }
