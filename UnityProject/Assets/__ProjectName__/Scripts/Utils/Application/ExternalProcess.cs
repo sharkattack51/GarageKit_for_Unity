@@ -1,110 +1,110 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Diagnostics;
-using System;
+using System.IO;
+using UnityEngine;
 
 /// <summary>
 /// 外部プロセスを起動する
 /// </summary>
 namespace GarageKit
 {
-	// プロセス情報データ
-	[Serializable]
-	public class ProcessData
-	{
-		public bool use = true;
-		public string exePath = "";
-		public bool pathIsStreamingAssets = false;
-		public string argument = "";
-		public bool startupOnStart = true;
-		
-		private bool isRunning = false;
-		public bool IsRunning { get{ return isRunning; } set{ isRunning = value; } }
-	}
+    // プロセス情報データ
+    [Serializable]
+    public class ProcessData
+    {
+        public bool use = true;
+        public string exePath = "";
+        public bool pathIsStreamingAssets = false;
+        public string argument = "";
+        public bool startupOnStart = true;
 
-	public class ExternalProcess : MonoBehaviour
-	{
-		// プロセス情報リスト
-		public ProcessData[] processes;
-		
-		// 実行プロセスリスト
-		private List<Process> processList = new List<Process>();
-		public List<Process> ProcessList { get{ return processList; } }
-		
-		
-		void Awake()
-		{
+        private bool isRunning = false;
+        public bool IsRunning { get{ return isRunning; } set{ isRunning = value; } }
+    }
 
-		}
-		
-		void Start()
-		{
-			// スタート時自動起動
-			foreach(ProcessData procData in processes)
-			{
-				if(procData.startupOnStart)
-					StartProcess(procData);
-			}
-		}
-		
-		void OnApplicationQuit()
-		{
-			try
-			{
-				// プロセスの終了
-				foreach(Process proc in processList)
-				{
-					proc.Kill();
-					proc.Dispose();	
-				}
-				
-				processList = new List<Process>();
-			}
-			catch(Exception e)
-			{
-				UnityEngine.Debug.Log("ExternalProcess :: process close error - " + e.Message);
-			}
-		}
-		
-		
-		/// <summary>
-		/// プロセスを実行
-		/// </summary>
-		public void StartProcess(ProcessData procData)
-		{
-			if(procData.use && !procData.IsRunning)
-			{
-				if(procData.pathIsStreamingAssets)
-					procData.exePath = Application.streamingAssetsPath + "/" + procData.exePath;
-				FileInfo fileInfo = new FileInfo(procData.exePath);
-				if(fileInfo.Exists)
-				{
-					Process proc = new Process();
-					proc.StartInfo.FileName = Path.GetFullPath(procData.exePath);
-					
-					// 引数設定
-					if(procData.argument != "")
-						proc.StartInfo.Arguments = procData.argument;
-					
-					// ウィンドウスタイル設定
-					if(!ApplicationSetting.Instance.GetBool("IsDebug"))
-						proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-					
-					try
-					{
-						proc.Start();
-						
-						processList.Add(proc);
-						procData.IsRunning = true;
-					}
-					catch(Exception e)
-					{
-						UnityEngine.Debug.Log("ExternalProcess :: process start error - " + e.Message);
-					}
-				}
-			}
-		}
-	}
+    public class ExternalProcess : MonoBehaviour
+    {
+        // プロセス情報リスト
+        public ProcessData[] processes;
+
+        // 実行プロセスリスト
+        private List<Process> processList = new List<Process>();
+        public List<Process> ProcessList { get{ return processList; } }
+
+
+        void Awake()
+        {
+
+        }
+
+        void Start()
+        {
+            // スタート時自動起動
+            foreach(ProcessData procData in processes)
+            {
+                if(procData.startupOnStart)
+                    StartProcess(procData);
+            }
+        }
+
+        void OnApplicationQuit()
+        {
+            try
+            {
+                // プロセスの終了
+                foreach(Process proc in processList)
+                {
+                    proc.Kill();
+                    proc.Dispose();	
+                }
+
+                processList = new List<Process>();
+            }
+            catch(Exception e)
+            {
+                UnityEngine.Debug.Log("ExternalProcess :: process close error - " + e.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// プロセスを実行
+        /// </summary>
+        public void StartProcess(ProcessData procData)
+        {
+            if(procData.use && !procData.IsRunning)
+            {
+                if(procData.pathIsStreamingAssets)
+                    procData.exePath = Application.streamingAssetsPath + "/" + procData.exePath;
+                FileInfo fileInfo = new FileInfo(procData.exePath);
+                if(fileInfo.Exists)
+                {
+                    Process proc = new Process();
+                    proc.StartInfo.FileName = Path.GetFullPath(procData.exePath);
+
+                    // 引数設定
+                    if(procData.argument != "")
+                        proc.StartInfo.Arguments = procData.argument;
+
+                    // ウィンドウスタイル設定
+                    if(!ApplicationSetting.Instance.GetBool("IsDebug"))
+                        proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+                    try
+                    {
+                        proc.Start();
+
+                        processList.Add(proc);
+                        procData.IsRunning = true;
+                    }
+                    catch(Exception e)
+                    {
+                        UnityEngine.Debug.Log("ExternalProcess :: process start error - " + e.Message);
+                    }
+                }
+            }
+        }
+    }
 }

@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System;
 using UnityEngine;
 
 namespace GarageKit
@@ -51,7 +51,7 @@ namespace GarageKit
 
         void Update()
         {
-            
+
         }
 
         void OnDisable()

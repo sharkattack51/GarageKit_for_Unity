@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -25,70 +26,70 @@ using Microsoft.Win32;
 
 namespace GarageKit
 {
-	[ExecuteInEditMode]
-	public class StandalonePlayerResolutionHelper : MonoBehaviour
-	{
-		/*
-		* ビルド設定のPlayerSettingsよりCompanyNameを入力してください
-		*/
-		public string playerSettingsCompanyName = "";
-		
-		/*
-		*　ビルド設定のPlayerSettingsよりProductNameを入力してください
-		*/
-		public string playerSettingsProductName = "";
-		
-		
-		void Start()
-		{
+    [ExecuteInEditMode]
+    public class StandalonePlayerResolutionHelper : MonoBehaviour
+    {
+        /*
+        * ビルド設定のPlayerSettingsよりCompanyNameを入力してください
+        */
+        public string playerSettingsCompanyName = "";
+
+        /*
+        *　ビルド設定のPlayerSettingsよりProductNameを入力してください
+        */
+        public string playerSettingsProductName = "";
+
+
+        void Start()
+        {
 #if UNITY_EDITOR
-			if(Application.platform == RuntimePlatform.WindowsEditor)
-			{
-				if(playerSettingsCompanyName == "" || playerSettingsCompanyName != PlayerSettings.companyName)
-					playerSettingsCompanyName = PlayerSettings.companyName;
+            if(Application.platform == RuntimePlatform.WindowsEditor)
+            {
+                if(playerSettingsCompanyName == "" || playerSettingsCompanyName != PlayerSettings.companyName)
+                    playerSettingsCompanyName = PlayerSettings.companyName;
 
-				if(playerSettingsProductName == "" || playerSettingsProductName != PlayerSettings.productName)
-					playerSettingsProductName = PlayerSettings.productName;
+                if(playerSettingsProductName == "" || playerSettingsProductName != PlayerSettings.productName)
+                    playerSettingsProductName = PlayerSettings.productName;
 
 #if UNITY_2018_3_OR_NEWER
-				if(PlayerSettings.scriptingRuntimeVersion != ScriptingRuntimeVersion.Latest)
-					Debug.LogError("StandalonePlayerResolutionHelper :: PlayerSettings.scriptingRuntimeVersion is Lagacy");
+                if(PlayerSettings.scriptingRuntimeVersion != ScriptingRuntimeVersion.Latest)
+                    Debug.LogError("StandalonePlayerResolutionHelper :: PlayerSettings.scriptingRuntimeVersion is Lagacy");
 
-				if(PlayerSettings.GetApiCompatibilityLevel(BuildTargetGroup.Standalone) != ApiCompatibilityLevel.NET_4_6)
-					Debug.LogError("StandalonePlayerResolutionHelper :: PlayerSettings.ApiCompatibilityLevel is Low");
+                if(PlayerSettings.GetApiCompatibilityLevel(BuildTargetGroup.Standalone) != ApiCompatibilityLevel.NET_4_6)
+                    Debug.LogError("StandalonePlayerResolutionHelper :: PlayerSettings.ApiCompatibilityLevel is Low");
 #endif
-			}
+            }
 #endif
-		}
-		
+        }
+
 #if UNITY_STANDALONE_WIN && !UNITY_EDITOR
-		void OnApplicationQuit()
-		{
-			RegistryKey key = Registry.CurrentUser;
-			if(key == null)
-				Debug.LogError("StandalonePlayerResolutionHelper :: Registry.CurrentUser is Null");
-			else
-			{
-				string subkey = "Software" + @"\" + playerSettingsCompanyName + @"\" + playerSettingsProductName;
-				key = key.OpenSubKey(subkey, true);
-				if(key == null)
-					Debug.LogError("StandalonePlayerResolutionHelper :: don't open sub key [" + subkey + "]");
-				else
-				{
+        void OnApplicationQuit()
+        {
+            RegistryKey key = Registry.CurrentUser;
+            if(key == null)
+                Debug.LogError("StandalonePlayerResolutionHelper :: Registry.CurrentUser is Null");
+            else
+            {
+                string subkey = "Software" + @"\" + playerSettingsCompanyName + @"\" + playerSettingsProductName;
+                key = key.OpenSubKey(subkey, true);
+                if(key == null)
+                    Debug.LogError("StandalonePlayerResolutionHelper :: don't open sub key [" + subkey + "]");
+                else
+                {
 #if UNITY_2018_3_OR_NEWER
-					key.DeleteValue("Screenmanager Fullscreen mode_h3630240806", false);
-					key.DeleteValue("Screenmanager Resolution Use Native_h1405027254", false);
+                    key.DeleteValue("Screenmanager Fullscreen mode_h3630240806", false);
+                    key.DeleteValue("Screenmanager Resolution Use Native_h1405027254", false);
 #else
-					key.DeleteValue("Screenmanager Is Fullscreen mode_h3981298716", false);
+                    key.DeleteValue("Screenmanager Is Fullscreen mode_h3981298716", false);
 #endif
-					key.DeleteValue("Screenmanager Resolution Height_h2627697771", false);
-					key.DeleteValue("Screenmanager Resolution Width_h182942802", false);
-					key.DeleteValue("UnityGraphicsQuality_h1669003810", false);
-					key.DeleteValue("UnitySelectMonitor_h17969598", false);
-					key.Close();
-				}
-			}
-		}
+                    key.DeleteValue("Screenmanager Resolution Height_h2627697771", false);
+                    key.DeleteValue("Screenmanager Resolution Width_h182942802", false);
+                    key.DeleteValue("UnityGraphicsQuality_h1669003810", false);
+                    key.DeleteValue("UnitySelectMonitor_h17969598", false);
+                    key.Close();
+                }
+            }
+        }
 #endif
-	}
+    }
 }

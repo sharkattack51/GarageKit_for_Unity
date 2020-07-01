@@ -4,22 +4,16 @@ Shader "Custom/ShaderLib/TransBlur"
 {
     Properties
     {
-	   _blurSizeXY("BlurSizeXY", Range(0,10)) = 0
+        _blurSizeXY("BlurSizeXY", Range(0,10)) = 0
     }
 
     SubShader
     {
         // Draw ourselves after all opaque geometry
-        Tags
-        {
-            "Queue" = "Transparent"
-        }
+        Tags { "Queue" = "Transparent" }
 
         // Grab the screen behind the object into _GrabTexture
-        GrabPass
-        {
-
-        }
+        GrabPass {}
 
         // Render the object with the texture generated above
         Pass
@@ -88,7 +82,7 @@ Shader "Custom/ShaderLib/TransBlur"
                 sum += tex2D(_GrabTexture, screenPos + 2.0 * depth) * 0.05;
                 sum += tex2D(_GrabTexture, screenPos + 1.0 * depth) * 0.025;
                 
-            	return sum / 2;
+                return sum / 2;
             }
 
             ENDCG

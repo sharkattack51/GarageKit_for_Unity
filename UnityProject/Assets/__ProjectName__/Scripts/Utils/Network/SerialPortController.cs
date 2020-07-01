@@ -1,10 +1,10 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Text;
 using System.Threading;
+using UnityEngine;
 
 /*
  * シリアル通信を行うクラス
@@ -21,7 +21,7 @@ namespace GarageKit
         /// シリアルポートのインスタンス
         /// </summary>
         private SerialPort port = null;
-        
+
         /// <summary>
         /// シリアルポート設定
         /// </summary>
@@ -42,10 +42,10 @@ namespace GarageKit
         {
             get{ return (port != null) ? port.IsOpen : false; }
         }
-        
+
         // 一度に受け取るコマンドの文字バッファサイズ　固定長
         const int STR_LENGTH = 1024;
-        
+
         // 改行コード設定
         public enum NewLineCode
         {
@@ -53,7 +53,7 @@ namespace GarageKit
             CR,
             CRLF,
         }
-        
+
         public Action<string> OnReceive;
 
         private string receivedDataStr = "";
@@ -63,7 +63,7 @@ namespace GarageKit
         private volatile bool threadAvairable = false;
         private volatile bool isDataReceived = false;
 
-        
+
         void Awake()
         {
             if(autoSerachPort)
@@ -73,7 +73,7 @@ namespace GarageKit
                     portName = portNames[0];
             }
         }
-        
+
         void Start()
         {
             if(autoOpen)
@@ -91,7 +91,7 @@ namespace GarageKit
                 isDataReceived = false;
             }
         }
-        
+
         void OnDisable()
         {
             Close();
@@ -115,7 +115,7 @@ namespace GarageKit
                 port.RtsEnable = rtsEnable;
                 port.ReadTimeout = readTimeout;
                 port.WriteTimeout = writeTimeout;
-                
+
                 try
                 {
                     if(!port.IsOpen)
@@ -155,7 +155,7 @@ namespace GarageKit
                 port = null;
             }
         }
-        
+
         // データ受信
         private void ReadData()
         {
@@ -164,14 +164,14 @@ namespace GarageKit
             while(port != null && port.IsOpen && threadAvairable)
             {
                 string dataStr = "";
-                
+
                 try
                 {
                     byte data = (byte)port.ReadByte();
                     while(data != 255)
                     {
                         dataStr += (char)data;
-                        
+
                         // 次データの読み取り
                         data = (byte)port.ReadByte();
                     }
@@ -180,7 +180,7 @@ namespace GarageKit
                 {
                     // pass
                 }
-                
+
                 if(dataStr != "")
                 {
                     receivedDataStr = dataStr;
@@ -188,7 +188,7 @@ namespace GarageKit
                 }
             }
         }
-        
+
         // コマンド文字列を送信
         public void SendCommand(string str)
         {
@@ -204,7 +204,7 @@ namespace GarageKit
                 }
             }
         }
-        
+
         // コマンド文字列をバイトに変換して送信する
         public void SendCommandByte(string str)
         {
@@ -214,7 +214,7 @@ namespace GarageKit
             
             SendByte(bytes.ToArray());
         }
-        
+
         // スペース区切りの数字のコマンド配列を16進数に変換してデータ送信
         public void SendCommandArrayHexByte(string str)
         {

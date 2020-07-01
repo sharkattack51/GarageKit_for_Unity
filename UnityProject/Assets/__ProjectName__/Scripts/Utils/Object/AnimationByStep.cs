@@ -43,10 +43,10 @@ namespace GarageKit
         {
             if(!anim.isPlaying)
                 anim.Play();
-            
+
             if(targetTime < currentAnim.length)
                 targetTime += speed;
-            
+
             if(targetTime > currentAnim.length)
                 targetTime = currentAnim.length;
         }
@@ -55,7 +55,7 @@ namespace GarageKit
         {
             anim.Rewind();
             anim.Play();
-            
+
             targetTime = 0.0f;
         }
 

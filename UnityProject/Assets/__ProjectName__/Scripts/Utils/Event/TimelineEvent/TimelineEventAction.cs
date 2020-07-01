@@ -1,32 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Collections;
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GarageKit
 {
-	public class TimelineEventAction
-	{
-		public float time;
-		public Action action;
-		private bool done = false;
-		public bool IsDone { get{ return done; } }
+    public class TimelineEventAction
+    {
+        public float time;
+        public Action action;
+        private bool done = false;
+        public bool IsDone { get{ return done; } }
 
-		
-		public TimelineEventAction(float time, Action action)
-		{
-			this.time = time;
-			this.action = action;
-		}
 
-		public void Done()
-		{
-			done = true;
-		}
+        public TimelineEventAction(float time, Action action)
+        {
+            this.time = time;
+            this.action = action;
+        }
 
-		public void Reset()
-		{
-			done = false;
-		}
-	}
+        public void Done()
+        {
+            done = true;
+        }
+
+        public void Reset()
+        {
+            done = false;
+        }
+    }
 }

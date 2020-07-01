@@ -7,7 +7,7 @@ Shader "Custom/ShaderLib/Billboard-Unlit"
     /*
      * オブジェクト座標の回転を(0,180,0)にした状態でビルボード処理をします
      */
-    
+
     Properties
     {
         _Color("Main Color", Color) = (1, 1, 1, 1)

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace GarageKit
 {
@@ -9,19 +9,19 @@ namespace GarageKit
     {
         public Image uiImage;
         public Sprite[] sprites;
-        
+
         private int frame = 0;
         private float preUpdtaeTime = 0.0f;
 
 
         void Awake()
         {
-            
+
         }
         
         void Start()
         {
-            
+
         }
 
         void Update()
@@ -62,7 +62,7 @@ namespace GarageKit
                     if(frame >= sprites.Length)
                         break;
                 }
-                
+
                 yield return null;
             }
 

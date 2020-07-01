@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections;
-using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 /*
  * WebCameraの映像をテクスチャに設定する
@@ -25,26 +26,26 @@ namespace GarageKit
         public bool isMirror = false;
         public bool isMobileCameraRotation = false;
         public OBJECTAXIS_Y vertical = OBJECTAXIS_Y.Z;
-        
+
         private WebCamDevice[] devices;
         private WebCamTexture webCamTexture;
         public WebCamTexture GetWebCamTexture() { return webCamTexture; }
-        
+
         private Renderer rend;
         private Vector3 defaultAspect;
-        
+
         public enum OBJECTAXIS_Y
         {
             Y = 0,
             Z
         }
-        
-        
+
+
         void Awake()
         {
-        
+
         }
-        
+
         IEnumerator Start()
         {
             rend = this.gameObject.GetComponent<Renderer>();
@@ -54,12 +55,12 @@ namespace GarageKit
             try
             {
                 devices = WebCamTexture.devices;
-                
+
                 if(!string.IsNullOrEmpty(deviceName))
                     webCamTexture = new WebCamTexture(deviceName, requestedWidth, requestedHeight, requestedFPS);
                 else
                     webCamTexture = new WebCamTexture(devices[deviceIndex].name, requestedWidth, requestedHeight, requestedFPS);
-                
+
                 webCamTexture.anisoLevel = anisoLevel;
                 webCamTexture.filterMode = filteMode;
                 webCamTexture.wrapMode = wrapMode;
@@ -72,10 +73,10 @@ namespace GarageKit
                 Debug.Log("webcam open error: " + e.Message);
                 yield break;
             }
-            
+
             // アスペクト調整用の初期値を保存
             defaultAspect = this.gameObject.transform.localScale;
-            
+
             // アスペクトを自動調整
             if(isAutoAspect)
             {
@@ -89,7 +90,7 @@ namespace GarageKit
                 
                 this.gameObject.transform.localScale = new Vector3(defaultAspect.x * scaleRatio, defaultAspect.y, defaultAspect.z);
             }
-            
+
             // 反転設定
             if(isMirror)
             {
@@ -98,10 +99,10 @@ namespace GarageKit
                     this.gameObject.transform.localScale.y,
                     this.gameObject.transform.localScale.z);
             }
-            
+
             // テクスチャを適用
             rend.material.SetTexture(texturePropName, webCamTexture);
-            
+
             // 映像の更新を開始
             webCamTexture.Play();
 
@@ -128,7 +129,7 @@ namespace GarageKit
                 WebCamTexture.Destroy(webCamTexture);
             }
         }
-        
+
         // 現在使用しているWebカメラ映像を取得
         public WebCamTexture GetTexture()
         {

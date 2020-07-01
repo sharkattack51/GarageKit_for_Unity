@@ -1,39 +1,39 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 /*
  * Aplplicationのメインクラス
  */
 namespace GarageKit
 {
-	public class AppMain : MonoBehaviour
-	{
-		// singleton
-		private static AppMain instance;
-		public static AppMain Instance { get{ return instance; } }
-		
-		public SceneStateManager sceneStateManager;
-		public TimeManager timeManager;
-		public SoundManager soundManager;
-		public UserInputManager userInputManager;
-		public DebugManager debugManager;
+    public class AppMain : MonoBehaviour
+    {
+        // singleton
+        private static AppMain instance;
+        public static AppMain Instance { get{ return instance; } }
+
+        public SceneStateManager sceneStateManager;
+        public TimeManager timeManager;
+        public SoundManager soundManager;
+        public UserInputManager userInputManager;
+        public DebugManager debugManager;
 
 
-		void Awake()
-		{
-			instance = this;
-		}
+        void Awake()
+        {
+            instance = this;
+        }
 
-		void Start()
-		{
-			// アプリケーションをスタートする
-			sceneStateManager.InitState();
-		}
-		
-		void Update()
-		{
-		
-		}
-	}
+        void Start()
+        {
+            // アプリケーションをスタートする
+            sceneStateManager.InitState();
+        }
+
+        void Update()
+        {
+
+        }
+    }
 }
