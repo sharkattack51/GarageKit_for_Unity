@@ -17,7 +17,9 @@ namespace GarageKit
             StateBase = 0,
             AsyncStateBase,
             TimelinedSceneStateBase,
-            VRSceneStateBase
+            VRSceneStateBase,
+            MultipleSceneStateBase,
+            MultipleSceneAsyncStateBase
         }
         public GenerateStateInfo.BaseClass baseClass = GenerateStateInfo.BaseClass.StateBase;
     }
@@ -31,7 +33,9 @@ namespace GarageKit
             { GenerateStateInfo.BaseClass.StateBase, "NewState" },
             { GenerateStateInfo.BaseClass.AsyncStateBase, "NewAsyncState" },
             { GenerateStateInfo.BaseClass.TimelinedSceneStateBase, "NewTimelinedSceneState" },
-            { GenerateStateInfo.BaseClass.VRSceneStateBase, "NewVRSceneState" }
+            { GenerateStateInfo.BaseClass.VRSceneStateBase, "NewVRSceneState" },
+            { GenerateStateInfo.BaseClass.MultipleSceneStateBase, "NewMultipleSceneState" },
+            { GenerateStateInfo.BaseClass.MultipleSceneAsyncStateBase, "NewMultipleSceneAsyncState" }
         };
 
         [MenuItem("EditorScript/GarageKit/StateGenerator")]

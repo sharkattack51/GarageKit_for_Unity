@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /*
- * Aplplicationのメインクラス
+ * Applicationのメインクラス
  */
 namespace GarageKit
 {
@@ -13,16 +13,31 @@ namespace GarageKit
         private static AppMain instance;
         public static AppMain Instance { get{ return instance; } }
 
+        [Header("Managers")]		
         public SceneStateManager sceneStateManager;
         public TimeManager timeManager;
         public SoundManager soundManager;
         public UserInputManager userInputManager;
         public DebugManager debugManager;
 
+        [Header("Multiple Scene")]
+        public bool asDontDestroyOnLoad = false;
+
 
         void Awake()
         {
-            instance = this;
+            if(asDontDestroyOnLoad)
+            {
+                if(instance == null)
+                {
+                    DontDestroyOnLoad(this.gameObject);
+                    instance = this;
+                }
+                else
+                    GameObject.DestroyImmediate(this.gameObject);
+            }
+            else
+                instance = this;
         }
 
         void Start()

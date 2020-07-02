@@ -40,10 +40,15 @@ namespace GarageKit
                 fadeMaterial = new Material(Shader.Find("Custom/ShaderLib/Unlit/MaterialAlpha"));
             fadeMaterial.color = fadeColor;
         }
-
+        
         void Start()
         {
 
+        }
+
+        void OnDisable()
+        {
+            Faders.Remove(this);
         }
 
         void OnPostRender()
@@ -106,7 +111,7 @@ namespace GarageKit
                 StartCoroutine(FadeIn(targetAlpha));
             }
         }
-
+        
         IEnumerator FadeIn(float targetAlpha)
         {
             float elapsedTime = 0.0f;
