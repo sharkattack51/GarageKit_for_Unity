@@ -6,6 +6,10 @@ namespace GarageKit
 {
     public class StateBase : MonoBehaviour, IState
     {
+        protected bool updateEnable = true;
+        public bool IsUpdateEnable { get{ return updateEnable; } }
+
+
         public virtual void StateStart(object context)
         {
 

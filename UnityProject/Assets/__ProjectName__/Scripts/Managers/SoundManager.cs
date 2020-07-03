@@ -73,12 +73,12 @@ namespace GarageKit
         private Dictionary<string, Sound3DLayerData> soundLayers3DTable;
         public Dictionary<string, Sound3DLayerData> SoundLayers3D { get{ return soundLayers3DTable; } }
 
-        
+
         protected override void Awake()
         {
             base.Awake();
         }
-        
+
         protected override void Start()
         {
             base.Start();
@@ -98,7 +98,7 @@ namespace GarageKit
         {
             base.Update();
         }
-        
+
 
 #region 2D sound
         public void AddLayer(SoundLayerData layer)
@@ -148,7 +148,7 @@ namespace GarageKit
         {
             if(!audioSources2D.ContainsKey(layerName))
                 return;
-            
+
             SoundLayerData layer = soundLayers.FirstOrDefault(l => l.layerName == layerName);
             if(layer == null)
                 return;
@@ -164,7 +164,7 @@ namespace GarageKit
                     if(audioSources2D[layerName].isPlaying)
                         audioSources2D[layerName].Stop();
                 }
-                
+
                 audioSources2D[layerName].volume = layer.soundData.volume;
                 audioSources2D[layerName].clip = clipData.clip;
 
@@ -202,7 +202,7 @@ namespace GarageKit
             {
                 if(!audioSources2D.ContainsKey(layerName))
                     return;
-                
+
                 if(audioSources2D[layerName].isPlaying)
                     audioSources2D[layerName].Stop();
             }
@@ -266,13 +266,13 @@ namespace GarageKit
                 SoundSourceData sourceData = layer.soundData.sources.FirstOrDefault(c => c.sourceName == sourceName);
                 if(sourceData == null)
                     return;
-                
+
                 if(!overlap)
                 {
                     if(sourceData.source.isPlaying)
                         sourceData.source.Stop();
                 }
-                
+
                 sourceData.source.volume = layer.soundData.volume;
 
                 if(asOneShot)
@@ -320,7 +320,7 @@ namespace GarageKit
                 Sound3DLayerData layer = soundLayers3D.FirstOrDefault(l => l.layerName == layerName);
                 if(layer == null)
                     return;
-                
+
                 if(sourceName == "")
                 {
                     foreach(SoundSourceData sourceData in layer.soundData.sources)

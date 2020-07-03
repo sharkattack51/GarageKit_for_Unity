@@ -20,6 +20,8 @@ namespace GarageKit
         {
             base.StateStart(context);
 
+            base.updateEnable = false;
+
             if(loadSceneName != "" && SceneManager.GetActiveScene().name != loadSceneName)
             {
                 SceneManager.sceneLoaded += OnSceneLoaded;
@@ -42,12 +44,13 @@ namespace GarageKit
             SceneManager.sceneLoaded -= OnSceneLoaded;
 
             sceneRepository = FindObjectOfType<SceneRepositoryBase>();
+
             this.SceneLoaded();
         }
 
         public virtual void SceneLoaded()
         {
-
+            base.updateEnable = true;
         }
 
         public override void StateUpdate()

@@ -69,11 +69,11 @@ namespace GarageKit
             this.gameObject.name = "SceneStateManager [" + currentState.StateName + "]";
 
             // Update curent state
-            if(currentState.StateObj != null)
+            if(currentState.StateObj != null && currentState.StateObj.IsUpdateEnable)
                 currentState.StateObj.StateUpdate();
         }
-        
-        
+
+
 #region Management for State
         public void InitState()
         {
@@ -124,10 +124,10 @@ namespace GarageKit
             // Exit previous state
             if(currentState != null)
                 currentState.StateObj.StateExit();
-            
+
             while(isAsync)
                 yield return null;
-            
+
             // Set new state
             currentState = sceneStateTable.Find((s) => { return s.StateName == stateName; });
             if(currentState == null)
@@ -135,7 +135,7 @@ namespace GarageKit
                 Debug.LogError("SceneStateManager :: not found StateName.");
                 yield break;
             }
-            
+
             // Start new state
             currentState.StateObj.StateStart(context);
 
