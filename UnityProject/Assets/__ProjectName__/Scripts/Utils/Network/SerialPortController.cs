@@ -1,10 +1,10 @@
-﻿using System;
+﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Text;
 using System.Threading;
-using UnityEngine;
 
 /*
  * シリアル通信を行うクラス
@@ -14,7 +14,7 @@ namespace GarageKit
 {
     public class SerialPortController : MonoBehaviour
     {
-        public bool autoSerachPort = false;
+        public bool autoSearchPort = false;
         public bool autoOpen = true;
 
         /// <summary>
@@ -66,18 +66,18 @@ namespace GarageKit
 
         void Awake()
         {
-            if(autoSerachPort)
-            {
-                string[] portNames = SerialPort.GetPortNames();
-                if(portNames.Length > 0)
-                    portName = portNames[0];
-            }
+
         }
 
         void Start()
         {
             if(autoOpen)
-                Open();
+            {
+                if(autoSearchPort)
+                    TryRecursiveOpen();
+                else
+                    Open();
+            }
         }
 
         void Update()
@@ -97,6 +97,27 @@ namespace GarageKit
             Close();
         }
 
+
+        public void TryRecursiveOpen()
+        {
+            string[] portNames = SerialPort.GetPortNames();
+            foreach(string pn in portNames)
+            {
+                try
+                {
+                    portName = pn;
+                    Open();
+                    break;
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+
+            if(port == null)
+                Debug.LogError("SerialPortController :: port not opened"); 
+        }
 
         public void Open()
         {
@@ -121,7 +142,7 @@ namespace GarageKit
                     if(!port.IsOpen)
                     {
                         port.Open();
-                        
+
                         // データ受信スレッドの開始
                         receiveThread = new Thread(new ThreadStart(ReadData));
                         receiveThread.IsBackground = true;
@@ -131,9 +152,12 @@ namespace GarageKit
                             portName, baudRate, parity, dataBits, stopBits);
                     }
                 }
-                catch (Exception e)
+                catch(Exception e)
                 {
+                    port = null;
+
                     Debug.LogError(e.Message); 
+                    throw new Exception(e.Message);
                 }
             }
         }
