@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2016 Tenebrous
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -68,7 +68,23 @@ namespace Tenebrous.EditorEnhancements
             return null;
         }
 
+#if UNITY_2019_3_OR_NEWER
+        [SettingsProvider]
+        public static SettingsProvider DrawPreferencesProvider()
+        {
+            var provider = new SettingsProvider("Preferences/Enhancements", SettingsScope.User) {
+                label = "Enhancements",
+                guiHandler = (searchText) => {
+                    DrawPreferences();
+                },
+                keywords = new HashSet<string>(new[] {"Enhancements"})
+            };
+
+            return provider;
+        }
+#else
         [PreferenceItem("Enhancements")]
+#endif
         public static void DrawPreferences()
         {
 			// create a single preferences tab to manage all the enhancement's preferences

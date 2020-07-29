@@ -52,8 +52,11 @@ namespace GarageKit
                     playerSettingsProductName = PlayerSettings.productName;
 
 #if UNITY_2018_3_OR_NEWER
+
+#if !UNITY_2019_3_OR_NEWER
                 if(PlayerSettings.scriptingRuntimeVersion != ScriptingRuntimeVersion.Latest)
                     Debug.LogError("StandalonePlayerResolutionHelper :: PlayerSettings.scriptingRuntimeVersion is Lagacy");
+#endif
 
                 if(PlayerSettings.GetApiCompatibilityLevel(BuildTargetGroup.Standalone) != ApiCompatibilityLevel.NET_4_6)
                     Debug.LogError("StandalonePlayerResolutionHelper :: PlayerSettings.ApiCompatibilityLevel is Low");

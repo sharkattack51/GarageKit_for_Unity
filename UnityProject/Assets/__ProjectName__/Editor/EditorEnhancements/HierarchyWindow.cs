@@ -96,7 +96,11 @@ namespace Tenebrous.EditorEnhancements
         {
             EditorApplication.hierarchyWindowItemOnGUI += Draw;
             EditorApplication.update += Update;
+#if UNITY_2019_3_OR_NEWER
+            SceneView.duringSceneGui += Updated;
+#else
             SceneView.onSceneGUIDelegate += Updated;
+#endif
             EditorApplication.hierarchyChanged += ClearTooltipCache;
             EditorApplication.modifierKeysChanged += ModifierKeysChanged;
             if( Common.HierarchyWindow != null ) Common.HierarchyWindow.Repaint();
@@ -106,7 +110,11 @@ namespace Tenebrous.EditorEnhancements
         {
             EditorApplication.hierarchyWindowItemOnGUI -= Draw;
             EditorApplication.update -= Update;
+#if UNITY_2019_3_OR_NEWER
+            SceneView.duringSceneGui += Updated;
+#else
             SceneView.onSceneGUIDelegate -= Updated;
+#endif
             EditorApplication.hierarchyChanged -= ClearTooltipCache;
             EditorApplication.modifierKeysChanged -= ModifierKeysChanged;
             Common.HierarchyWindow.Repaint();
