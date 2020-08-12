@@ -23,14 +23,14 @@ namespace GarageKit.ARFoundationExtention
 
         // ARラブラリのインストールリクエスト(ARCore)
         public Action OnRequestARLibInstall;
-        
+
         // AR機能の初期化完了
         public Action OnReadyAR;
 
 
         void Awake()
         {
-
+            arSession.Reset();
         }
 
         IEnumerator Start()
@@ -41,18 +41,26 @@ namespace GarageKit.ARFoundationExtention
                 yield return ARSession.CheckAvailability();
             else if(ARSession.state == ARSessionState.Unsupported)
             {
+                Debug.Log("ARSessionStartHelper :: ar unsupported");
+
                 this.OnFailARSession?.Invoke();
                 yield break;
             }
 
             if(ARSession.state == ARSessionState.NeedsInstall)
             {
+                Debug.Log("ARSessionStartHelper :: ar library need install");
+
                 this.OnRequestARLibInstall?.Invoke();
                 yield return ARSession.Install();
+
+                Debug.Log("ARSessionStartHelper :: ar library installed");
             }
 
             if(ARSession.state == ARSessionState.Ready)
             {
+                Debug.Log("ARSessionStartHelper :: ar ready");
+
                 this.OnReadyAR?.Invoke();
                 arSession.enabled = true;
             }
@@ -63,6 +71,11 @@ namespace GarageKit.ARFoundationExtention
         void Update()
         {
 
+        }
+
+        void OnDisable()
+        {
+            arSession.Reset();
         }
 #endif
     }

@@ -173,11 +173,11 @@ namespace GarageKit
         /// <summary>
         /// ポップアップウィンドウを設定する
         /// </summary>
-        public static void SetPopupWindow(int cx, int cy)
+        public static void SetPopupWindow(int x, int y, int w, int h)
         {
             IntPtr hWnd = GetApplicationWindowHandle();
 
-            MoveWindow(hWnd, 0, 0, cx, cy, false);
+            MoveWindow(hWnd, x, y, w, h, false);
 
             Process currentProc = Process.GetCurrentProcess();
             currentProc.PriorityClass = ProcessPriorityClass.RealTime;
@@ -187,6 +187,15 @@ namespace GarageKit
             SetWindowLong(hWnd, GWL_STYLE, new_style);
 
             SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_FRAMECHANGED);
+        }
+
+        /// <summary>
+        /// ウィンドウ位置の変更
+        /// </summary>
+        public static void SetWindowPos(int x, int y, int w, int h)
+        {
+            IntPtr hWnd = GetApplicationWindowHandle();
+            MoveWindow(hWnd, x, y, w, h, false);
         }
 
         /// <summary>

@@ -32,6 +32,9 @@ namespace GarageKit.ARFoundationExtention
         // アンカーの画面外判定でDestroyを行う
         public bool destroyOnInvisibleAnchor = false;
 
+        // トラッキングされるイメージアンカー数の制限
+        public int numberOfTrackingImageAnchor = 1;
+
         private ARTrackedImageManager trackedImageManager;
         private ARAnchorManager anchorManager;
         private Camera arCamera;
@@ -74,14 +77,19 @@ namespace GarageKit.ARFoundationExtention
             // アンカーの画面外削除
             if(destroyOnInvisibleAnchor)
             {
+                List<string> removeReserved = new List<string>();
+
                 foreach(KeyValuePair<string, ARAnchor> kvp in trackedImageAnchors)
                 {
                     string imageName = kvp.Key;
                     ARAnchor anchor = kvp.Value;
 
                     if(IsOutOfView(anchor.gameObject.transform.position))
-                        RemoveImageAnchorFromImageName(imageName);
+                        removeReserved.Add(imageName);
                 }
+
+                foreach(string name in removeReserved)
+                    RemoveImageAnchorFromImageName(name);
             }
         }
 
@@ -113,16 +121,25 @@ namespace GarageKit.ARFoundationExtention
 
         private void AddImageAnchor(ARTrackedImage trackedImage)
         {
+            if(trackedImageAnchors.Count >= numberOfTrackingImageAnchor)
+            {
+                // トラッキングされるイメージアンカー数の制限
+                Debug.LogWarning("ARTrackedImageAnchorManager :: Limit of number recognized.");
+                return;
+            }
+            
             if(trackedImageAnchors.ContainsKey(trackedImage.referenceImage.name))
             {
                 // 同一マーカーの複数認識を拒否
-                Debug.LogWarning("Multiple identical markers have been recognized.");
+                Debug.LogWarning("ARTrackedImageAnchorManager :: Multiple identical markers have been recognized.");
                 return;
             }
 
             // 画面外判定
             if(IsOutOfView(trackedImage.transform.position))
                 return;
+
+            Debug.LogFormat("ARTrackedImageAnchorManager :: ImageAnchor added [{0}].", trackedImage.referenceImage.name);
 
             // マーカー画像検出位置にアンカーを設定
             ARAnchor anchor = anchorManager.AddAnchor(new Pose(trackedImage.transform.position, trackedImage.transform.rotation));
@@ -152,6 +169,8 @@ namespace GarageKit.ARFoundationExtention
         {
             if(trackedImageAnchors.ContainsKey(imageName))
             {
+                Debug.LogFormat("ARTrackedImageAnchorManager :: ImageAnchor removed [{0}].", imageName);
+
                 // マーカー削除イベント
                 this.OnRemoveImageAnchor?.Invoke(imageName);
 
