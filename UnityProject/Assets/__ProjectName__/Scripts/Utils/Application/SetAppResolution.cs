@@ -12,13 +12,15 @@ namespace GarageKit
         // 解像度設定タイプ
         public enum APP_RESOLUTION
         {
+            PLAYER_SETTINGS_RESOLUTIOM = -1,
             CURRENT_FULLSCREEN = 0,
             DISPLAY_SUPPORTED,
             CUSTOM_RESOLUTION,
             CUSTOM_RESOLUTION_POPUPWINDOW
         }
 
-        public APP_RESOLUTION resolutionType = APP_RESOLUTION.CURRENT_FULLSCREEN;
+        [Header("Override resolution settings")]
+        public APP_RESOLUTION resolutionType = APP_RESOLUTION.PLAYER_SETTINGS_RESOLUTIOM;
 
         // フルスクリーン設定
         public bool fullScreen = true;
@@ -38,6 +40,9 @@ namespace GarageKit
 
         void Start()
         {
+            if(resolutionType == APP_RESOLUTION.PLAYER_SETTINGS_RESOLUTIOM)
+                return;
+
             if(Application.platform == RuntimePlatform.WindowsPlayer
                 || Application.platform == RuntimePlatform.OSXPlayer)
             {
@@ -81,6 +86,9 @@ namespace GarageKit
 
         void LateUpdate()
         {
+            if(resolutionType == APP_RESOLUTION.PLAYER_SETTINGS_RESOLUTIOM)
+                return;
+
             if(Application.platform == RuntimePlatform.WindowsPlayer
                 || Application.platform == RuntimePlatform.OSXPlayer)
             {

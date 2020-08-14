@@ -537,6 +537,7 @@ MonoBehaviour:
   soundManager: {fileID: 47}
   userInputManager: {fileID: 1811139379}
   debugManager: {fileID: 54}
+  asDontDestroyOnLoad: 0
 --- !u!4 &33
 Transform:
   m_ObjectHideFlags: 0
@@ -912,7 +913,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04e40c104730b82428f24c8b2c508ddf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetFPS: 60
 --- !u!114 &56
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1002,6 +1002,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c7934abc3a5dd34b98c945b05d91237, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fadeTime: 1
   sceneText: {fileID: 823301258}
   timerText: {fileID: 261876849}
   messageText: {fileID: 1583199108}
@@ -1173,6 +1174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79fa015195b777d4592db71a04194610, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fadeTime: 1
   sceneText: {fileID: 823301258}
   timerText: {fileID: 261876849}
   messageText: {fileID: 1583199108}
@@ -1219,6 +1221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1fc9ea313d9ca34ba85a519128d5885, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fadeTime: 1
   sceneText: {fileID: 823301258}
   timerText: {fileID: 261876849}
   messageText: {fileID: 1583199108}
@@ -1280,11 +1283,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2e3cc41c93c9f34ea2c1752417d9a07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolutionType: 2
+  resolutionType: -1
   fullScreen: 0
   resolutionID: 0
-  customW: 1920
-  customH: 1080
+  customWindowRect: {x: 0, y: 0, z: 1920, w: 1080}
   useFixAspect: 0
   aspectRatio: 1.7777778
 --- !u!114 &392205107
