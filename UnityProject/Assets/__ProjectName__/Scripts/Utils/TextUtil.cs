@@ -139,7 +139,7 @@ namespace GarageKit
             {
                 List<char> doubleByteChar = new List<char>(); 
                 
-                if(isDoubleByteChar(charArry[i], encoding)) //全角2バイト文字
+                if(IsMultiByteChar(charArry[i], encoding)) //全角2バイト文字
                 {
                     doubleByteChar.Add(charArry[i]);
                 }
@@ -149,7 +149,7 @@ namespace GarageKit
                     
                     if((i + 1) < charArry.Length)
                     {
-                        if(!isDoubleByteChar(charArry[i + 1], encoding)) //半角1バイト文字
+                        if(!IsMultiByteChar(charArry[i + 1], encoding)) //半角1バイト文字
                         {
                             doubleByteChar.Add(charArry[i + 1]);
                             i++;
@@ -179,14 +179,14 @@ namespace GarageKit
         /// <summary>
         /// バイト数を考慮して文字数をカウント
         /// </summary>
-        public static int DoubleByteLength(string srcString, Encoding encoding)
+        public static int MultiByteLength(string srcString, Encoding encoding)
         {
             char[] charArry = srcString.ToCharArray();
             float ct = 0.0f;
 
             for(int i = 0; i < charArry.Length; i++)
             {
-                if(isDoubleByteChar(charArry[i], encoding))
+                if(IsMultiByteChar(charArry[i], encoding))
                     ct += 1.0f;
                 else
                     ct += 0.5f;
@@ -198,7 +198,7 @@ namespace GarageKit
         /// <summary>
         /// 2バイト文字のチェック
         /// </summary>
-        private static bool isDoubleByteChar(char srcChar, Encoding encoding)
+        public static bool IsMultiByteChar(char srcChar, Encoding encoding)
         {
             if(encoding.GetByteCount(srcChar.ToString()) > 1)
                 return true;
