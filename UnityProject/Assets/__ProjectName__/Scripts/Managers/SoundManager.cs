@@ -77,11 +77,6 @@ namespace GarageKit
         protected override void Awake()
         {
             base.Awake();
-        }
-
-        protected override void Start()
-        {
-            base.Start();
 
             audioSources2D = new Dictionary<string, AudioSource>();
             soundLayersTable = new Dictionary<string, SoundLayerData>();
@@ -92,6 +87,11 @@ namespace GarageKit
 
             foreach(Sound3DLayerData layer in soundLayers3D)
                 AddLayer3D(layer);
+        }
+
+        protected override void Start()
+        {
+            base.Start();
         }
 
         protected override void Update()
