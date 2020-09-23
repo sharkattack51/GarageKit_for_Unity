@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Audio;
 
 /*
  * Manage all sound controll in scene
@@ -73,6 +74,11 @@ namespace GarageKit
         private Dictionary<string, Sound3DLayerData> soundLayers3DTable;
         public Dictionary<string, Sound3DLayerData> SoundLayers3D { get{ return soundLayers3DTable; } }
 
+        [Header("optional MasterAudioMixer settings")]
+        public AudioMixerGroup masterMixerGroup;
+        public AnimationCurve decibelByStep = AnimationCurve.Linear(-5, -20, 5, 20);
+        private int currentMasterVolStep = 0;
+
 
         protected override void Awake()
         {
@@ -87,6 +93,13 @@ namespace GarageKit
 
             foreach(Sound3DLayerData layer in soundLayers3D)
                 AddLayer3D(layer);
+
+            if(masterMixerGroup != null)
+            {
+                AudioSource[] audioSources = FindObjectsOfType<AudioSource>();
+                foreach(AudioSource source in audioSources)
+                    source.outputAudioMixerGroup = masterMixerGroup;
+            }
         }
 
         protected override void Start()
@@ -444,6 +457,40 @@ namespace GarageKit
                     "onupdatetarget", target,
                     "oncomplete", "fade_completed",
                     "oncompletetarget", target));
+        }
+#endregion
+
+#region MasterAudioMixer
+        public void SetMasterVol(float vol, string exposeProperty = "MasterVolume")
+        {
+            if(masterMixerGroup == null)
+            {
+                Debug.LogWarning("SoundManager :: MasterAudioMixer is null");
+                return;
+            }
+
+            masterMixerGroup.audioMixer.SetFloat(exposeProperty, vol);
+            Debug.Log(string.Format("SoundManager :: MasterVolume > {0:F3}", vol));
+        }
+
+        public void MasterVolUp(string exposeProperty = "MasterVolume")
+        {
+            currentMasterVolStep++;
+
+            int max = (int)decibelByStep.keys[decibelByStep.keys.Length - 1].time;
+            currentMasterVolStep = Mathf.Min(max, currentMasterVolStep);
+
+            SetMasterVol(decibelByStep.Evaluate(currentMasterVolStep), exposeProperty);
+        }
+
+        public void MasterVolDown(string exposeProperty = "MasterVolume")
+        {
+            currentMasterVolStep--;
+
+            int min = (int)decibelByStep.keys[0].time;
+            currentMasterVolStep = Mathf.Max(min, currentMasterVolStep);
+
+            SetMasterVol(decibelByStep.Evaluate(currentMasterVolStep), exposeProperty);
         }
 #endregion
     }
