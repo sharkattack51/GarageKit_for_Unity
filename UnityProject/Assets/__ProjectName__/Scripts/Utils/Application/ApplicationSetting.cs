@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -241,6 +242,24 @@ namespace GarageKit
             }
             else
                 return new bool[0];
+        }
+
+        public DateTime GetFormattedDateTime(string key, string format = "HH:mm:ss")
+        {
+            DateTime result;
+            if(dataDict.ContainsKey(key) && DateTime.TryParseExact(dataDict[key], format, CultureInfo.CurrentCulture, DateTimeStyles.None, out result))
+                return result;
+            else
+                return DateTime.Now;
+        }
+
+        public DateTime GetDateTime(string key)
+        {
+            DateTime result;
+            if(dataDict.ContainsKey(key) && DateTime.TryParse(dataDict[key], out result))
+                return result;
+            else
+                return DateTime.Now;
         }
 #endregion
     }
