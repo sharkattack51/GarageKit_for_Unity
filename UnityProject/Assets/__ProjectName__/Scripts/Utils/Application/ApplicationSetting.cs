@@ -18,19 +18,23 @@ namespace GarageKit
         private static ApplicationSetting instance;
         public static ApplicationSetting Instance { get{ return instance; } }
 
+        public enum XML_FROM
+        {
+            STREAMING_ASSETS = 0,
+            PROJECT_DIRECTORY,
+            CURRENT_WORK_DIRECTORY
+        }
+        public XML_FROM loadFrom = XML_FROM.STREAMING_ASSETS;
+        public string xmlFile = "ApplicationSetting.xml";
+
         private XmlDocument xml;
         private string xmlUtf8Str;
-        private Dictionary<string, string> dataDict;
+
+        private Dictionary<string, string> rawData;
+        public Dictionary<string, string> RawData { get{ return rawData; } }
 
         private bool isValid = false;
         public bool IsValid { get{ return isValid; } }
-
-        // xmlファイル名
-        public string xmlUrl = "ApplicationSetting.xml";
-        public bool xmlFromStreamingAssets = true;
-
-        // 読み込み後展開されるアクセス可能なハッシュ
-        public Dictionary<string, string> Data { get{ return dataDict; } }
 
 
         void Awake()
@@ -49,24 +53,34 @@ namespace GarageKit
             try
             {
                 xml = new XmlDocument();
-                dataDict = new Dictionary<string, string>();
+                rawData = new Dictionary<string, string>();
 
-                //xml読み込み
+                // xml読み込み
                 string path = "";
-                if(xmlFromStreamingAssets)
+                switch(loadFrom)
                 {
-                    if(File.Exists(Path.Combine(Application.streamingAssetsPath, xmlUrl)))
-                        path = Path.Combine(Application.streamingAssetsPath, xmlUrl);
-                    else
-                        path = Path.GetFullPath("./") + xmlUrl;
+                    case XML_FROM.STREAMING_ASSETS:
+                        path = path = Path.Combine(Application.streamingAssetsPath, xmlFile);
+                        break;
+
+                    case XML_FROM.PROJECT_DIRECTORY:
+                        path = path = Path.Combine(Application.dataPath + "/..", xmlFile);
+                        break;
+
+                    case XML_FROM.CURRENT_WORK_DIRECTORY:
+                        path = Path.GetFullPath("./") + xmlFile;
+                        break;
+
+                    default: break;
                 }
-                else
-                    path = Path.GetFullPath("./") + xmlUrl;
+
+                if(!File.Exists(path))
+                    path = Path.GetFullPath("./") + xmlFile;
 
                 xml.Load(path);
                 xmlUtf8Str = File.ReadAllText(path, Encoding.UTF8);
 
-                //xmlをパース
+                // xmlをパース
                 ParseXML();
 
                 isValid = true;
@@ -77,11 +91,6 @@ namespace GarageKit
 
                 isValid = false;
             }
-
-            /*
-            foreach(string key in dataDict.Keys)
-                Debug.Log("ApplicationSettingData Name: " + key + "  Value: " + dataDict[key]);
-            */
         }
 
         private void ParseXML()
@@ -96,55 +105,16 @@ namespace GarageKit
                 string paramName = element.GetAttribute("name");
                 string paramValue = element.GetAttribute("value");
 
-                dataDict.Add(paramName, paramValue);
+                rawData.Add(paramName, paramValue);
             }
-        }
-#endregion
-
-#region Save
-        public void SaveXML()
-        {
-            if(isValid)
-            {
-                // 設定値を更新したxmlを作成
-                string xmlStr = BuildXML(xmlUtf8Str);
-
-                // 書き込み
-                Stream stream = new FileStream(Path.GetFullPath("./") + xmlUrl, FileMode.Create);
-                StreamWriter writer = new StreamWriter(stream, Encoding.UTF8);
-                writer.Write(xmlStr);
-                writer.Close();
-            }
-        }
-
-        private string BuildXML(string sourceStr)
-        {
-            string buildStr = sourceStr;
-            foreach(string key in dataDict.Keys)
-            {
-                string preSplitter = key + "\" value=\"";
-                string postSplitter = "\"";
-
-                string[] preStr = buildStr.Split(new string[]{ preSplitter }, StringSplitOptions.None);
-                string[] postStr = (preStr[1] as string).Split(new string[]{ postSplitter }, StringSplitOptions.None);
-
-                buildStr = preStr[0] + preSplitter + dataDict[key];
-                for(int i=1; i<postStr.Length; i++)
-                {
-                    buildStr += postSplitter;
-                    buildStr += postStr[i];
-                }
-            }
-
-            return buildStr;
         }
 #endregion
 
 #region 型チェックしての取得
         public string GetString(string key, string defaultValue = "")
         {
-            if(dataDict.ContainsKey(key) && dataDict.ContainsKey(key))
-                return dataDict[key];
+            if(rawData.ContainsKey(key) && rawData.ContainsKey(key))
+                return rawData[key];
             else
                 return defaultValue;
         }
@@ -152,7 +122,7 @@ namespace GarageKit
         public bool GetBool(string key, bool defaultValue = false)
         {
             bool result;
-            if(dataDict.ContainsKey(key) && bool.TryParse(dataDict[key], out result))
+            if(rawData.ContainsKey(key) && bool.TryParse(rawData[key], out result))
                 return result;
             else
                 return defaultValue;
@@ -161,7 +131,7 @@ namespace GarageKit
         public int GetInt(string key, int defaultValue = 0)
         {
             int result;
-            if(dataDict.ContainsKey(key) && int.TryParse(dataDict[key], out result))
+            if(rawData.ContainsKey(key) && int.TryParse(rawData[key], out result))
                 return result;
             else
                 return defaultValue;
@@ -170,7 +140,7 @@ namespace GarageKit
         public float GetFloat(string key, float defaultValue = 0.0f)
         {
             float result;
-            if(dataDict.ContainsKey(key) && float.TryParse(dataDict[key], out result))
+            if(rawData.ContainsKey(key) && float.TryParse(rawData[key], out result))
                 return result;
             else
                 return defaultValue;
@@ -178,17 +148,17 @@ namespace GarageKit
 
         public string[] GetStringArray(string key, string separator = ",")
         {
-            if(dataDict.ContainsKey(key) && dataDict.ContainsKey(key))
-                return dataDict[key].Split(new string[]{ separator }, StringSplitOptions.None);
+            if(rawData.ContainsKey(key) && rawData.ContainsKey(key))
+                return rawData[key].Split(new string[]{ separator }, StringSplitOptions.None);
             else
                 return new string[0];
         }
 
         public int[] GetIntArray(string key, string separator = ",", int defaultValue = 0)
         {
-            if(dataDict.ContainsKey(key) && dataDict.ContainsKey(key))
+            if(rawData.ContainsKey(key) && rawData.ContainsKey(key))
             {
-                string[] strs = dataDict[key].Split(new string[]{ separator }, StringSplitOptions.None);
+                string[] strs = rawData[key].Split(new string[]{ separator }, StringSplitOptions.None);
                 List<int> list = new List<int>();
                 foreach(string str in strs)
                 {
@@ -206,9 +176,9 @@ namespace GarageKit
 
         public float[] GetFloatArray(string key, string separator = ",", float defaultValue = 0.0f)
         {
-            if(dataDict.ContainsKey(key) && dataDict.ContainsKey(key))
+            if(rawData.ContainsKey(key) && rawData.ContainsKey(key))
             {
-                string[] strs = dataDict[key].Split(new string[]{ separator }, StringSplitOptions.None);
+                string[] strs = rawData[key].Split(new string[]{ separator }, StringSplitOptions.None);
                 List<float> list = new List<float>();
                 foreach(string str in strs)
                 {
@@ -226,9 +196,9 @@ namespace GarageKit
 
         public bool[] GetBoolArray(string key, string separator = ",", bool defaultValue = false)
         {
-            if(dataDict.ContainsKey(key) && dataDict.ContainsKey(key))
+            if(rawData.ContainsKey(key) && rawData.ContainsKey(key))
             {
-                string[] strs = dataDict[key].Split(new string[]{ separator }, StringSplitOptions.None);
+                string[] strs = rawData[key].Split(new string[]{ separator }, StringSplitOptions.None);
                 List<bool> list = new List<bool>();
                 foreach(string str in strs)
                 {
@@ -247,7 +217,7 @@ namespace GarageKit
         public DateTime GetFormattedDateTime(string key, string format = "HH:mm:ss")
         {
             DateTime result;
-            if(dataDict.ContainsKey(key) && DateTime.TryParseExact(dataDict[key], format, CultureInfo.CurrentCulture, DateTimeStyles.None, out result))
+            if(rawData.ContainsKey(key) && DateTime.TryParseExact(rawData[key], format, CultureInfo.CurrentCulture, DateTimeStyles.None, out result))
                 return result;
             else
                 return DateTime.Now;
@@ -256,7 +226,7 @@ namespace GarageKit
         public DateTime GetDateTime(string key)
         {
             DateTime result;
-            if(dataDict.ContainsKey(key) && DateTime.TryParse(dataDict[key], out result))
+            if(rawData.ContainsKey(key) && DateTime.TryParse(rawData[key], out result))
                 return result;
             else
                 return DateTime.Now;

@@ -65,6 +65,9 @@ namespace GarageKit
         {
             base.Update();
 
+            if(currentState == null)
+                return;
+
             // Display current state name
             this.gameObject.name = "SceneStateManager [" + currentState.StateName + "]";
 

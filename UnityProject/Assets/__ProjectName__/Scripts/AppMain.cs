@@ -40,9 +40,12 @@ namespace GarageKit
                 instance = this;
         }
 
-        void Start()
+        IEnumerator Start()
         {
-            // アプリケーションをスタートする
+            // wait for Start() of all scripts to safely
+            yield return new WaitForEndOfFrame();
+
+            // start application
             sceneStateManager.InitState();
         }
 
