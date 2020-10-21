@@ -139,10 +139,10 @@ namespace GarageKit
                 yield break;
             }
 
+            stateChanging = false;
+
             // Start new state
             currentState.StateObj.StateStart(context);
-
-            stateChanging = false;
         }	
 #endregion
 
