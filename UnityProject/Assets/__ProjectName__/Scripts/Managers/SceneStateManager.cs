@@ -42,6 +42,8 @@ namespace GarageKit
         private bool stateChanging = false;
         public bool StateChanging { get{ return stateChanging; } }
 
+        public bool StateInitted { get{ return currentState != null; } }
+
         private bool isAsync = false;
 
 

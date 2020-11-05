@@ -29,17 +29,24 @@ namespace GarageKit
         }
 
 
-        // データの送信
+#region Send
         public void Send(string dataStr)
         {
+            // byte配列に変換して送信
+            byte[] data = Encoding.UTF8.GetBytes(dataStr);
+            Send(data);
+        }
+
+        public void Send(byte[] data)
+        {
+            if(!this.gameObject.activeSelf)
+                return;
+            
             // ソケットの設定
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, 255);
             IPEndPoint ipEndPoint = new IPEndPoint(Dns.GetHostAddresses(address)[0], port);
-
-            // byte配列に変換
-            byte[] data = Encoding.UTF8.GetBytes(dataStr);
-
+            
             // 送信
             try
             {
@@ -51,19 +58,27 @@ namespace GarageKit
                 DebugConsole.Log("UDPSender :: " + e.Message);
             }
         }
+#endregion
 
-        // Broadcastで送信
-        public void Bradcast(string dataStr)
+#region Broadcast
+        public void Broadcast(string dataStr)
         {
+            // byte配列に変換して送信
+            byte[] data = Encoding.UTF8.GetBytes(dataStr);
+            Broadcast(data);
+        }
+
+        public void Broadcast(byte[] data)
+        {
+            if(!this.gameObject.activeSelf)
+                return;
+            
             // ソケットの設定
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, 16);
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
             IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Broadcast, port);
 
-            // byte配列に変換
-            byte[] data = Encoding.UTF8.GetBytes(dataStr);
-
             // 送信
             try
             {
@@ -75,5 +90,6 @@ namespace GarageKit
                 DebugConsole.Log("UDPSender :: " + e.Message);
             }
         }
+#endregion
     }
 }

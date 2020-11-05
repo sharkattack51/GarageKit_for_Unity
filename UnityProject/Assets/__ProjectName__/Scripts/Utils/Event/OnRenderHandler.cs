@@ -3,21 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Camera))]
-public class OnPostRenderActions : MonoBehaviour
+namespace GarageKit
 {
-    public Action OnPreRenderAction;
-    public Action OnPostRenderAction;
-
-    void OnPreRender()
+    [RequireComponent(typeof(Camera))]
+    public class OnPostRenderActions : MonoBehaviour
     {
-        if(OnPreRenderAction != null)
-            OnPreRenderAction();
-    }
+        public Action OnPreRenderAction;
+        public Action OnPostRenderAction;
 
-    void OnPostRender()
-    {
-        if(OnPostRenderAction != null)
-            OnPostRenderAction();
+        void OnPreRender()
+        {
+            if(OnPreRenderAction != null)
+                OnPreRenderAction();
+        }
+
+        void OnPostRender()
+        {
+            if(OnPostRenderAction != null)
+                OnPostRenderAction();
+        }
     }
 }
