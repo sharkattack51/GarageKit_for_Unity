@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-// Log4Netのラッパークラス
+// Log4Net warapper for unity
 public class Log4Net : MonoBehaviour
 {
     private static Log4Net logger;
@@ -11,16 +11,25 @@ public class Log4Net : MonoBehaviour
 
     public string outputLogDir = "./Log";
 
-    // Loggerオブジェクト
+    // native logger instance
     private log4net.ILog nativeLogger;
     public log4net.ILog NativeLogger { get{ return nativeLogger; } }
 
-    // ログイベントタイプ
-    public enum LOG_EVENT_TYPE
+    public enum FILTER_LEVEL
     {
-        STARTUP = 0,
+        VERBOSE = 0,
+        DEBUG,
         INFO,
-        QUIT,
+        WARN,
+        ERROR
+    }
+    public FILTER_LEVEL filterLevel = FILTER_LEVEL.VERBOSE;
+
+    public enum LOG_LEVEL
+    {
+        DEBUG = 0,
+        INFO,
+        WARN,
         ERROR
     }
 
@@ -49,9 +58,9 @@ public class Log4Net : MonoBehaviour
 
     private void InitializeLog4Net()
     {
-        // ログローテーション設定
-        nativeLogger = log4net.LogManager.GetLogger("Logger");
+        nativeLogger = log4net.LogManager.GetLogger("UnityLog4NetLogger");
 
+        // set log rotate to daily
         log4net.Appender.RollingFileAppender rollingFileAppender = new log4net.Appender.RollingFileAppender();
         rollingFileAppender.RollingStyle = log4net.Appender.RollingFileAppender.RollingMode.Date;
         rollingFileAppender.AppendToFile = true;
@@ -59,8 +68,16 @@ public class Log4Net : MonoBehaviour
         rollingFileAppender.File = Path.GetFullPath(outputLogDir) + "/";
         rollingFileAppender.DatePattern = "yyyyMMdd\".log\"";
         rollingFileAppender.Layout = new log4net.Layout.PatternLayout("%date{yyyy/MM/dd  HH:mm:ss} %message%newline");
+
         log4net.Filter.LevelRangeFilter filter = new log4net.Filter.LevelRangeFilter();
-        filter.LevelMin = log4net.Core.Level.Info;
+        switch(filterLevel)
+        {
+            case FILTER_LEVEL.VERBOSE: filter.LevelMin = log4net.Core.Level.Verbose; break;
+            case FILTER_LEVEL.DEBUG: filter.LevelMin = log4net.Core.Level.Debug; break;
+            case FILTER_LEVEL.INFO: filter.LevelMin = log4net.Core.Level.Info; break;
+            case FILTER_LEVEL.WARN: filter.LevelMin = log4net.Core.Level.Warn; break;
+            case FILTER_LEVEL.ERROR: filter.LevelMin = log4net.Core.Level.Error; break;
+        }
         filter.LevelMax = log4net.Core.Level.Fatal;
         rollingFileAppender.AddFilter(filter);
 
@@ -69,33 +86,24 @@ public class Log4Net : MonoBehaviour
         ((log4net.Repository.Hierarchy.Logger)nativeLogger.Logger).Hierarchy.Configured = true;
     }
 
-    // ログ出力
-    public void Log(LOG_EVENT_TYPE type, string message = "")
-    {	
-        switch(type)
+    // output log
+    public void Log(LOG_LEVEL lv, string msg)
+    {
+        if(nativeLogger == null)
+            return;
+
+        switch(lv)
         {
-            case LOG_EVENT_TYPE.STARTUP:
-                nativeLogger.Info("[STARTUP]"+ "\t" + message);
-                break;
-
-            case LOG_EVENT_TYPE.INFO:
-                nativeLogger.Info("[INFO]"+ "\t" + message);
-                break;
-
-            case LOG_EVENT_TYPE.QUIT:
-                nativeLogger.Info("[QUIT]"+ "\t" + message);
-                break;
-
-            case LOG_EVENT_TYPE.ERROR:
-                nativeLogger.Error("[ERROR]"+ "\t" + message);
-                break;
-
+            case LOG_LEVEL.DEBUG: nativeLogger.Debug(msg); break;
+            case LOG_LEVEL.INFO: nativeLogger.Info(msg); break;
+            case LOG_LEVEL.WARN: nativeLogger.Warn(msg); break;
+            case LOG_LEVEL.ERROR: nativeLogger.Error(msg); break;
             default: break;
         }
     }
 
-    public void Log(string message)
+    public void Log(LOG_LEVEL lv, string tag, string msg)
     {
-        Log(LOG_EVENT_TYPE.INFO, message);
+        Log(lv, tag + "\t" + msg);
     }
 }
