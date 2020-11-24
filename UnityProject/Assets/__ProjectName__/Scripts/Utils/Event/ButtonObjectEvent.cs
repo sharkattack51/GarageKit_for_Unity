@@ -5,9 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/*
- * ボタンオブジェクトのベースクラス
- */
 namespace GarageKit
 {
     // Press&Releaseの連携処理コンポーネント格納用
@@ -19,10 +16,14 @@ namespace GarageKit
         public string releaseFunctionName = "";
     }
 
-    [RequireComponent(typeof(BoxCollider))]
-    public class ButtonObjectBase : MonoBehaviour
+    public class ButtonObjectEvent : MonoBehaviour
     {
-        // ボタンの実行タイプ
+        public enum INPUT_TYPE
+        {
+            MOUSE = 0,
+            TOUCH
+        }
+
         public enum BUTTON_TYPE
         {
             CLICK = 0,
@@ -31,137 +32,109 @@ namespace GarageKit
             PRESSHOLD
         }
 
-        // 入力タイプ
-        public enum INPUT_TYPE
-        {
-            WTOUCH = 0,
-            INPUTTOUCH,
-            MOUSE
-        }
-
-        // 共通入力フェーズ
         public enum INPUT_PHASE
         {
-            Began = 0,
-            Canceled,
-            Ended,
-            Moved,
-            Stationary,
-            NONE
+            NONE = 0,
+            BEGAN,
+            CANCELED,
+            ENDED,
+            MOVED,
+            STATIONARY
         }
 
-        // ボタンの有効確認
-        private bool isEnableButton = true;
-        public bool IsEnableButton { get{ return isEnableButton; } }
-
-        // 入力タイプ
-        public static INPUT_TYPE inputType = INPUT_TYPE.MOUSE;
-
-        // ボタンの実行タイプ
+        public INPUT_TYPE inputType = INPUT_TYPE.MOUSE;
         public BUTTON_TYPE buttonType = BUTTON_TYPE.CLICK;
+        public bool asFirstResponder = true; // Hitチェックの重なりを考慮
 
-        // Hitチェックの重なりを考慮
-        public bool asFirstResponder = true;
-
-        // ボタンテクスチャの切り替え
-        public GameObject guiPlate;
-        private Color defaultButtonColor;
+        [Header("button view")]
+        public Renderer targetRenderer;
+        public Color defaultButtonColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         public Color disableButtonColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
-        public Texture2D offBtnTexture;
-        public Texture2D onBtnTexture;
+        public Texture2D offButtonTexture;
+        public Texture2D onButtonTexture;
 
-        // トグル処理用
-        public bool isToggleButton = false;
+        [Header("toggle button")]
+        public bool asToggle = false;
         private bool toggleState = false;
         public bool ToggleState { get{ return toggleState; } }
 
-        // Press&Releaseの連携処理コンポーネント
+        [Header("relational call")]
         public RelationalComponentData[] relationalComponents;
 
-        private Camera rayCamera;
-        private bool inputEnable = true; //入力有効判定
+        private bool isEnableButton = true;
+        public bool IsEnableButton { get{ return isEnableButton; } }
+        private bool inputEnable = true;
         public bool InputEnable { get{ return inputEnable; } }
-        private bool isTouch = true; //タッチしてるかどうか
-        private bool isPressed = false; //Pressタイプのとき、Pressできたかどうか
+
+        private Camera rayCamera;
+        private Collider collid;
+
+        private bool isTouch = true; // タッチしてるかどうか
+        private bool isPressed = false; // Pressタイプのとき、Pressできたかどうか
         private int touchCount;
         private Vector3 touchPosition; 
         public Vector3 TouchPosition { get{ return touchPosition; } }
         private INPUT_PHASE phase = INPUT_PHASE.NONE;
 
-        // Pressされたボタンのカウント
         static public int PressBtnsTotal = 0;
 
+        public Action OnButton;
+        public Action<bool> OnToggleButton;
 
-        protected virtual void Awake()
+
+        public static void SetInputType(INPUT_TYPE type)
         {
-
+            ButtonObjectEvent[] btns = FindObjectsOfType<ButtonObjectEvent>();
+            foreach(ButtonObjectEvent btn in btns)
+                btn.inputType = type;
         }
 
-        protected virtual void Start()
+
+        void Awake()
         {
-            // 設定ファイルから入力モードの取得
-            if(ApplicationSetting.Instance.GetString("InputMode").ToLower() == "mouse")
-                inputType = INPUT_TYPE.MOUSE;
-            else
-                inputType = INPUT_TYPE.WTOUCH;
+            if(rayCamera == null)
+                rayCamera = CameraUtil.FindCameraForLayer(this.gameObject.layer);
+            if(rayCamera == null)
+                rayCamera = Camera.main;
 
-            // 自分を描画するカメラを取得
-            rayCamera = CameraUtil.FindCameraForLayer(this.gameObject.layer);
+            collid = this.GetComponent<Collider>();
+            if(collid == null)
+                Debug.LogWarning("collider is null. a collider component is required for button processing.");
+        }
 
+        void Start()
+        {
             // ボタンテクスチャの設定
-            if(guiPlate != null && guiPlate.GetComponent<Renderer>() != null)
-                defaultButtonColor = guiPlate.GetComponent<Renderer>().material.color;
             ChangeTexture(false);
         }
 
-        protected virtual void Update()
+        void Update()
         {
-            // デバイスチェック
+            // デバイス入力
             InputDevice();
 
-            // ボタン入力チェック
+            // ボタン判定
             CheckTouchButton();
 
             // トグルボタン時にテクスチャを上書き設定
-            if(isToggleButton && !isPressed)
+            if(asToggle && !isPressed)
                 ChangeTexture(toggleState);
         }
 
 
-        /// <summary>
-        /// 入力デバイスにより分岐する
-        /// </summary>
         private void InputDevice()
         {
             isTouch = true;
-            touchCount=0;
+            touchCount = 0;
 
-            // for WinTouch
-            if(inputType == INPUT_TYPE.WTOUCH)
-            {				
+            if(inputType == INPUT_TYPE.TOUCH)
+            {
 #if UNITY_STANDALONE_WIN
-
+                // for Windows Player
 #if !USE_TOUCH_SCRIPT
-                touchCount = Input.touchCount;
-
-                // 1点目を入力として受付
-                if(touchCount >= 1)
-                {
-                    Rect wrect = WindowsUtil.GetApplicationWindowRect(); // not work in Editor.
-                    touchPosition = new Vector2(
-                        (int)(((Input.touches[0].position.x / Screen.width) * Screen.currentResolution.width) - wrect.x),
-                        Screen.height + (int)(((Input.touches[0].position.x / Screen.height) * Screen.currentResolution.height) - wrect.y));
-                    
-                    if(Input.touches[0].deltaPosition != Vector2.zero)
-                    {
-                        if(isPressed)
-                            phase = INPUT_PHASE.Moved;
-                        else
-                            phase = INPUT_PHASE.Began;
-                    }
-                    else
-                        phase = INPUT_PHASE.Moved;
+                Debug.LogWarning("Input.Touch is not work in windows. please use TouchScript.");
 #else
+                // as TouchScript
                 touchCount = TouchScript.TouchManager.Instance.PressedPointersCount;
 
                 // 1点目を入力として受付
@@ -182,15 +155,13 @@ namespace GarageKit
                     }
                     else
                         phase = INPUT_PHASE.Moved;
-#endif
                 }
                 else
+#endif
                 {
                     // Pressされた後にここにきたらReleaseとする
                     if(isPressed)
-                    {
-                        phase = INPUT_PHASE.Ended;
-                    }
+                        phase = INPUT_PHASE.ENDED;
                     else
                     {
                         phase = INPUT_PHASE.NONE;
@@ -198,12 +169,9 @@ namespace GarageKit
                         isTouch = false;
                     }
                 }
-#endif		
-            }
 
-            // for Mobile
-            else if(inputType == INPUT_TYPE.INPUTTOUCH)
-            {
+#elif UNITY_IOS || UNITY_ANDROID
+                // for Mobile
                 touchCount = Input.touchCount;
                 
                 if(touchCount >= 1)
@@ -212,11 +180,11 @@ namespace GarageKit
                     TouchPhase tphase = Input.GetTouch(0).phase;
                     
                     if(tphase == TouchPhase.Began)
-                        phase = INPUT_PHASE.Began;
+                        phase = INPUT_PHASE.BEGAN;
                     else if(tphase == TouchPhase.Ended || tphase == TouchPhase.Canceled)
-                        phase = INPUT_PHASE.Ended;
+                        phase = INPUT_PHASE.ENDED;
                     else if(tphase == TouchPhase.Moved || tphase == TouchPhase.Stationary)
-                        phase = INPUT_PHASE.Moved;
+                        phase = INPUT_PHASE.MOVED;
                 }
                 else
                 {
@@ -224,6 +192,7 @@ namespace GarageKit
                     touchPosition = Vector3.zero;
                     isTouch = false;
                 }
+#endif
             }
 
             // for Mouse
@@ -234,14 +203,14 @@ namespace GarageKit
                 if(Input.GetMouseButton(0))
                 {
                     if(Input.GetMouseButtonDown(0))
-                        phase = INPUT_PHASE.Began;
+                        phase = INPUT_PHASE.BEGAN;
                     else
-                        phase = INPUT_PHASE.Moved;
+                        phase = INPUT_PHASE.MOVED;
                     
                     touchCount = 1;
                 }
                 else if(Input.GetMouseButtonUp(0))
-                    phase = INPUT_PHASE.Ended;
+                    phase = INPUT_PHASE.ENDED;
                 else
                     phase = INPUT_PHASE.NONE;
             }
@@ -250,9 +219,6 @@ namespace GarageKit
                 touchCount = 0;
         }
 
-        /// <summary>
-        /// ボタンが押されているかチェックする
-        /// </summary>
         private void CheckTouchButton()
         {
             if(!isTouch || !inputEnable)
@@ -280,72 +246,60 @@ namespace GarageKit
             else
             {
                 // 重なりは無視してチェック
-                if(this.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
+                if(collid.Raycast(ray, out hit, Mathf.Infinity))
                     Hit();
                 else
                     Unhit();
             }
         }
 
-        /// <summary>
-        /// RaycastしてHitした場合の処理
-        /// <summary>
         private void Hit()
         {
-            if(phase == INPUT_PHASE.Began) // Pressした瞬間
+            if(phase == INPUT_PHASE.BEGAN) // Pressした瞬間
             {
                 isPressed = true;
                 
-                OnPressButton(this.gameObject, true);
+                OnPressButton(true);
             }
-            else if(phase == INPUT_PHASE.Moved) // 押している間
+            else if(phase == INPUT_PHASE.MOVED) // 押している間
             {
                 if(isPressed)
-                    OnPressHoldButton(this.gameObject);
+                    OnPressHoldButton();
             }
-            else if(phase == INPUT_PHASE.Ended) // 離した瞬間
+            else if(phase == INPUT_PHASE.ENDED) // 離した瞬間
             {
                 if(isPressed)
                 {
-                    OnPressButton(this.gameObject, false);	
-                    OnClickButton(this.gameObject);
+                    OnPressButton(false);	
+                    OnClickButton();
                 }
 
                 isPressed = false;
             }
             else if(phase == INPUT_PHASE.NONE) // オーバー
-            {
-                OnHoverButton(this.gameObject, true);
-                
                 isPressed = false;
-            }
         }
 
-        /// <summary>
-        /// RaycastしてHitしなかった場合の処理
-        /// <summary>
         private void Unhit()
         {
-            if(buttonType == BUTTON_TYPE.PRESS ||
-                buttonType == BUTTON_TYPE.PRESSHOLD ||
-                buttonType == BUTTON_TYPE.CLICK)
+            if(buttonType == BUTTON_TYPE.PRESS
+                || buttonType == BUTTON_TYPE.PRESSHOLD
+                || buttonType == BUTTON_TYPE.CLICK)
             {
                 // Began時にOnPressしていれば処理
-                if(phase == INPUT_PHASE.Ended && isPressed)
+                if(phase == INPUT_PHASE.ENDED && isPressed)
                 {
-                    OnPressButton(this.gameObject, false);
+                    OnPressButton(false);
                 
                     isPressed = false;
                 }
             }
             else
-            {
                 isPressed = false;
-            }
         }
 
-#region Button Function
-        protected virtual void OnPressButton(GameObject sender, bool pressed)
+#region Button Event Function
+        private void OnPressButton(bool pressed)
         {
             if(pressed)
             {
@@ -360,7 +314,7 @@ namespace GarageKit
 
                 // ボタン処理
                 if(buttonType == BUTTON_TYPE.PRESS)
-                    OnButton();
+                    InvokeOnButton();
             }
             else
             {
@@ -373,57 +327,41 @@ namespace GarageKit
                 RelationalComponentFunc(false);
 
                 // テクスチャを切り替え
-                if(!isToggleButton)
+                if(!asToggle)
                     ChangeTexture(false);
 
                 // ボタン処理
                 if(buttonType == BUTTON_TYPE.RELEASE)
-                    OnButton();
+                    InvokeOnButton();
             }
         }
 
-        protected virtual void OnPressHoldButton(GameObject sender)
+        private void OnPressHoldButton()
         {
-            // ボタン処理
             if(buttonType == BUTTON_TYPE.PRESSHOLD)
-                OnButton();
+                InvokeOnButton();
         }
 
-        protected virtual void OnDragButton(GameObject sender, Vector2 dragDelta) { }
-
-        protected virtual void OnHoverButton(GameObject sender, bool overed) { }
-
-        protected virtual void OnClickButton(GameObject sender)
-        {	
-            // ボタン処理
+        private void OnClickButton()
+        {
             if(buttonType == BUTTON_TYPE.CLICK)
-                OnButton();
+                InvokeOnButton();
         }
 
-
-        /// <summary>
-        /// ボタン処理
-        /// </summary>
-        protected virtual void OnButton()
+        private void InvokeOnButton()
         {
             // トグルボタン
-            if(isToggleButton)
+            if(asToggle)
             {
                 toggleState = !toggleState;
 
-                OnToggleButton(toggleState);
+                this.OnToggleButton?.Invoke(toggleState);
             }
-        }
 
-        /// <summary>
-        /// トグルボタン処理
-        /// </summary>
-        protected virtual void OnToggleButton(bool toggleState) {}
+            this.OnButton?.Invoke();
+        }
 #endregion
 
-        /// <summary>
-        /// Press/Releaseのコンポーネント連携
-        /// </summary>
         private void RelationalComponentFunc(bool state)
         {
             foreach(RelationalComponentData componentData in relationalComponents)
@@ -438,78 +376,63 @@ namespace GarageKit
             }
         }
 
-        /// <summary>
-        /// //テクスチャを切り替え
-        /// </summary>
         private void ChangeTexture(bool pressed)
         {
             if(pressed)
             {
-                if(guiPlate != null && guiPlate.GetComponent<Renderer>() != null && onBtnTexture != null)
-                    guiPlate.GetComponent<Renderer>().material.mainTexture = onBtnTexture;
+                if(targetRenderer != null && onButtonTexture != null)
+                    targetRenderer.material.mainTexture = onButtonTexture;
             }
             else
             {
-                if(guiPlate != null && guiPlate.GetComponent<Renderer>() != null && offBtnTexture != null)
-                    guiPlate.GetComponent<Renderer>().material.mainTexture = offBtnTexture;
+                if(targetRenderer != null && offButtonTexture != null)
+                    targetRenderer.material.mainTexture = offButtonTexture;
             }
         }
 
-        /// <summary>
-        /// ボタンの有効化
-        /// </summary>
+# region Enable/Disable
+        // ボタンの有効化
         public void EnableButton()
         {
             isEnableButton = true;
 
-            // マテリアル変更
-            if(guiPlate != null && guiPlate.GetComponent<Renderer>() != null)
-                guiPlate.GetComponent<Renderer>().material.color = defaultButtonColor;
+            if(targetRenderer != null)
+                targetRenderer.material.color = defaultButtonColor;
 
-            // コライダをON
-            if(this.gameObject.GetComponent<Collider>() != null)
-                this.gameObject.GetComponent<Collider>().enabled = true;
+            if(collid != null)
+                collid.enabled = true;
         }
 
-        /// <summary>
-        /// ボタンの無効化
-        /// </summary>
+        // ボタンの無効化
         public void DisableButton()
         {
             isEnableButton = false;
 
-            // マテリアル変更
-            if(guiPlate != null && guiPlate.GetComponent<Renderer>() != null)
-                guiPlate.GetComponent<Renderer>().material.color = disableButtonColor;
+            if(targetRenderer != null)
+                targetRenderer.material.color = disableButtonColor;
 
-            // コライダをOFF
-            if(this.gameObject.GetComponent<Collider>() != null)
-                this.gameObject.GetComponent<Collider>().enabled = false;
+            if(collid != null)
+                collid.enabled = false;
         }
 
-        /// <summary>
-        /// ボタンのリセット
-        /// </summary>
+        // ボタンのリセット
         public void ResetButton()
         {
             toggleState = false;
             ChangeTexture(false);
         }
 
-        /// <summary>
-        /// 入力の有効化
-        /// </summary>
+        // 入力の有効化
         public void EnableInput()
         {
             inputEnable = true;
         }
 
-        /// <summary>
-        /// 入力の無効化
-        /// </summary>
+        // 入力の無効化
         public void DisableInput()
         {
             inputEnable = false;
         }
+#endregion
     }
 }

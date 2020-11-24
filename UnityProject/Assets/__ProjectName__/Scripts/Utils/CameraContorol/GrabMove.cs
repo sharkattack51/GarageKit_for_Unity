@@ -62,7 +62,7 @@ namespace GarageKit
 
         void Update()
         {
-            if(!inputLock && ButtonObjectBase.PressBtnsTotal == 0)
+            if(!inputLock && ButtonObjectEvent.PressBtnsTotal == 0)
                 GetInput();
             else
                 ResetInput();

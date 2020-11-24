@@ -85,7 +85,7 @@ namespace GarageKit
 
         void Update()
         {
-            if(!inputLock && ButtonObjectBase.PressBtnsTotal == 0)
+            if(!inputLock && ButtonObjectEvent.PressBtnsTotal == 0)
             {
                 if(orbitInputType == ORBIT_INPUT_TYPE.PRIMARY)
                     GetInput();
