@@ -92,6 +92,11 @@ namespace GarageKit
 
         void Awake()
         {
+
+        }
+
+        void Start()
+        {
             if(rayCamera == null)
                 rayCamera = CameraUtil.FindCameraForLayer(this.gameObject.layer);
             if(rayCamera == null)
@@ -100,10 +105,7 @@ namespace GarageKit
             collid = this.GetComponent<Collider>();
             if(collid == null)
                 Debug.LogWarning("collider is null. a collider component is required for button processing.");
-        }
 
-        void Start()
-        {
             // ボタンテクスチャの設定
             ChangeTexture(false);
         }
@@ -132,7 +134,7 @@ namespace GarageKit
 #if UNITY_STANDALONE_WIN
                 // for Windows Player
 #if !USE_TOUCH_SCRIPT
-                Debug.LogWarning("Input.Touch is not work in windows. please use TouchScript.");
+                Debug.LogWarning("Input.Touch is not work in windows. please use TouchScript. and then enable the define macro on the first line of this script.");
 #else
                 // as TouchScript
                 touchCount = TouchScript.TouchManager.Instance.PressedPointersCount;
