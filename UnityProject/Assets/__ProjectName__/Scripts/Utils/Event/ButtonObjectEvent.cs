@@ -7,15 +7,6 @@ using UnityEngine;
 
 namespace GarageKit
 {
-    // Press&Releaseの連携処理コンポーネント格納用
-    [Serializable]
-    public class RelationalComponentData
-    {
-        public MonoBehaviour component = null;
-        public string pressFunctionName = "";
-        public string releaseFunctionName = "";
-    }
-
     public class ButtonObjectEvent : MonoBehaviour
     {
         public enum INPUT_TYPE
@@ -32,7 +23,7 @@ namespace GarageKit
             PRESSHOLD
         }
 
-        public enum INPUT_PHASE
+        private enum INPUT_PHASE
         {
             NONE = 0,
             BEGAN,
@@ -44,45 +35,40 @@ namespace GarageKit
 
         public INPUT_TYPE inputType = INPUT_TYPE.MOUSE;
         public BUTTON_TYPE buttonType = BUTTON_TYPE.CLICK;
-        public bool asFirstResponder = true; // Hitチェックの重なりを考慮
-
-        [Header("button view")]
-        public Renderer targetRenderer;
-        public Color defaultButtonColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-        public Color disableButtonColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
-        public Texture2D offButtonTexture;
-        public Texture2D onButtonTexture;
-
-        [Header("toggle button")]
+        public bool asFirstResponder = true;
         public bool asToggle = false;
-        private bool toggleState = false;
-        public bool ToggleState { get{ return toggleState; } }
-
-        [Header("relational call")]
-        public RelationalComponentData[] relationalComponents;
 
         private bool isEnableButton = true;
         public bool IsEnableButton { get{ return isEnableButton; } }
         private bool inputEnable = true;
         public bool InputEnable { get{ return inputEnable; } }
+        private bool toggleState = false;
+        public bool ToggleState { get{ return toggleState; } }
+        private Vector3 touchPosition; 
+        public Vector3 TouchPosition { get{ return touchPosition; } }
 
         private Camera rayCamera;
         private Collider collid;
 
-        private bool isTouch = true; // タッチしてるかどうか
-        private bool isPressed = false; // Pressタイプのとき、Pressできたかどうか
+        private bool isTouch = true;
+        private bool isPressed = false;
+        private bool isHover = false;
         private int touchCount;
-        private Vector3 touchPosition; 
-        public Vector3 TouchPosition { get{ return touchPosition; } }
+        
         private INPUT_PHASE phase = INPUT_PHASE.NONE;
 
         static public int PressBtnsTotal = 0;
 
+        // Button Actions
         public Action OnButton;
         public Action<bool> OnToggleButton;
+        public Action OnPressButton;
+        public Action OnReleaseButton;
+        public Action OnHoverInButton;
+        public Action OnHoverExitButton;
 
 
-        public static void SetInputType(INPUT_TYPE type)
+        public static void SetAllInputType(INPUT_TYPE type)
         {
             ButtonObjectEvent[] btns = FindObjectsOfType<ButtonObjectEvent>();
             foreach(ButtonObjectEvent btn in btns)
@@ -105,26 +91,17 @@ namespace GarageKit
             collid = this.GetComponent<Collider>();
             if(collid == null)
                 Debug.LogWarning("collider is null. a collider component is required for button processing.");
-
-            // ボタンテクスチャの設定
-            ChangeTexture(false);
         }
 
         void Update()
         {
-            // デバイス入力
-            InputDevice();
+            InputByDevice();
 
-            // ボタン判定
-            CheckTouchButton();
-
-            // トグルボタン時にテクスチャを上書き設定
-            if(asToggle && !isPressed)
-                ChangeTexture(toggleState);
+            ButtonProcess();
         }
 
 
-        private void InputDevice()
+        private void InputByDevice()
         {
             isTouch = true;
             touchCount = 0;
@@ -139,7 +116,6 @@ namespace GarageKit
                 // as TouchScript
                 touchCount = TouchScript.TouchManager.Instance.PressedPointersCount;
 
-                // 1点目を入力として受付
                 if(touchCount >= 1)
                 {
                     TouchScript.Pointers.Pointer tp = TouchScript.TouchManager.Instance.PressedPointers[0];
@@ -147,7 +123,7 @@ namespace GarageKit
                     touchPosition = new Vector2(
                         (int)(((tp.Position.x / Screen.width) * Screen.currentResolution.width) - wrect.x),
                         Screen.height + (int)(((tp.Position.y / Screen.height) * Screen.currentResolution.height) - wrect.y));
-                    
+
                     if(tp.Position == tp.PreviousPosition)
                     {
                         if(isPressed)
@@ -201,14 +177,14 @@ namespace GarageKit
             else if(inputType == INPUT_TYPE.MOUSE)
             {
                 touchPosition = Input.mousePosition;
-                
+
                 if(Input.GetMouseButton(0))
                 {
                     if(Input.GetMouseButtonDown(0))
                         phase = INPUT_PHASE.BEGAN;
                     else
                         phase = INPUT_PHASE.MOVED;
-                    
+
                     touchCount = 1;
                 }
                 else if(Input.GetMouseButtonUp(0))
@@ -221,7 +197,7 @@ namespace GarageKit
                 touchCount = 0;
         }
 
-        private void CheckTouchButton()
+        private void ButtonProcess()
         {
             if(!isTouch || !inputEnable)
             {
@@ -229,7 +205,6 @@ namespace GarageKit
                 return;
             }
 
-            // タッチ判定を行う
             RaycastHit hit = new RaycastHit();
             Ray ray = rayCamera.ScreenPointToRay(touchPosition);
             if(asFirstResponder)
@@ -257,29 +232,47 @@ namespace GarageKit
 
         private void Hit()
         {
-            if(phase == INPUT_PHASE.BEGAN) // Pressした瞬間
+            if(phase == INPUT_PHASE.BEGAN) // 押した瞬間
             {
+                if(!isHover)
+                    this.OnHoverInButton?.Invoke();
+                isHover = true;
+
                 isPressed = true;
-                
-                OnPressButton(true);
+                this.OnPressButton?.Invoke();
+
+                PressButton(true);
             }
             else if(phase == INPUT_PHASE.MOVED) // 押している間
             {
                 if(isPressed)
-                    OnPressHoldButton();
+                    PressHoldButton();
             }
             else if(phase == INPUT_PHASE.ENDED) // 離した瞬間
             {
                 if(isPressed)
                 {
-                    OnPressButton(false);	
-                    OnClickButton();
+                    isPressed = false;
+                    this.OnReleaseButton?.Invoke();
+                    PressButton(false);
+
+                    ClickButton();
+
+                    if(inputType == INPUT_TYPE.TOUCH)
+                    {
+                        isHover = false;
+                        this.OnHoverExitButton?.Invoke();
+                    }
                 }
+            }
+            else if(phase == INPUT_PHASE.NONE) // オーバー
+            {
+                if(!isHover)
+                    this.OnHoverInButton?.Invoke();
+                isHover = true;
 
                 isPressed = false;
             }
-            else if(phase == INPUT_PHASE.NONE) // オーバー
-                isPressed = false;
         }
 
         private void Unhit()
@@ -291,60 +284,47 @@ namespace GarageKit
                 // Began時にOnPressしていれば処理
                 if(phase == INPUT_PHASE.ENDED && isPressed)
                 {
-                    OnPressButton(false);
-                
                     isPressed = false;
+                    this.OnReleaseButton?.Invoke();
+                    PressButton(false);
                 }
             }
             else
                 isPressed = false;
+
+            if(isHover)
+                this.OnHoverExitButton?.Invoke();
+            isHover = false;
         }
 
 #region Button Event Function
-        private void OnPressButton(bool pressed)
+        private void PressButton(bool pressed)
         {
             if(pressed)
             {
-                // Pressされたボタンのカウント
                 PressBtnsTotal++;
 
-                // Pressのコンポーネント連携
-                RelationalComponentFunc(true);
-
-                // テクスチャを切り替え
-                ChangeTexture(true);
-
-                // ボタン処理
                 if(buttonType == BUTTON_TYPE.PRESS)
                     InvokeOnButton();
             }
             else
             {
-                // Pressされたボタンのカウント
                 PressBtnsTotal--;
                 if(PressBtnsTotal < 0)
                     PressBtnsTotal = 0;
 
-                // Releaseのコンポーネント連携
-                RelationalComponentFunc(false);
-
-                // テクスチャを切り替え
-                if(!asToggle)
-                    ChangeTexture(false);
-
-                // ボタン処理
                 if(buttonType == BUTTON_TYPE.RELEASE)
                     InvokeOnButton();
             }
         }
 
-        private void OnPressHoldButton()
+        private void PressHoldButton()
         {
             if(buttonType == BUTTON_TYPE.PRESSHOLD)
                 InvokeOnButton();
         }
 
-        private void OnClickButton()
+        private void ClickButton()
         {
             if(buttonType == BUTTON_TYPE.CLICK)
                 InvokeOnButton();
@@ -352,54 +332,22 @@ namespace GarageKit
 
         private void InvokeOnButton()
         {
+            this.OnButton?.Invoke();
+
             // トグルボタン
             if(asToggle)
             {
                 toggleState = !toggleState;
-
                 this.OnToggleButton?.Invoke(toggleState);
             }
-
-            this.OnButton?.Invoke();
         }
 #endregion
-
-        private void RelationalComponentFunc(bool state)
-        {
-            foreach(RelationalComponentData componentData in relationalComponents)
-            {
-                if(componentData != null)
-                {
-                    if(state)
-                        componentData.component.SendMessage(componentData.pressFunctionName, SendMessageOptions.DontRequireReceiver);
-                    else
-                        componentData.component.SendMessage(componentData.releaseFunctionName, SendMessageOptions.DontRequireReceiver);
-                }
-            }
-        }
-
-        private void ChangeTexture(bool pressed)
-        {
-            if(pressed)
-            {
-                if(targetRenderer != null && onButtonTexture != null)
-                    targetRenderer.material.mainTexture = onButtonTexture;
-            }
-            else
-            {
-                if(targetRenderer != null && offButtonTexture != null)
-                    targetRenderer.material.mainTexture = offButtonTexture;
-            }
-        }
 
 # region Enable/Disable
         // ボタンの有効化
         public void EnableButton()
         {
             isEnableButton = true;
-
-            if(targetRenderer != null)
-                targetRenderer.material.color = defaultButtonColor;
 
             if(collid != null)
                 collid.enabled = true;
@@ -410,9 +358,6 @@ namespace GarageKit
         {
             isEnableButton = false;
 
-            if(targetRenderer != null)
-                targetRenderer.material.color = disableButtonColor;
-
             if(collid != null)
                 collid.enabled = false;
         }
@@ -421,7 +366,6 @@ namespace GarageKit
         public void ResetButton()
         {
             toggleState = false;
-            ChangeTexture(false);
         }
 
         // 入力の有効化
