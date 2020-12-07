@@ -12,8 +12,10 @@ namespace GarageKit
     [RequireComponent(typeof(VisibleMouseCursor))]
     public class DebugManager : ManagerBase
     {
-        public bool IsDebug = true;
-        public bool UseDebugConsole = false;
+        public bool isDebug = true;
+        public bool useIngameDebugConsole = true;
+
+        private GameObject ingameDebugConsole;
 
 #if USE_STATSMONITOR
         private StatsMonitor.StatsMonitor statsMonitor;
@@ -29,23 +31,25 @@ namespace GarageKit
         {
             base.Start();
 
-            IsDebug = ApplicationSetting.Instance.GetBool("IsDebug");
+            isDebug = ApplicationSetting.Instance.GetBool("IsDebug");
             
-            UseDebugConsole = ApplicationSetting.Instance.GetBool("UseDebugConsole");
-            DebugConsole.IsOpen = UseDebugConsole;
+            if(isDebug && useIngameDebugConsole)
+            {
+                ingameDebugConsole = GameObject.Find("IngameDebugConsole");
+                if(ingameDebugConsole == null)
+                {
+                    Debug.LogWarning(
+                        "DebugManager :: package not found. recommend using the [IngameDebugConsole]. please install with OpenUPM. and re-open unity.\n> openupm add com.yasirkula.ingamedebugconsole");
+                }
+            }
 
 #if USE_STATSMONITOR
             // Display StatesMonitor
             statsMonitor = FindObjectOfType<StatsMonitor.StatsMonitor>();
             if(statsMonitor != null)
-                statsMonitor.gameObject.SetActive(IsDebug);
-#else
-            this.gameObject.AddComponent<MemoryProfiler>();
-            MemoryProfiler.useHUD = IsDebug;
-            this.gameObject.AddComponent<FrameRateUtil>();
-            FrameRateUtil.useHUD = IsDebug;
+                statsMonitor.gameObject.SetActive(isDebug);
 #endif
-            
+
             // Display mouse cursor
             if(Application.platform == RuntimePlatform.WindowsEditor)
                 VisibleMouseCursor.showCursor = true;
@@ -56,23 +60,23 @@ namespace GarageKit
         protected override void Update()
         {
             base.Update();
+
+            if(isDebug)
+                this.gameObject.name = "DebugManager [DEBUG]";
         }
 
 
         // Toggle debug infomation
         public void ToggleShowDebugView()
         {
-            // Display DebugConsole
-            if(UseDebugConsole)
-                DebugConsole.IsOpen = !DebugConsole.IsOpen;
+            // Display IngameDebugConsole
+            if(ingameDebugConsole != null)
+                ingameDebugConsole.SetActive(!ingameDebugConsole.activeSelf);
 
 #if USE_STATSMONITOR
             // Display StatesMonitor
             if(statsMonitor != null)
                 statsMonitor.gameObject.SetActive(IsDebug);
-#else
-            MemoryProfiler.useHUD = IsDebug;
-            FrameRateUtil.useHUD = IsDebug;
 #endif
         }
     }

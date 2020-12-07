@@ -345,8 +345,6 @@ GameObject:
   m_Component:
   - component: {fileID: 37}
   - component: {fileID: 57}
-  - component: {fileID: 56}
-  - component: {fileID: 55}
   - component: {fileID: 54}
   m_Layer: 0
   m_Name: DebugManager
@@ -924,32 +922,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7c91073750ec844b89df1990c0ad780, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsDebug: 1
-  UseDebugConsole: 0
---- !u!114 &55
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 20}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04e40c104730b82428f24c8b2c508ddf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &56
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 20}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51455259782158c45b6938f55a785d47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  isDebug: 1
+  useIngameDebugConsole: 1
 --- !u!114 &57
 MonoBehaviour:
   m_ObjectHideFlags: 0

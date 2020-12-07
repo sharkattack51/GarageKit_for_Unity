@@ -40,7 +40,7 @@ namespace GarageKit
                 DebugConsole.Log("press key D : Visible Debug View");
                 
                 DebugManager debugManager = AppMain.Instance.debugManager;
-                debugManager.IsDebug = !debugManager.IsDebug;
+                debugManager.isDebug = !debugManager.isDebug;
                 debugManager.ToggleShowDebugView();
             }
 
@@ -92,23 +92,6 @@ namespace GarageKit
                         seqState.ToNextState(); // WAIT or RESULT state
                 }
             }
-        }
-
-        void OnGUI()
-        {
-            if(AppMain.Instance.debugManager.IsDebug)
-                GUI.Window(0, new Rect(0.0f, 0.0f, 250.0f, 200.0f), DrawWindow, "- DEBUG KEYS -");
-        }
-
-        private void DrawWindow(int windowId)
-        {
-            GUILayout.BeginVertical();
-            GUILayout.Label("ESC : Application Quit");
-            GUILayout.Label("D : Visible Debug View");
-            GUILayout.Label("C : Clear DebugConsole");
-            GUILayout.Label("G : System GC Collect");
-            GUILayout.Label("R : Reload ApplicationSetting");
-            GUILayout.EndVertical();
         }
     }
 }
