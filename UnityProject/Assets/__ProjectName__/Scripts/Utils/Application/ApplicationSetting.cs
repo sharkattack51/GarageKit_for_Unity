@@ -26,6 +26,7 @@ namespace GarageKit
         }
         public XML_FROM loadFrom = XML_FROM.STREAMING_ASSETS;
         public string xmlFile = "ApplicationSetting.xml";
+        private string xmlFilePath = "";
 
         private XmlDocument xml;
         private string xmlUtf8Str;
@@ -36,6 +37,11 @@ namespace GarageKit
         private bool isValid = false;
         public bool IsValid { get{ return isValid; } }
 
+        private FileSystemWatcher watcher;
+        private bool settingFileChanged = false;
+        public delegate void OnSettingFileChangedHandler();
+        public event OnSettingFileChangedHandler OnSettingFileChanged;
+
 
         void Awake()
         {
@@ -45,7 +51,27 @@ namespace GarageKit
             // 読み込み開始
             LoadXML();
         }
-        
+
+        void Update()
+        {
+            if(settingFileChanged)
+            {
+                if(OnSettingFileChanged != null)
+                    OnSettingFileChanged();
+
+                settingFileChanged = false;
+            }
+        }
+
+        void OnApplicationQuit()
+        {
+            if(watcher != null)
+            {
+                watcher.EnableRaisingEvents = false;
+                watcher.Dispose();
+                watcher = null;
+            }
+        }
 
 #region Load
         public void LoadXML()
@@ -56,29 +82,28 @@ namespace GarageKit
                 rawData = new Dictionary<string, string>();
 
                 // xml読み込み
-                string path = "";
                 switch(loadFrom)
                 {
                     case XML_FROM.STREAMING_ASSETS:
-                        path = path = Path.Combine(Application.streamingAssetsPath, xmlFile);
+                        xmlFilePath = Path.Combine(Application.streamingAssetsPath, xmlFile);
                         break;
 
                     case XML_FROM.PROJECT_DIRECTORY:
-                        path = path = Path.Combine(Application.dataPath + "/..", xmlFile);
+                        xmlFilePath = Path.Combine(Application.dataPath + "/..", xmlFile);
                         break;
 
                     case XML_FROM.CURRENT_WORK_DIRECTORY:
-                        path = Path.GetFullPath("./") + xmlFile;
+                        xmlFilePath = Path.GetFullPath("./") + xmlFile;
                         break;
 
                     default: break;
                 }
 
-                if(!File.Exists(path))
-                    path = Path.GetFullPath("./") + xmlFile;
+                if(!File.Exists(xmlFilePath))
+                    xmlFilePath = Path.GetFullPath("./") + xmlFile;
 
-                xml.Load(path);
-                xmlUtf8Str = File.ReadAllText(path, Encoding.UTF8);
+                xml.Load(xmlFilePath);
+                xmlUtf8Str = File.ReadAllText(xmlFilePath, Encoding.UTF8);
 
                 // xmlをパース
                 ParseXML();
@@ -107,6 +132,27 @@ namespace GarageKit
 
                 rawData.Add(paramName, paramValue);
             }
+        }
+#endregion
+
+#region Watch setting file
+        public void StartWatchSettingFile()
+        {
+            if(watcher == null)
+            {
+                FileSystemWatcher watcher = new FileSystemWatcher();
+                watcher.Path = Path.GetDirectoryName(xmlFilePath);
+                watcher.Filter = Path.GetFileName(xmlFilePath);
+                watcher.NotifyFilter = NotifyFilters.LastWrite;
+                watcher.Changed += new FileSystemEventHandler(OnWatchFileChanged);
+                watcher.EnableRaisingEvents = true;
+            }
+        }
+
+        private void OnWatchFileChanged(System.Object source, FileSystemEventArgs e)
+        {
+            LoadXML();
+            settingFileChanged = true;
         }
 #endregion
 
