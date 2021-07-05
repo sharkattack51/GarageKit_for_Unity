@@ -25,6 +25,7 @@ namespace GarageKit
             if(loadSceneName != "" && SceneManager.GetActiveScene().name != loadSceneName)
             {
                 SceneManager.sceneLoaded += OnSceneLoaded;
+                SceneManager.sceneUnloaded += OnSceneUnloaded;
 
                 LoadSceneMode mode = asAdditiveLoad ? LoadSceneMode.Additive : LoadSceneMode.Single;
                 if(asAsyncLoad)
@@ -48,6 +49,14 @@ namespace GarageKit
             this.SceneLoaded();
         }
 
+        private void OnSceneUnloaded(Scene scene)
+        {
+            SceneManager.sceneUnloaded -= OnSceneUnloaded;
+
+            this.SceneUnloaded();
+        }
+
+#region override functions
         public virtual void SceneLoaded()
         {
             base.updateEnable = true;
@@ -62,5 +71,11 @@ namespace GarageKit
         {
             base.StateExit();
         }
+
+        public virtual void SceneUnloaded()
+        {
+
+        }
+#endregion
     }
 }

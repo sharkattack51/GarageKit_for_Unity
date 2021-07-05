@@ -39,7 +39,11 @@ namespace Tenebrous.EditorEnhancements
         {
             List<string> settings = new List<string>();
 
+#if UNITY_2020_3_OR_NEWER
+            if( VersionControlSettings.mode == "Hidden Meta Files" )
+#else
             if( EditorSettings.externalVersionControl == "Hidden Meta Files" )
+#endif
                 settings.Add( "· Meta files: 'Hidden Meta Files' to 'Visible Meta Files'"  );
 
             if( EditorSettings.serializationMode == SerializationMode.Mixed )
@@ -57,8 +61,13 @@ namespace Tenebrous.EditorEnhancements
 
                 if( update )
                 {
+#if UNITY_2020_3_OR_NEWER
+                    if( VersionControlSettings.mode == "Hidden Meta Files" )
+                        VersionControlSettings.mode = "Visible Meta Files";
+#else
                     if( EditorSettings.externalVersionControl == "Hidden Meta Files" )
                         EditorSettings.externalVersionControl = "Visible Meta Files";
+#endif
 
                     if( EditorSettings.serializationMode == SerializationMode.Mixed )
                         EditorSettings.serializationMode = SerializationMode.ForceText;

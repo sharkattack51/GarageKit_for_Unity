@@ -72,7 +72,7 @@ namespace GarageKit
                 return;
 
             VRSceneStateBase state = AppMain.Instance.sceneStateManager.CurrentState.StateObj as VRSceneStateBase;
-            if(XRDevice.isPresent
+            if(IsDevicePresent()
                 && useArrow
                 && !AppMain.Instance.sceneStateManager.StateChanging
                 && state != null && state.viewGuideTarget != null)
@@ -103,6 +103,24 @@ namespace GarageKit
             guideArrowRotRoot.localRotation = Quaternion.AngleAxis(targetAngle, Vector3.back);
         }
 
+
+        public bool IsDevicePresent()
+        {
+            bool present = false;
+
+            List<XRDisplaySubsystem> subsystems = new List<XRDisplaySubsystem>();
+            SubsystemManager.GetInstances<XRDisplaySubsystem>(subsystems);
+            foreach(XRDisplaySubsystem subsystem in subsystems)
+            {
+                if(subsystem.running)
+                {
+                    present = true;
+                    break;
+                }
+            }
+
+            return present;
+        }
 
         // 色変更
         public void ChangeColor(COLOR_MODE mode)

@@ -94,7 +94,7 @@ namespace GarageKit
 
             yield return request.SendWebRequest();
 
-            if(request.isHttpError || request.isNetworkError)
+            if(request.result == UnityWebRequest.Result.ConnectionError)
             {
                 // 読み込み失敗
                 InvokeOnLoadError();

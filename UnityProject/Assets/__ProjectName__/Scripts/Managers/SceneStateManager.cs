@@ -153,5 +153,17 @@ namespace GarageKit
         {
             isAsync = false;
         }
+
+#region find state
+        public T FindStateObjectOfType<T>() where T : StateBase
+        {
+            return sceneStateTable.Find(s => s.StateObj.GetType() == typeof(T))?.StateObj as T;
+        }
+
+        public StateBase FindStateObjectByName(string stateName)
+        {
+            return sceneStateTable.Find(s => s.StateName == stateName)?.StateObj;
+        }
+#endregion
     }
 }
