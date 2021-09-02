@@ -10,12 +10,6 @@ GaraegKit is Unity C# framework. provide the template scene, some manager script
 
 http://debuglog.tumblr.com/post/100742681354/garagekit-for-unity
 
-## How to use?
-
-1. open /Scenes/Main.unity
-2. and press the play.
-3. and customize your project.
-
 ## Require Modules
 
 #### from OpenUPM (https://openupm.com/)
@@ -37,6 +31,14 @@ http://debuglog.tumblr.com/post/100742681354/garagekit-for-unity
 
 - log4net  
   - http://logging.apache.org/log4net/
+
+## How to use?
+
+First change the API compatibility level to `.NET4.x` to fix the error.
+
+1. open /Scenes/Main.unity
+2. and press the play.
+3. and customize your project.
 
 ## Examples
 

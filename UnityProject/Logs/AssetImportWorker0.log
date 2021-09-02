@@ -15,11 +15,11 @@ D:/Etc/GitHub/GarageKit_for_Unity/UnityProject
 -logFile
 Logs/AssetImportWorker0.log
 -srvPort
-59520
+49550
 Successfully changed project path to: D:/Etc/GitHub/GarageKit_for_Unity/UnityProject
 D:/Etc/GitHub/GarageKit_for_Unity/UnityProject
 Using Asset Import Pipeline V2.
-Refreshing native plugins compatible for Editor in 11.90 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 16.50 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 2020.3.13f1 (71691879b7f5)
 [Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2020.3.13f1/Editor/Data/Resources/UnitySubsystems
@@ -35,37 +35,37 @@ Initialize mono
 Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2020.3.13f1/Editor/Data/Managed'
 Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2020.3.13f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
 Mono config path = 'C:/Program Files/Unity/Hub/Editor/2020.3.13f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56172
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56784
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.3.13f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002434 seconds.
+Registered in 0.002443 seconds.
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 10.79 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 9.97 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.366 seconds
+- Completed reload, in  1.436 seconds
 Platform modules already initialized, skipping
 Registering precompiled user dll's ...
-Registered in 0.001914 seconds.
+Registered in 0.001962 seconds.
 Begin MonoManager ReloadAssembly
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.21 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 0.22 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.007 seconds
+- Completed reload, in  0.975 seconds
 Platform modules already initialized, skipping
 ========================================================================
 Worker process is ready to serve import requests
 Launched and connected shader compiler UnityShaderCompiler.exe after 0.03 seconds
-Refreshing native plugins compatible for Editor in 0.21 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 0.35 ms, found 0 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Unloading 420 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 41.4 MB.
-System memory in use after: 41.4 MB.
+System memory in use before: 41.8 MB.
+System memory in use after: 41.8 MB.
 
 Unloading 10 unused Assets to reduce memory usage. Loaded Objects now: 860.
-Total: 1.506058 ms (FindLiveObjects: 0.076700 ms CreateObjectMapping: 0.019674 ms MarkObjects: 1.338116 ms  DeleteObjects: 0.069572 ms)
+Total: 2.285033 ms (FindLiveObjects: 0.124602 ms CreateObjectMapping: 0.028798 ms MarkObjects: 2.043528 ms  DeleteObjects: 0.086109 ms)
 
 AssetImportParameters requested are different than current active one (requested -> active):
   custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
@@ -79,105 +79,9 @@ AssetImportParameters requested are different than current active one (requested
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
 ========================================================================
 Received Import Request.
-  path: Assets/__ProjectName__/Scripts/Utils/CameraContorol/FlyThroughCamera.cs
-  artifactKey: Guid(cbce9e90ff492314ba67a37e9528653d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/__ProjectName__/Scripts/Utils/CameraContorol/FlyThroughCamera.cs using Guid(cbce9e90ff492314ba67a37e9528653d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '892bbff3c05e8e9162468c116ab7c255') in 0.042746 seconds 
-  Import took 0.043787 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.151280 seconds.
-  path: Assets/__ProjectName__/Scripts/Managers/SoundManager.cs
-  artifactKey: Guid(ff945832c6b3fa944a39b95991d13bdb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/__ProjectName__/Scripts/Managers/SoundManager.cs using Guid(ff945832c6b3fa944a39b95991d13bdb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b8b41b510b2ce48492d024c9f2feab6a') in 0.003430 seconds 
-  Import took 0.004317 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.083742 seconds.
   path: Assets/__ProjectName__/Scenes/Main.unity
   artifactKey: Guid(18791b025603bb747a461b29deca3922) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/__ProjectName__/Scenes/Main.unity using Guid(18791b025603bb747a461b29deca3922) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '336baba95edd6b99d50c3c627f5f6d40') in 0.015895 seconds 
-  Import took 0.017175 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.152400 seconds.
-  path: Assets/__ProjectName__/Scripts/Utils/State/Base/TimelinedSceneStateBase.cs
-  artifactKey: Guid(8805a02bac6183545a54003954f6a3bf) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/__ProjectName__/Scripts/Utils/State/Base/TimelinedSceneStateBase.cs using Guid(8805a02bac6183545a54003954f6a3bf) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'beaed4f0f0802ee67bf1e42ba662d45d') in 0.003413 seconds 
-  Import took 0.004550 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.097142 seconds.
-  path: Assets/__ProjectName__/Scripts/Utils/Application/SetAppResolution.cs
-  artifactKey: Guid(f2e3cc41c93c9f34ea2c1752417d9a07) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/__ProjectName__/Scripts/Utils/Application/SetAppResolution.cs using Guid(f2e3cc41c93c9f34ea2c1752417d9a07) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '91181d66ddcf47cda08755bf73996273') in 0.003921 seconds 
-  Import took 0.004946 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.294932 seconds.
-  path: Assets/__ProjectName__/Scripts/Utils/Application/ExcuteArgs.cs
-  artifactKey: Guid(f5930eee80fb55c4bb68a66374014950) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/__ProjectName__/Scripts/Utils/Application/ExcuteArgs.cs using Guid(f5930eee80fb55c4bb68a66374014950) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0dbe9510b9c3b85d52bd388b8bde8aa4') in 0.003673 seconds 
-  Import took 0.004873 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.103585 seconds.
-  path: Assets/__ProjectName__/Scripts/Utils/CameraContorol/PinchZoomCamera.cs
-  artifactKey: Guid(043be4ed291086f458af32da908aaeed) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/__ProjectName__/Scripts/Utils/CameraContorol/PinchZoomCamera.cs using Guid(043be4ed291086f458af32da908aaeed) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c761dd12bc6437c7032d81d4dcd15a09') in 0.003517 seconds 
-  Import took 0.004376 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.166830 seconds.
-  path: Assets/__ProjectName__/Scripts/Utils/Object/AutoUVScroll.cs
-  artifactKey: Guid(bdd6bc12f2943414c80c916f980b37a4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/__ProjectName__/Scripts/Utils/Object/AutoUVScroll.cs using Guid(bdd6bc12f2943414c80c916f980b37a4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2f79d71e07fe581f1282b8c0868b3a7c') in 0.003702 seconds 
-  Import took 0.004579 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.145293 seconds.
-  path: Assets/__ProjectName__/Scripts/Managers/UserInputManager.cs
-  artifactKey: Guid(be19c087b830c72478863f6bca868df7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/__ProjectName__/Scripts/Managers/UserInputManager.cs using Guid(be19c087b830c72478863f6bca868df7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '541548dd006c1dfc1d28fe1259812058') in 0.003415 seconds 
-  Import took 0.004283 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.103374 seconds.
-  path: Assets/__ProjectName__/Scripts/Utils/Network/UDPSender.cs
-  artifactKey: Guid(3864f861f88f0254593b635d3b446037) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/__ProjectName__/Scripts/Utils/Network/UDPSender.cs using Guid(3864f861f88f0254593b635d3b446037) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b815d5ce2a3cb322f84112928207f04d') in 0.004054 seconds 
-  Import took 0.013650 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.354386 seconds.
-  path: Assets/__ProjectName__/Scripts/Utils/VR/VRGazeGuideArrow.cs
-  artifactKey: Guid(9cf16d1cd52eb264c891efb307567200) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/__ProjectName__/Scripts/Utils/VR/VRGazeGuideArrow.cs using Guid(9cf16d1cd52eb264c891efb307567200) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5732a10b23bdec9510439ac229541520') in 0.003588 seconds 
-  Import took 0.004447 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.028010 seconds.
-  path: Assets/__ProjectName__/Scripts/Utils/Object/AutoScale.cs
-  artifactKey: Guid(210e477a2e9c99144a5c2e2bd2eaa624) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/__ProjectName__/Scripts/Utils/Object/AutoScale.cs using Guid(210e477a2e9c99144a5c2e2bd2eaa624) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'afd92fcc8f224b49abf59b7ba14b8573') in 0.003511 seconds 
-  Import took 0.004382 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.012004 seconds.
-  path: Assets/__ProjectName__/Scripts/Utils/Object/AutoBrink.cs
-  artifactKey: Guid(a3ecc198a4c28e64f81720ea31fa3763) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/__ProjectName__/Scripts/Utils/Object/AutoBrink.cs using Guid(a3ecc198a4c28e64f81720ea31fa3763) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd9644c1a0bd6a404e4b9421118585ca4') in 0.003598 seconds 
-  Import took 0.004414 seconds .
+Start importing Assets/__ProjectName__/Scenes/Main.unity using Guid(18791b025603bb747a461b29deca3922) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4a2b09244432fd80ad124546b1cf1ee5') in 0.017638 seconds 
+  Import took 0.019132 seconds .
 
 AssetImportWorkerClient::OnTransportError - code=2 error=End of file
