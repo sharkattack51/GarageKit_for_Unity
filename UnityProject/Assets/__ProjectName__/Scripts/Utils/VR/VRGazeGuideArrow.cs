@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR;
 
+using DG.Tweening;
+
 namespace GarageKit
 {
     public class VRGazeGuideArrow : MonoBehaviour
@@ -56,12 +58,10 @@ namespace GarageKit
             {
                 arrow.GetComponent<Image>().color = modeGreen;
 
-                iTween.MoveTo(arrow, iTween.Hash(
-                    "time", 0.5f,
-                    "position", arrow.transform.localPosition + new Vector3(0.0f, 50.0f, 0.0f),
-                    "islocal", true,
-                    "easetype", iTween.EaseType.linear,
-                    "looptype", iTween.LoopType.loop));
+                arrow.transform.DOMove(new Vector3(0.0f, 50.0f, 0.0f), 0.5f)
+                    .SetRelative()
+                    .SetEase(Ease.Linear)
+                    .SetLoops(-1);
             }
         }
 

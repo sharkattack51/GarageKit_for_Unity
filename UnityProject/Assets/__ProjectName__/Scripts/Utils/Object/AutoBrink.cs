@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using DG.Tweening;
+
 /*
  * マテリアルの自動点滅アニメーション
  */
@@ -22,25 +24,15 @@ namespace GarageKit
 
         private void StartTween()
         {
-            Color startColor = this.gameObject.GetComponent<Renderer>().material.color;
-            this.gameObject.GetComponent<Renderer>().material.color = new Color(startColor.r, startColor.g, startColor.b, startAlpha);
+            Renderer rend = this.gameObject.GetComponent<Renderer>();
+            Color startColor = new Color(rend.material.color.r, rend.material.color.g, rend.material.color.b, startAlpha);
+            Color endColor = new Color(rend.material.color.r, rend.material.color.g, rend.material.color.b, endAlpha);
 
-            iTween.LoopType loopType;
-            if(isPinpon)
-            {
-                loopType = iTween.LoopType.pingPong;
-                brinkTime *= 0.5f;
-            }
-            else
-                loopType = iTween.LoopType.loop;
-
-            iTween.ColorTo(
-                this.gameObject,
-                iTween.Hash(
-                    "time", brinkTime,
-                    "alpha", endAlpha,
-                    "looptype", loopType,
-                    "easetype", iTween.EaseType.linear));
+            rend.material.color = startColor;
+            rend.material.DOColor(endColor, brinkTime)
+                .SetEase(Ease.Linear)
+                .SetLoops(-1, isPinpon ? LoopType.Yoyo : LoopType.Restart)
+                .Play();
         }
     }
 }

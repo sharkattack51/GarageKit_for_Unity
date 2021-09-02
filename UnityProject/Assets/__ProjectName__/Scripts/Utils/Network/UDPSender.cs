@@ -55,7 +55,6 @@ namespace GarageKit
             catch(Exception e)
             {
                 Debug.LogWarning("UDPSender :: " + e.Message);
-                DebugConsole.Log("UDPSender :: " + e.Message);
             }
         }
 #endregion
@@ -87,7 +86,6 @@ namespace GarageKit
             catch(Exception e)
             {
                 Debug.LogWarning("UDPSender :: " + e.Message);
-                DebugConsole.Log("UDPSender :: " + e.Message);
             }
         }
 #endregion

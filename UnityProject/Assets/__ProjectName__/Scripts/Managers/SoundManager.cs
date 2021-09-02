@@ -5,6 +5,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Audio;
 
+using DG.Tweening;
+
 /*
  * Manage all sound controll in scene
  */
@@ -422,15 +424,14 @@ namespace GarageKit
                 SoundFadeCallbackBehabiour cb = target.AddComponent<SoundFadeCallbackBehabiour>();
                 cb.audioSource = audioSources2D[layerName];
 
-                iTween.ValueTo(target,
-                    iTween.Hash(
-                        "from", fromVol,
-                        "to", toVol,
-                        "time", time,
-                        "onupdate", "fade_updated",
-                        "onupdatetarget", target,
-                        "oncomplete", "fade_completed",
-                        "oncompletetarget", target));
+                DOVirtual.Float(fromVol, toVol, time,
+                    (v) => {
+                        cb.fade_updated(v);
+                    })
+                    .OnComplete(() => {
+                        cb.fade_completed();
+                    })
+                    .Play();
             }
         }
 
@@ -448,15 +449,14 @@ namespace GarageKit
             SoundFadeCallbackBehabiour cb = target.AddComponent<SoundFadeCallbackBehabiour>();
             cb.audioSource = sourceData.source;
 
-            iTween.ValueTo(target,
-                iTween.Hash(
-                    "from", fromVol,
-                    "to", toVol,
-                    "time", time,
-                    "onupdate", "fade_updated",
-                    "onupdatetarget", target,
-                    "oncomplete", "fade_completed",
-                    "oncompletetarget", target));
+            DOVirtual.Float(fromVol, toVol, time,
+                    (v) => {
+                        cb.fade_updated(v);
+                    })
+                    .OnComplete(() => {
+                        cb.fade_completed();
+                    })
+                    .Play();
         }
 #endregion
 
@@ -500,12 +500,12 @@ namespace GarageKit
     {
         public AudioSource audioSource;
 
-        private void fade_updated(float newValue)
+        public void fade_updated(float newValue)
         {
             audioSource.volume = newValue;
         }
 
-        private void fade_completed()
+        public void fade_completed()
         {
             if(audioSource.isPlaying)
                 audioSource.Stop();

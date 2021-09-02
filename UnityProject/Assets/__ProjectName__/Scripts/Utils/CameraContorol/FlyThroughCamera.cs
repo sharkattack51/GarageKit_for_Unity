@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using DG.Tweening;
+
 /*
  * ドラッグ操作でのカメラの移動コントロールクラス
  * マウス&タッチ対応
@@ -123,7 +125,7 @@ namespace GarageKit
                 GetInput();
             else
                 ResetInput();
-            
+
             UpdateFlyThrough();
             UpdateOrbitCombination();
         }
@@ -144,16 +146,16 @@ namespace GarageKit
                 {	
                     // ドラッグ量を計算
                     Vector3 currentScrTouchPos = Input.GetTouch(0).position;
-                    
+
                     if(isFirstTouch)
                     {
                         oldScrTouchPos = currentScrTouchPos;
                         isFirstTouch = false;
                         return;
                     }
-                    
+
                     dragDelta = currentScrTouchPos - oldScrTouchPos;
-                    
+
                     if(controllType == FLYTHROUGH_CONTROLL_TYPE.DRAG)
                         oldScrTouchPos = currentScrTouchPos;
                 }
@@ -181,9 +183,9 @@ namespace GarageKit
                         isFirstTouch = false;
                         return;
                     }
-                    
+
                     dragDelta = currentScrTouchPos - oldScrTouchPos;
-                    
+
                     if(controllType == FLYTHROUGH_CONTROLL_TYPE.DRAG)
                         oldScrTouchPos = currentScrTouchPos;
                 }
@@ -198,16 +200,16 @@ namespace GarageKit
                 {	
                     // ドラッグ量を計算
                     Vector3 currentScrTouchPos = Input.mousePosition;
-                    
+
                     if(isFirstTouch)
                     {
                         oldScrTouchPos = currentScrTouchPos;
                         isFirstTouch = false;
                         return;
                     }
-                    
+
                     dragDelta = currentScrTouchPos - oldScrTouchPos;
-                    
+
                     if(controllType == FLYTHROUGH_CONTROLL_TYPE.DRAG)
                         oldScrTouchPos = currentScrTouchPos;
                 }
@@ -310,15 +312,10 @@ namespace GarageKit
         public void MoveToFlyThrough(Vector3 targetPosition, float time = 1.0f)
         {
             dampDragDelta = Vector3.zero;
-            
-            iTween.MoveTo(
-                flyThroughRoot,
-                iTween.Hash(
-                    "position", targetPosition,
-                    "time", time,
-                    "easetype", iTween.EaseType.easeOutCubic
-                )
-            );
+
+            flyThroughRoot.transform.DOMove(targetPosition, time)
+                .SetEase(Ease.OutCubic)
+                .Play();
         }
 
         /// <summary>
@@ -337,14 +334,11 @@ namespace GarageKit
         {
             dampRotateDelta = 0.0f;
 
-            iTween.RotateTo(
-                flyThroughRoot,
-                iTween.Hash(
-                    "y", targetAngle,
-                    "time", time,
-                    "easetype", iTween.EaseType.easeOutCubic
-                )
-            );
+            Vector3 targetEulerAngles = flyThroughRoot.transform.rotation.eulerAngles;
+            targetEulerAngles.y = targetAngle;
+            flyThroughRoot.transform.DORotate(targetEulerAngles, time)
+                .SetEase(Ease.OutCubic)
+                .Play();
         }
 
         /// <summary>
@@ -369,7 +363,7 @@ namespace GarageKit
         public void ResetFlyThrough()
         {
             ResetInput();
-            
+
             MoveToFlyThrough(defaultPos);
             RotateToFlyThrough(defaultRot.eulerAngles.y);
         }

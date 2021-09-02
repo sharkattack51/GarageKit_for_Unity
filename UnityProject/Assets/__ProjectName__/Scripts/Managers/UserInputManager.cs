@@ -27,7 +27,6 @@ namespace GarageKit
             if(Input.GetKeyDown(KeyCode.Escape))
             {
                 Debug.Log("press key ESC : Application Quit");
-                DebugConsole.Log("press key ESC : Application Quit");
                 
                 if(Application.platform != RuntimePlatform.WindowsEditor)			
                     Application.Quit();
@@ -37,27 +36,16 @@ namespace GarageKit
             if(Input.GetKeyDown(KeyCode.D))
             {
                 Debug.Log("press key D : Visible Debug View");
-                DebugConsole.Log("press key D : Visible Debug View");
                 
                 DebugManager debugManager = AppMain.Instance.debugManager;
                 debugManager.isDebug = !debugManager.isDebug;
                 debugManager.ToggleShowDebugView();
             }
 
-            // C
-            if(Input.GetKeyDown(KeyCode.C))
-            {
-                Debug.Log("press key C : Clear DebugConsole");
-                DebugConsole.Log("press key C : Clear DebugConsole");
-
-                DebugConsole.Clear();
-            }
-
             // G
             if(Input.GetKeyDown(KeyCode.G))
             {
                 Debug.Log("press key G : System GC Collect");
-                DebugConsole.Log("press key G : System GC Collect");
 
                 System.GC.Collect();
             }
@@ -66,7 +54,6 @@ namespace GarageKit
             if(Input.GetKeyDown(KeyCode.R))
             {
                 Debug.Log("press key R : Reload ApplicationSetting");
-                DebugConsole.Log("press key R : Reload ApplicationSetting");
 
                 // Reload settings
                 ApplicationSetting.Instance.LoadXML();
@@ -76,7 +63,6 @@ namespace GarageKit
             if(Input.GetKeyDown(KeyCode.Space))
             {
                 Debug.Log("press key Space : Change State");
-                DebugConsole.Log("press key Space : Change State");
 
                 // SE
                 AppMain.Instance.soundManager.Play("SE", "CLICK");

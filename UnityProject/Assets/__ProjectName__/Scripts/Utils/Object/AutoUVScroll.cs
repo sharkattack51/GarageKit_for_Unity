@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using DG.Tweening;
+
 /*
  * UVの自動スクロールアニメーション
  */
@@ -15,8 +17,8 @@ namespace GarageKit
         public float scrollTime = 1.0f;
         public Vector2 startUV = Vector2.zero;
         public Vector2 endUV = Vector2.zero;
-        public iTween.EaseType easeType = iTween.EaseType.linear;
-        public iTween.LoopType loopType = iTween.LoopType.loop;
+        public Ease easeType = Ease.Linear;
+        public LoopType loopType = LoopType.Restart;
 
         private Material targetMat;
 
@@ -25,20 +27,13 @@ namespace GarageKit
         {
             targetMat = this.GetComponent<Renderer>().materials[materialID];
 
-            iTween.ValueTo(
-                this.gameObject,
-                iTween.Hash(
-                    "time", scrollTime,
-                    "from", 0.0f,
-                    "to", 1.0f,
-                    "easetype", easeType,
-                    "looptype", loopType,
-                    "onupdate", "updated"));
-        }
-
-        private void updated(float val)
-        {
-            targetMat.SetTextureOffset(texturePropName, Vector2.Lerp(startUV, endUV, val));
+            DOVirtual.Float(0.0f, 1.0f, scrollTime,
+                (v) => {
+                    targetMat.SetTextureOffset(texturePropName, Vector2.Lerp(startUV, endUV, v));
+                })
+                .SetEase(easeType)
+                .SetLoops(-1, loopType)
+                .Play();
         }
     }
 }

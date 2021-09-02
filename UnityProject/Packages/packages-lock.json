@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.demigiant.dotween": {
+      "version": "1.2.632",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
     "com.unity.ide.vscode": {
       "version": "1.2.0",
       "depth": 0,
@@ -15,6 +22,13 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
       }
+    },
+    "com.yasirkula.ingamedebugconsole": {
+      "version": "1.5.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

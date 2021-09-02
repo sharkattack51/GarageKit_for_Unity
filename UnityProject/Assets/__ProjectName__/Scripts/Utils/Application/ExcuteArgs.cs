@@ -21,10 +21,7 @@ namespace GarageKit
                 args = System.Environment.GetCommandLineArgs();
 
                 for(int i = 0; i < args.Length; i++)
-                {
                     Debug.Log("excute args [" + i.ToString() + "] : " + args[i]);
-                    DebugConsole.Log("excute args [" + i.ToString() + "] : " + args[i]);
-                }
             }
         }
     }

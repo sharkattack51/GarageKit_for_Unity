@@ -18,31 +18,25 @@ http://debuglog.tumblr.com/post/100742681354/garagekit-for-unity
 
 ## Require Modules
 
-/Editor
+#### from OpenUPM (https://openupm.com/)
+
+- In-game Debug Console
+  - `$ openupm add com.yasirkula.ingamedebugconsole`
+- dotween
+  - `$ openupm add com.demigiant.dotween`
+
+#### /Editor (already in)
 
 - Editor enhancements
-https://github.com/sharkattack51/UnityEditorEnhancements
+  - https://github.com/sharkattack51/UnityEditorEnhancements
+    - fork of
+  https://bitbucket.org/Tenebrous/unityeditorenhancements/
+  http://forum.unity3d.com/threads/free-editor-enhancements-extensions-in-project-window-components-in-heirarchy.149569/
 
-fork of
-https://bitbucket.org/Tenebrous/unityeditorenhancements/
-http://forum.unity3d.com/threads/free-editor-enhancements-extensions-in-project-window-components-in-heirarchy.149569/
-
-/Plugins/Log4Net
+#### /Plugins/Log4Net (already in)
 
 - log4net  
-http://logging.apache.org/log4net/
-
-/Scripts/Utils
-
-- DebugConsole  
-https://gist.github.com/darktable/1412228
-
-- iTween  
-http://itween.pixelplacement.com/index.php
-
-~~- TouchScript
-https://www.assetstore.unity3d.com/jp/#!/content/7394~~
-(UnityEngine.Input.Touch works in Windows !!)
+  - http://logging.apache.org/log4net/
 
 ## Examples
 
@@ -57,7 +51,7 @@ https://www.assetstore.unity3d.com/jp/#!/content/7394~~
 
 - AppMain.cs
 
-/Scripts/Managers
+#### /Scripts/Managers
 
 - DebugManager.cs
 - SceneStateManager.cs
@@ -65,7 +59,7 @@ https://www.assetstore.unity3d.com/jp/#!/content/7394~~
 - TimeManager.cs
 - UserInputManager.cs
 
-/Scripts/States/Base
+#### /Scripts/States/Base
 
 - AsyncStateBase.cs
 - StateBase.cs
@@ -74,16 +68,16 @@ https://www.assetstore.unity3d.com/jp/#!/content/7394~~
 
 ## Utility Scripts
 
-/Editor
+#### /Editor
 
 - AssetPostprocessUTF8Encode.cs
 
-/Scripts/Utils
+#### /Scripts/Utils
 
 - Utils.cs
 - AndroidUtil.cs
 
-/Scripts/Utils/Application
+#### /Scripts/Utils/Application
   
 - ApplicationSetting.cs
 - ExecuteArgs.cs
@@ -93,11 +87,11 @@ https://www.assetstore.unity3d.com/jp/#!/content/7394~~
 - SetAppResoution.cs
 - StandaloneResolutionHelper.cs
 
-/Scripts/Utils/Button
+#### /Scripts/Utils/Button
 
 - ButtonObjectBase.cs
 
-/Scripts/Utils/CameraControl
+#### /Scripts/Utils/CameraControl
 
 - CameraShfter.cs
 - FlyThroughCamera.cs
@@ -108,13 +102,13 @@ https://www.assetstore.unity3d.com/jp/#!/content/7394~~
 - Panorama360Camera.cs
 - PinchZoomCamera.cs
 
-/Scripts/Utils/DataLoader
+#### /Scripts/Utils/DataLoader
 
 - ContentsDownLoader.cs
 - CsvLoader.cs
 - ImageLoader.cs
 
-/Scripts/Utils/Debug
+#### /Scripts/Utils/Debug
 
 - CameraGizmoDrawer.cs
 - EditorHide.cs
@@ -124,12 +118,12 @@ https://www.assetstore.unity3d.com/jp/#!/content/7394~~
 - MemoryProfiler.cs
 - VisibleMouseCursor.cs
 
-/Scripts/Utils/Envelope
+#### /Scripts/Utils/Envelope
 
 - AnimationCurveUtil.cs
 - Envelope.cs
 
-/Scripts/Utils/Event
+#### /Scripts/Utils/Event
 
 - TimelineEventAction.cs
 - TimelineEventActionList.cs
@@ -137,17 +131,17 @@ https://www.assetstore.unity3d.com/jp/#!/content/7394~~
 - ColliderHandler.cs
 - TimerEvent.cs
 
-/Scripts/Utils/Input
+#### /Scripts/Utils/Input
 
 - VirtualInput.cs
 
-/Scripts/Utils/Network
+#### /Scripts/Utils/Network
 
 - TinyHttpServer.cs
 - UDPReciever.cs
 - UDPSender.cs
 
-/Scripts/Utils/Object
+#### /Scripts/Utils/Object
 
 - AnimationByStep.cs
 - AutoBrink.cs
@@ -164,25 +158,25 @@ https://www.assetstore.unity3d.com/jp/#!/content/7394~~
 - WebCamPlateObject.cs
 - ZsortOrderGroup.cs
 
-/Scripts/Utils/Render
+#### /Scripts/Utils/Render
 
 - CompositLayer.cs
 - GlLineRenderer.cs
 - RenderScreenTexture.cs
 
-/Scripts/Utils/Texture
+#### /Scripts/Utils/Texture
 
 - NumberTexture.cs
 - SequenceSprite.cs
 - SequenceTexture.cs
 
-/Scripts/Utils/UI
+#### /Scripts/Utils/UI
 
 - UIFadeGroupComponent.cs
 - UIFadeTelop.cs
 - UILineRenderer.cs
 
-/Scripts/Utils/VR
+#### /Scripts/Utils/VR
 
 - VRGazeGuideArrow.cs
 

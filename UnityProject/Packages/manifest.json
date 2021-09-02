@@ -32,6 +32,19 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0"
-  }
+    "com.unity.modules.xr": "1.0.0",
+    "com.yasirkula.ingamedebugconsole": "1.5.1",
+    "com.demigiant.dotween": "1.2.632"
+  },
+  "scopedRegistries": [
+    {
+      "name": "package.openupm.com",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "com.demigiant.dotween",
+        "com.openupm",
+        "com.yasirkula.ingamedebugconsole"
+      ]
+    }
+  ]
 }

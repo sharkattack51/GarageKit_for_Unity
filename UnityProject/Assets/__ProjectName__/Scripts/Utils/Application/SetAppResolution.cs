@@ -54,23 +54,23 @@ namespace GarageKit
                     case APP_RESOLUTION.CURRENT_FULLSCREEN:
                         setWidth = Screen.currentResolution.width;
                         setHeight = Screen.currentResolution.height;
-                        DebugConsole.Log("set CURRENT_FULLSCREEN resolution " + setWidth.ToString() + " : " + setHeight.ToString());
+                        Debug.Log("set CURRENT_FULLSCREEN resolution " + setWidth.ToString() + " : " + setHeight.ToString());
                         break;
 
                     case APP_RESOLUTION.DISPLAY_SUPPORTED:
                         setWidth = Screen.resolutions[resolutionID].width;
                         setHeight = Screen.resolutions[resolutionID].height;
-                        DebugConsole.Log("set DISPLAY_SUPPORTED resolution " + setWidth.ToString() + " : " + setHeight.ToString());
+                        Debug.Log("set DISPLAY_SUPPORTED resolution " + setWidth.ToString() + " : " + setHeight.ToString());
                         break;
 
                     case APP_RESOLUTION.CUSTOM_RESOLUTION:
                         setWidth = (int)customWindowRect.z;
                         setHeight = (int)customWindowRect.w;
-                        DebugConsole.Log("set CUSTOM_RESOLUTION resolution " + setWidth.ToString() + " : " + setHeight.ToString());
+                        Debug.Log("set CUSTOM_RESOLUTION resolution " + setWidth.ToString() + " : " + setHeight.ToString());
                         break;
 
                     case APP_RESOLUTION.CUSTOM_RESOLUTION_POPUPWINDOW:
-                        DebugConsole.Log("set CUSTOM_RESOLUTION_POPUPWINDOW resolution " + setWidth.ToString() + " : " + setHeight.ToString());
+                        Debug.Log("set CUSTOM_RESOLUTION_POPUPWINDOW resolution " + setWidth.ToString() + " : " + setHeight.ToString());
                         break;
                 }
 

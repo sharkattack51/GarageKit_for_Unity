@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using DG.Tweening;
+
 namespace GarageKit
 {
     public class TimelinedSceneStateBase : AsyncStateBase, ITimelinedSceneState
@@ -82,7 +84,7 @@ namespace GarageKit
             AppMain.Instance.timeManager.mainTimer.StopTimer();
 
             // Tweenライブラリを停止
-            iTween.Pause();
+            DOTween.PauseAll();
 
             // 再生中のAudioを一時停止
             managedPausingAudios = new List<AudioSource>();
@@ -131,7 +133,7 @@ namespace GarageKit
             AppMain.Instance.timeManager.mainTimer.ResumeTimer();
 
             // Tweenライブラリを再開
-            iTween.Resume();
+            DOTween.PlayAll();
 
             // Audioを一時停止復帰
             foreach(AudioSource source in managedPausingAudios)

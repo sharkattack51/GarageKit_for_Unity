@@ -5,6 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using DG.Tweening;
+
 /*
  * マルチタッチ操作でのカメラのピンチズームコントロールクラス
  * マウス&タッチ対応
@@ -253,7 +255,7 @@ namespace GarageKit
                         // ピンチセンターへのズーム開始
                         if(zoomToPinchCenterFor2D)
                             StartZoomToPinchCenter();
-                        
+
                         oldDistance = currentDistance;
                         isFirstTouch = false;
                         return;
@@ -308,7 +310,7 @@ namespace GarageKit
                         // ピンチセンターへのズーム開始
                         if(zoomToPinchCenterFor2D)
                             StartZoomToPinchCenter();
-                        
+
                         oldDistance = currentDistance;
                         isFirstTouch = false;
                         return;
@@ -365,7 +367,7 @@ namespace GarageKit
                             isFirstTouch = false;
                             return;
                         }
-                        
+
                         calcZoom = currentDistance - oldDistance;
                         oldDistance = currentDistance;
                     }
@@ -506,15 +508,10 @@ namespace GarageKit
                 if(this.gameObject.transform.localPosition.z + zoom >= defaultZoom + limitMinMaxForRelativePosZ.max)
                     zoom = (defaultZoom + limitMinMaxForRelativePosZ.max) - this.gameObject.transform.localPosition.z;
 
-                iTween.MoveTo(
-                    this.gameObject,
-                    iTween.Hash(
-                        "z", zoom,
-                        "islocal", true,
-                        "time", time,
-                        "easetype", iTween.EaseType.easeOutCubic
-                    )
-                );		
+                this.gameObject.transform.DOMoveZ(zoom, time)
+                    .SetRelative()
+                    .SetEase(Ease.OutCubic)
+                    .Play();		
             }
             else if(zoomType == PINCH_ZOOM_TYPE.FOV)
             {
@@ -523,17 +520,14 @@ namespace GarageKit
                     zoom = limitMinMaxForFOV.min;
                 if(zoom >= limitMinMaxForFOV.max)
                     zoom = limitMinMaxForFOV.max;
-                
-                iTween.ValueTo(
-                    this.gameObject,
-                    iTween.Hash(
-                        "from", this.gameObject.GetComponent<Camera>().fieldOfView,
-                        "to", zoom,
-                        "time", time,
-                        "easetype", iTween.EaseType.easeOutCubic,
-                        "onupdate", "updateFov"
-                    )
-                );
+
+                Camera cam = this.gameObject.GetComponent<Camera>();
+                DOVirtual.Float(cam.fieldOfView, zoom, time,
+                    (v) => {
+                        cam.fieldOfView = v;
+                    })
+                    .SetEase(Ease.OutCubic)
+                    .Play();
             }
             else if(zoomType == PINCH_ZOOM_TYPE.ORTHOSIZE)
             {
@@ -543,27 +537,14 @@ namespace GarageKit
                 if(zoom >= limitMinMaxForOrthoSize.max)
                     zoom = limitMinMaxForOrthoSize.max;
 
-                iTween.ValueTo(
-                    this.gameObject,
-                    iTween.Hash(
-                        "from", this.gameObject.GetComponent<Camera>().orthographicSize,
-                        "to", zoom,
-                        "time", time,
-                        "easetype", iTween.EaseType.easeOutCubic,
-                        "onupdate", "updateOrthosize"
-                    )
-                );
+                Camera cam = this.gameObject.GetComponent<Camera>();
+                DOVirtual.Float(cam.orthographicSize, zoom, time,
+                    (v) => {
+                        cam.orthographicSize = v;
+                    })
+                    .SetEase(Ease.OutCubic)
+                    .Play();
             }
-        }
-
-        private void updateFov(float fov)
-        {
-            this.gameObject.GetComponent<Camera>().fieldOfView = fov;
-        }
-
-        private void updateOrthosize(float size)
-        {
-            this.gameObject.GetComponent<Camera>().orthographicSize = size;
         }
 
         /// <summary>
