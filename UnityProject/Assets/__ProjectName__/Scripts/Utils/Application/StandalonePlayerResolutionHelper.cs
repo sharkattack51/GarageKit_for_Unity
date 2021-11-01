@@ -22,7 +22,6 @@ using UnityEditor;
  * 5) Player settings ApiCompatibilityLevel to [.NET 4.x]
  */
 using Microsoft.Win32;
-#endif
 
 namespace GarageKit
 {
@@ -63,10 +62,23 @@ namespace GarageKit
 #endif
             }
 #endif
-        }
 
 #if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+            SystemEvents.SessionEnding += new SessionEndingEventHandler((s, e) => {
+                e.Cancel = true;
+                RemoveFromRegistry();
+            });
+#endif
+        }
+
         void OnApplicationQuit()
+        {
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+            RemoveFromRegistry();
+#endif
+        }
+
+        private void RemoveFromRegistry()
         {
             RegistryKey key = Registry.CurrentUser;
             if(key == null)
@@ -93,6 +105,6 @@ namespace GarageKit
                 }
             }
         }
-#endif
     }
 }
+#endif

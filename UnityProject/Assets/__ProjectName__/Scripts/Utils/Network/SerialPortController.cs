@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_STANDALONE
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -268,3 +269,4 @@ namespace GarageKit
         }
     }
 }
+#endif

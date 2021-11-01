@@ -3,6 +3,7 @@
 [Oo]bj
 
 Log/*.log
+Logs
 
 # for Unity
 /*.unityproj
