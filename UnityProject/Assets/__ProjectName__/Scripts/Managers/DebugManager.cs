@@ -28,6 +28,7 @@ namespace GarageKit
             base.Start();
 
             isDebug = ApplicationSetting.Instance.GetBool("IsDebug");
+            VisibleMouseCursor.showCursor = Application.isEditor || ApplicationSetting.Instance.GetBool("UseMouse");
 
             ingameDebugConsole = GameObject.Find("IngameDebugConsole");
             graphy = GameObject.Find("[Graphy]");
