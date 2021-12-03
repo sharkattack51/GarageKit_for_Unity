@@ -86,10 +86,9 @@ namespace GarageKit
                 quat = SensorHelper.rotation * Quaternion.Euler(0.0f, 180.0f, 0.0f);
 #else
                 quat = Quaternion.Euler(90.0f, 0.0f, 0.0f) * new Quaternion(-gyro.x, -gyro.y, gyro.z, gyro.w);
-                quat = Quaternion.Euler(0.0f, -quat.eulerAngles.y, 0.0f);
 #endif
 
-                directionRoot.rotation = Quaternion.Euler(0.0f, quat.eulerAngles.y, 0.0f);
+                directionRoot.rotation = Quaternion.Euler(0.0f, -quat.eulerAngles.y, 0.0f);
             }
 
             ready = true;
