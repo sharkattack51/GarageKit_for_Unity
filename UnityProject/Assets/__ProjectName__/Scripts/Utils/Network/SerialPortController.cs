@@ -1,4 +1,7 @@
-﻿#if UNITY_STANDALONE
+﻿// considering an error workaround when building with .Net4 ...
+#if BUILD_ERROR_FIX
+
+#if UNITY_STANDALONE
 using UnityEngine;
 using System;
 using System.Collections;
@@ -269,4 +272,6 @@ namespace GarageKit
         }
     }
 }
+#endif
+
 #endif
