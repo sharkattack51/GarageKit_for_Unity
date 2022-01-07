@@ -41,9 +41,31 @@ namespace GarageKit
                 if(Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
                 {
                     Vector2 touchDeltaPosition = Input.GetTouch(0).deltaPosition;
-                    if(mode == OPERATION_MODE.ROTATE_XY)
-                        rotationX += (touchDeltaPosition.y * rotationSpeed * (invertX ? -1.0f : 1.0f));
-                    rotationY -= (touchDeltaPosition.x * rotationSpeed * (invertY ? -1.0f : 1.0f));
+
+                    if(Input.deviceOrientation == DeviceOrientation.Portrait)
+                    {
+                        if(mode == OPERATION_MODE.ROTATE_XY)
+                            rotationX += (touchDeltaPosition.y * rotationSpeed * (invertX ? -1.0f : 1.0f));
+                        rotationY -= (touchDeltaPosition.x * rotationSpeed * (invertY ? -1.0f : 1.0f));
+                    }
+                    else if(Input.deviceOrientation == DeviceOrientation.PortraitUpsideDown)
+                    {
+                        if(mode == OPERATION_MODE.ROTATE_XY)
+                            rotationX -= (touchDeltaPosition.y * rotationSpeed * (invertX ? -1.0f : 1.0f));
+                        rotationY += (touchDeltaPosition.x * rotationSpeed * (invertY ? -1.0f : 1.0f));
+                    }
+                    else if(Input.deviceOrientation == DeviceOrientation.LandscapeLeft)
+                    {
+                        if(mode == OPERATION_MODE.ROTATE_XY)
+                            rotationX -= (touchDeltaPosition.x * rotationSpeed * (invertX ? -1.0f : 1.0f));
+                        rotationY += (touchDeltaPosition.y * rotationSpeed * (invertY ? -1.0f : 1.0f));
+                    }
+                    else if(Input.deviceOrientation == DeviceOrientation.LandscapeRight)
+                    {
+                        if(mode == OPERATION_MODE.ROTATE_XY)
+                            rotationX += (touchDeltaPosition.x * rotationSpeed * (invertX ? -1.0f : 1.0f));
+                        rotationY -= (touchDeltaPosition.y * rotationSpeed * (invertY ? -1.0f : 1.0f));
+                    }
                 }
             }
             else

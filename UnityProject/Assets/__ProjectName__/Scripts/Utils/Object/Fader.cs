@@ -118,18 +118,26 @@ namespace GarageKit
             Color color = fadeColor;
             isFading = true;
 
-            while(elapsedTime < fadeTime)
+            if(fadeTime <= 0.0f)
             {
-                yield return new WaitForEndOfFrame();
-
-                elapsedTime += Time.deltaTime;
-
-                if(fadeType == FADE_TYPE.FADE_IN)
-                    color.a = targetAlpha - Mathf.Clamp01(elapsedTime / fadeTime);
-                else if(fadeType == FADE_TYPE.FADE_OUT)
-                    color.a = Mathf.Clamp01(elapsedTime / fadeTime);
-
+                color.a = 0.0f;
                 fadeMaterial.color = color;
+            }
+            else
+            {
+                while(elapsedTime < fadeTime)
+                {
+                    yield return new WaitForEndOfFrame();
+
+                    elapsedTime += Time.deltaTime;
+
+                    if(fadeType == FADE_TYPE.FADE_IN)
+                        color.a = targetAlpha - Mathf.Clamp01(elapsedTime / fadeTime);
+                    else if(fadeType == FADE_TYPE.FADE_OUT)
+                        color.a = Mathf.Clamp01(elapsedTime / fadeTime);
+
+                    fadeMaterial.color = color;
+                }
             }
 
             isFading = false;

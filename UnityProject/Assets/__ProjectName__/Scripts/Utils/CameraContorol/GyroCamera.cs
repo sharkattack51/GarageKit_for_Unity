@@ -83,7 +83,7 @@ namespace GarageKit
 #if UNITY_IOS
                 quat = new Quaternion(-gyro.x, -gyro.z, -gyro.y, gyro.w) * Quaternion.Euler(90.0f, 0.0f, 0.0f);
 #elif UNITY_ANDROID && USE_GYRODOROID
-                quat = SensorHelper.rotation * Quaternion.Euler(0.0f, 180.0f, 0.0f);
+                quat = SensorHelper.rotation;
 #else
                 quat = Quaternion.Euler(90.0f, 0.0f, 0.0f) * new Quaternion(-gyro.x, -gyro.y, gyro.z, gyro.w);
 #endif

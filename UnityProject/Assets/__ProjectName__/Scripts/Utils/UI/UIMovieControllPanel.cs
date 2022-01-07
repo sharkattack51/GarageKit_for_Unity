@@ -28,7 +28,6 @@ namespace GarageKit
 #if AVPRO_VIDEO
         public MediaPlayer player;
         public bool setupOnStart = true;
-        public bool ignorePlayerControll = false;
 
         [Header("UI")]
         public DisplayUGUI uiMovie;
@@ -53,11 +52,13 @@ namespace GarageKit
         public Action<float> OnSeekStart;
         public Action<float> OnSeek;
         public Action<float> OnSeekEnd;
+        public Action OnFinishedPlaying;
 
 
         void Awake()
         {
-
+            if(player.m_AutoOpen || player.m_AutoStart)
+                Debug.LogError("AVPro MediaPlayer setting [Auto Open] & [Auto Play] to False");
         }
 
         void Start()
@@ -68,12 +69,12 @@ namespace GarageKit
 
         void Update()
         {
-            if(player != null)
+            if(player != null && player.VideoOpened)
             {
                 // ボタンスプライトの切り替え
                 if(!player.Control.IsSeeking())
                 {
-                    if(!player.Control.IsPlaying())
+                    if(!player.Control.IsPlaying() || player.Control.IsFinished())
                         uiPlayPauseBtn.image.sprite = playSprite;
                     else
                         uiPlayPauseBtn.image.sprite = pauseSprite;
@@ -109,23 +110,32 @@ namespace GarageKit
 
         public void Setup()
         {
-            uiMovie._mediaPlayer = player;
+            // MediaPlayerイベント
+            player.Events.AddListener((mp, e, err) => {
+                switch(e)
+                {
+                    case MediaPlayerEvent.EventType.FinishedPlaying:
+                        OnFinishedPlaying?.Invoke();
+                        break;
+
+                    default: break;
+                }
+            });
 
             // 再生/一時停止ボタン
             uiPlayPauseBtn.onClick.AddListener(() => {
-                if(!player.Control.IsPlaying())
+                if(!player.Control.IsPlaying() || player.Control.IsFinished())
                 {
-                    OnPlay?.Invoke();
+                    if(!movieLoaded)
+                        Debug.LogWarning("not loaded movie. please use UIMovieControllPanel.Load()");
 
-                    if(!ignorePlayerControll)
-                        player.Play();
+                    OnPlay?.Invoke();
+                    player.Play();
                 }
                 else
                 {
                     OnPause?.Invoke();
-
-                    if(!ignorePlayerControll)
-                        player.Pause();
+                    player.Pause();
                 }
             });
 
@@ -136,9 +146,7 @@ namespace GarageKit
                 {
                     float timeMs = v * player.Info.GetDurationMs();
                     OnSeek?.Invoke(timeMs);
-
-                    if(!ignorePlayerControll)
-                        player.Control.Seek(timeMs);
+                    player.Control.Seek(timeMs);
                 }
             });
 
@@ -152,9 +160,7 @@ namespace GarageKit
 
                 float timeMs = uiSeekSlider.value * player.Info.GetDurationMs();
                 OnSeekStart?.Invoke(timeMs);
-
-                if(!ignorePlayerControll)
-                    player.Pause();
+                player.Pause();
             });
             seekEventTrg.triggers.Add(pointerDown);
 
@@ -166,17 +172,15 @@ namespace GarageKit
 
                 float timeMs = uiSeekSlider.value * player.Info.GetDurationMs();
                 OnSeekEnd?.Invoke(timeMs);
-
-                if(!ignorePlayerControll)
-                    player.Control.Seek(timeMs);
+                player.Control.Seek(timeMs);
             });
             seekEventTrg.triggers.Add(pointerUp);
         }
 
-        public bool Load(string moviePathOrUrl, bool autoPlay)
+        public bool Load(string moviePathOrUrl, MediaPlayer.FileLocation location = MediaPlayer.FileLocation.AbsolutePathOrURL, bool autoPlay = false)
         {
             // 動画の読み込み
-            movieLoaded = player.OpenVideoFromFile(MediaPlayer.FileLocation.AbsolutePathOrURL, moviePathOrUrl, autoPlay);
+            movieLoaded = player.OpenVideoFromFile(moviePathOrUrl, location, autoPlay);
 
             return movieLoaded;
         }
