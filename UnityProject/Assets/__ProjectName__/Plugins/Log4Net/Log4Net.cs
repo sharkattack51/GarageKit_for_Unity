@@ -87,7 +87,7 @@ public class Log4Net : MonoBehaviour
     }
 
     // output log
-    public void Log(LOG_LEVEL lv, string msg)
+    public void Log(LOG_LEVEL lv, string msg, bool withDebugLog = true)
     {
         if(nativeLogger == null)
             return;
@@ -98,7 +98,25 @@ public class Log4Net : MonoBehaviour
             case LOG_LEVEL.INFO: nativeLogger.Info(msg); break;
             case LOG_LEVEL.WARN: nativeLogger.Warn(msg); break;
             case LOG_LEVEL.ERROR: nativeLogger.Error(msg); break;
-            default: break;
+        }
+
+        if(withDebugLog)
+        {
+            switch(lv)
+            {
+                case LOG_LEVEL.DEBUG:
+                case LOG_LEVEL.INFO:
+                    Debug.Log(msg);
+                    break;
+
+                case LOG_LEVEL.WARN:
+                    Debug.LogWarning(msg);
+                    break;
+
+                case LOG_LEVEL.ERROR:
+                    Debug.LogError(msg);
+                    break;
+            }
         }
     }
 

@@ -35,6 +35,8 @@ namespace GarageKit
         private RectTransform rectTrans;
         private RawImage uiRawImage;
 
+        private bool disabled = false;
+
 
         void Awake()
         {
@@ -128,8 +130,20 @@ namespace GarageKit
 #endif
         }
 
+        void OnEnable()
+        {
+            if(disabled)
+            {
+                disabled = false;
+
+                StartCoroutine(Start());
+            }
+        }
+
         void OnDisable()
         {
+            disabled = true;
+
             if(webCamTexture != null)
             {
                 webCamTexture.Stop();
