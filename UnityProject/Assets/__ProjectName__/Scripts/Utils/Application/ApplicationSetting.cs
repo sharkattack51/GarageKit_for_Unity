@@ -159,7 +159,7 @@ namespace GarageKit
 #region 型チェックしての取得
         public string GetString(string key, string defaultValue = "")
         {
-            if(rawData.ContainsKey(key) && rawData.ContainsKey(key))
+            if(rawData.ContainsKey(key))
                 return rawData[key];
             else
                 return defaultValue;
@@ -194,7 +194,7 @@ namespace GarageKit
 
         public string[] GetStringArray(string key, string separator = ",")
         {
-            if(rawData.ContainsKey(key) && rawData.ContainsKey(key))
+            if(rawData.ContainsKey(key))
                 return rawData[key].Split(new string[]{ separator }, StringSplitOptions.None);
             else
                 return new string[0];
@@ -202,14 +202,14 @@ namespace GarageKit
 
         public int[] GetIntArray(string key, string separator = ",", int defaultValue = 0)
         {
-            if(rawData.ContainsKey(key) && rawData.ContainsKey(key))
+            if(rawData.ContainsKey(key))
             {
                 string[] strs = rawData[key].Split(new string[]{ separator }, StringSplitOptions.None);
                 List<int> list = new List<int>();
                 foreach(string str in strs)
                 {
                     int result;
-                    if(int.TryParse(str, out result))
+                    if(int.TryParse(str.Trim(), out result))
                         list.Add(result);
                     else
                         list.Add(defaultValue);
@@ -222,14 +222,14 @@ namespace GarageKit
 
         public float[] GetFloatArray(string key, string separator = ",", float defaultValue = 0.0f)
         {
-            if(rawData.ContainsKey(key) && rawData.ContainsKey(key))
+            if(rawData.ContainsKey(key))
             {
                 string[] strs = rawData[key].Split(new string[]{ separator }, StringSplitOptions.None);
                 List<float> list = new List<float>();
                 foreach(string str in strs)
                 {
                     float result;
-                    if(float.TryParse(str, out result))
+                    if(float.TryParse(str.Trim(), out result))
                         list.Add(result);
                     else
                         list.Add(defaultValue);
@@ -242,14 +242,14 @@ namespace GarageKit
 
         public bool[] GetBoolArray(string key, string separator = ",", bool defaultValue = false)
         {
-            if(rawData.ContainsKey(key) && rawData.ContainsKey(key))
+            if(rawData.ContainsKey(key))
             {
                 string[] strs = rawData[key].Split(new string[]{ separator }, StringSplitOptions.None);
                 List<bool> list = new List<bool>();
                 foreach(string str in strs)
                 {
                     bool result;
-                    if(bool.TryParse(str, out result))
+                    if(bool.TryParse(str.Trim(), out result))
                         list.Add(result);
                     else
                         list.Add(defaultValue);
@@ -276,6 +276,30 @@ namespace GarageKit
                 return result;
             else
                 return DateTime.Now;
+        }
+
+        public Vector3 GetVector3(string key, string separator = ",", Vector3 defaultValue = default(Vector3))
+        {
+            Vector3 result = Vector3.zero;
+            float[] arr = GetFloatArray(key, separator);
+            if(arr.Length >= 3)
+                result = new Vector3(arr[0], arr[1], arr[2]);
+            else
+                result = defaultValue;
+
+            return result;
+        }
+
+        public Vector2 GetVector2(string key, string separator = ",", Vector2 defaultValue = default(Vector2))
+        {
+            Vector2 result = Vector2.zero;
+            float[] arr = GetFloatArray(key, separator);
+            if(arr.Length >= 2)
+                result = new Vector2(arr[0], arr[1]);
+            else
+                result = defaultValue;
+
+            return result;
         }
 #endregion
     }

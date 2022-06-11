@@ -171,6 +171,9 @@ namespace GarageKit
             public const int VK_F10 = 0x0079;
             public const int VK_F11 = 0x007A;
             public const int VK_F12 = 0x007B;
+
+            public const int VK_L_WINDOWS = 0x005B;
+            public const int VK_R_WINDOWS = 0x005C;
         }
 
 

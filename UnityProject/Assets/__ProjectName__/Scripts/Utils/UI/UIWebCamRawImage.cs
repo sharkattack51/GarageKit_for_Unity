@@ -10,11 +10,12 @@ namespace GarageKit
     public class UIWebCamRawImage : MonoBehaviour
     {
         [Header("camera device setting")]
+        public bool webcamPlayOnStart = true;
         public string deviceName = "";
         public int deviceIndex = 0;
-        public int requestedWidth = 1280;
-        public int requestedHeight = 720;
-        public int requestedFps = 15;
+        public int requestedWidth = 1920;
+        public int requestedHeight = 1080;
+        public int requestedFps = 30;
         public int anisoLevel = 9;
         public FilterMode filteMode = FilterMode.Bilinear;
         public TextureWrapMode wrapMode = TextureWrapMode.Clamp;
@@ -45,6 +46,32 @@ namespace GarageKit
 
         IEnumerator Start()
         {
+            yield return new WaitForEndOfFrame();
+
+            if(webcamPlayOnStart)
+                yield return WebcamPlay();
+        }
+
+        void OnEnable()
+        {
+            if(disabled)
+            {
+                disabled = false;
+
+                StartCoroutine(WebcamPlay());
+            }
+        }
+
+        void OnDisable()
+        {
+            disabled = true;
+
+            WebcamStop();
+        }
+
+
+        public IEnumerator WebcamPlay()
+        {
             rectTrans = this.gameObject.GetComponent<RectTransform>();
             uiRawImage = this.gameObject.GetComponent<RawImage>();
             uiRawImage.enabled = false;
@@ -65,12 +92,15 @@ namespace GarageKit
 #endif
                 yield return new WaitForEndOfFrame();
 
+                for(int i = 0; i < WebCamTexture.devices.Length; i++)
+                    Debug.LogFormat("UIWebCamRawImage :: devices[{0}] name:{1}", i, WebCamTexture.devices[i].name);
+
                 // Webカメラを開く
                 try
                 {
                     devices = WebCamTexture.devices;
-                    
-                    if(deviceName != null)
+
+                    if(!string.IsNullOrEmpty(deviceName))
                         webCamTexture = new WebCamTexture(deviceName, requestedWidth, requestedHeight, requestedFps);
                     else
                         webCamTexture = new WebCamTexture(devices[deviceIndex].name, requestedWidth, requestedHeight, requestedFps);
@@ -91,7 +121,7 @@ namespace GarageKit
                 // 映像の更新を開始
                 webCamTexture.Play();
 
-                yield return new WaitUntil(() => IsOpen());
+                yield return new WaitUntil(() => IsWebcamPlay());
 
                 Debug.LogFormat("usb camera opened: {0}/{1}", webCamTexture.width, webCamTexture.height);
 
@@ -130,20 +160,8 @@ namespace GarageKit
 #endif
         }
 
-        void OnEnable()
+        public void WebcamStop()
         {
-            if(disabled)
-            {
-                disabled = false;
-
-                StartCoroutine(Start());
-            }
-        }
-
-        void OnDisable()
-        {
-            disabled = true;
-
             if(webCamTexture != null)
             {
                 webCamTexture.Stop();
@@ -152,8 +170,7 @@ namespace GarageKit
             }
         }
 
-
-        public bool IsOpen()
+        public bool IsWebcamPlay()
         {
             return webCamTexture != null
                 && webCamTexture.isPlaying

@@ -113,6 +113,7 @@ namespace GarageKit
         private const uint SWP_NOMOVE = 0x0002;
         private const uint SWP_FRAMECHANGED = 0x0020;
 
+        private const int SW_MAXIMIZE = 3;
         private const int SW_MINIMIZE = 6;
 
         [StructLayout(LayoutKind.Sequential)]
@@ -136,7 +137,7 @@ namespace GarageKit
             {
                 uint procID = 0;
                 GetWindowThreadProcessId(hWnd, ref procID);
-                
+
                 if(procID == currentProcID)
                     return hWnd;
             }
@@ -175,17 +176,13 @@ namespace GarageKit
         /// </summary>
         public static void SetPopupWindow(int x, int y, int w, int h)
         {
-            IntPtr hWnd = GetApplicationWindowHandle();
-
-            MoveWindow(hWnd, x, y, w, h, false);
-
             Process currentProc = Process.GetCurrentProcess();
             currentProc.PriorityClass = ProcessPriorityClass.RealTime;
 
+            IntPtr hWnd = GetApplicationWindowHandle();
             uint old_style = GetWindowLong(hWnd, GWL_STYLE);
             uint new_style = (old_style & ~(WS_CAPTION | WS_BORDER | WS_DLGFRAME | WS_THICKFRAME));
             SetWindowLong(hWnd, GWL_STYLE, new_style);
-
             SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_FRAMECHANGED);
         }
 
@@ -211,6 +208,21 @@ namespace GarageKit
         {
             IntPtr hWnd = GetActiveWindow();
             ShowWindow(hWnd, SW_MINIMIZE);
+        }
+
+        /// <summary>
+        /// 指定ウィンドウを最大化する
+        /// </summary>
+        public static void MaximizeWindow(string className, string windowName)
+        {
+            IntPtr hWnd = FindWindow(className, windowName);
+            ShowWindow(hWnd, SW_MAXIMIZE);
+        }
+
+        public static void MaximizeWindow()
+        {
+            IntPtr hWnd = GetActiveWindow();
+            ShowWindow(hWnd, SW_MAXIMIZE);
         }
     }
 }
