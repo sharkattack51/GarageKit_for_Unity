@@ -76,7 +76,10 @@ namespace GarageKit
 
                 // 解像度を変更
                 if(resolutionType == APP_RESOLUTION.CUSTOM_RESOLUTION_POPUPWINDOW)
-                    GarageKit.WindowsUtil.SetPopupWindow((int)customWindowRect.x, (int)customWindowRect.y, (int)customWindowRect.z, (int)customWindowRect.w);
+                {
+                    GarageKit.WindowsUtil.SetWindowPos((int)customWindowRect.x, (int)customWindowRect.y, (int)customWindowRect.z, (int)customWindowRect.w);
+                    GarageKit.WindowsUtil.SetPopupWindow();
+                }
                 else
                     Screen.SetResolution(setWidth, setHeight, fullScreen);
             }

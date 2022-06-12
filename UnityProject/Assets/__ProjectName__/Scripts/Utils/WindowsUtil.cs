@@ -174,7 +174,7 @@ namespace GarageKit
         /// <summary>
         /// ポップアップウィンドウを設定する
         /// </summary>
-        public static void SetPopupWindow(int x, int y, int w, int h)
+        public static void SetPopupWindow()
         {
             Process currentProc = Process.GetCurrentProcess();
             currentProc.PriorityClass = ProcessPriorityClass.RealTime;
