@@ -37,7 +37,7 @@ namespace GarageKit
             Faders.Add(this);
 
             if(fadeMaterial == null)
-                fadeMaterial = new Material(Shader.Find("Custom/ShaderLib/Unlit/MaterialAlpha"));
+                fadeMaterial = new Material(Shader.Find("UI/Default"));
             fadeMaterial.color = fadeColor;
         }
         
