@@ -36,7 +36,7 @@ public class PlayState : AsyncStateBase, ISequentialState
         else
             timerText.text = "";
     }
-    
+
     public override void StateExit()
     {
         base.StateExit();
@@ -45,12 +45,13 @@ public class PlayState : AsyncStateBase, ISequentialState
 
     public void ToNextState()
     {
+        Debug.Log("Change Async State to [RESULT] with Fade.");
         AppMain.Instance.sceneStateManager.ChangeAsyncState("RESULT");
     }
 
     public void ToPrevState()
     {
-        AppMain.Instance.sceneStateManager.ChangeAsyncState("WAIT");
+        // pass
     }
 
 

@@ -1,10 +1,10 @@
 {
   "dependencies": {
     "com.demigiant.dotween": "1.2.632",
-    "com.tayx.graphy": "2.1.3",
-    "com.unity.ide.vscode": "1.2.0",
+    "com.tayx.graphy": "3.0.2",
+    "com.unity.ide.vscode": "1.2.5",
     "com.unity.ugui": "1.0.0",
-    "com.yasirkula.ingamedebugconsole": "1.5.2",
+    "com.yasirkula.ingamedebugconsole": "1.5.8",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",

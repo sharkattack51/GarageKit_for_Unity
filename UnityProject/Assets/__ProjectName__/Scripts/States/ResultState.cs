@@ -34,11 +34,12 @@ public class ResultState : AsyncStateBase, ISequentialState
 
     public void ToNextState()
     {
+        Debug.Log("Change Async State to [WAIT] with Fade.");
         AppMain.Instance.sceneStateManager.ChangeAsyncState("WAIT");
     }
 
     public void ToPrevState()
     {
-        AppMain.Instance.sceneStateManager.ChangeAsyncState("PLAY");
+        // pass
     }
 }

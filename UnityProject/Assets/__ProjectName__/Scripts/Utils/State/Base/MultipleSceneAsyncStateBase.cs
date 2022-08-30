@@ -8,6 +8,19 @@ namespace GarageKit
     {
         [Header("MultipleSceneAsyncStateBase")]
         public float fadeTime = 1.0f;
+        public Color fadeColor = Color.white;
+
+        private Fader fader;
+
+
+        private void Awake()
+        {
+            List<Camera> cameras = CameraUtil.GetCameraListByDepth();
+            Camera cam = cameras[cameras.Count - 1];
+            fader = cam.GetComponent<Fader>();
+            if(fader == null)
+                fader = cam.gameObject.AddComponent<Fader>();
+        }
 
 
         public override void StateStart(object context)
@@ -19,8 +32,15 @@ namespace GarageKit
         {
             base.SceneLoaded();
 
-            if(Fader.UseFade)
-                Fader.StartFadeAll(fadeTime, Fader.FADE_TYPE.FADE_IN);
+            if(Fader.UseFade && AppMain.Instance.sceneStateManager.AsyncChangeFading)
+            {
+                if(fader != null)
+                {
+                    fader.fadeColor = fadeColor;
+                    fader.StartFade(fadeTime, Fader.FADE_TYPE.FADE_IN);
+                }
+                Invoke("InvokeAsyncChangeFaded", fadeTime);
+            }
         }
 
         public override void StateUpdate()
@@ -32,14 +52,24 @@ namespace GarageKit
         {
             base.StateExit();
 
-            if(Fader.UseFade)
+            if(Fader.UseFade && AppMain.Instance.sceneStateManager.AsyncChangeFading)
             {
-                Fader.StartFadeAll(fadeTime, Fader.FADE_TYPE.FADE_OUT);
+                if(fader != null)
+                {
+                    fader.fadeColor = fadeColor;
+                    fader.StartFade(fadeTime, Fader.FADE_TYPE.FADE_OUT);
+                }
                 Invoke("OnFaded", fadeTime);
             }
             else
                 OnFaded();
         }
+
+        public virtual void StateExitAsync()
+        {
+
+        }
+
 
         private void OnFaded()
         {
@@ -49,9 +79,9 @@ namespace GarageKit
             AppMain.Instance.sceneStateManager.SyncState();
         }
 
-        public virtual void StateExitAsync()
+        private void InvokeAsyncChangeFaded()
         {
-
+            AppMain.Instance.sceneStateManager.AsyncChangeFaded();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace GarageKit
             // ESC
             if(Input.GetKeyDown(KeyCode.Escape))
             {
-                Debug.Log("press key ESC : Application Quit");
+                Debug.Log("Press Key [ESC]: Application Quit");
                 
                 if(Application.platform != RuntimePlatform.WindowsEditor)			
                     Application.Quit();
@@ -35,25 +35,17 @@ namespace GarageKit
             // D
             if(Input.GetKeyDown(KeyCode.D))
             {
-                Debug.Log("press key D : Visible Debug View");
+                Debug.Log("Press Key [D]: Visible Debug View");
                 
                 DebugManager debugManager = AppMain.Instance.debugManager;
                 debugManager.isDebug = !debugManager.isDebug;
                 debugManager.ToggleShowDebugView();
             }
 
-            // G
-            if(Input.GetKeyDown(KeyCode.G))
-            {
-                Debug.Log("press key G : System GC Collect");
-
-                System.GC.Collect();
-            }
-
             // R
             if(Input.GetKeyDown(KeyCode.R))
             {
-                Debug.Log("press key R : Reload ApplicationSetting");
+                Debug.Log("Press Key [R]: Reload ApplicationSetting");
 
                 // Reload settings
                 ApplicationSetting.Instance.LoadXML();
@@ -62,20 +54,24 @@ namespace GarageKit
             // Space
             if(Input.GetKeyDown(KeyCode.Space))
             {
-                Debug.Log("press key Space : Change State");
-
                 // SE
                 AppMain.Instance.soundManager.Play("SE", "CLICK");
 
                 // change State or Timer start
                 PlayState state = AppMain.Instance.sceneStateManager.CurrentState.StateObj as PlayState;
                 if(state != null)
-                    state.StartTimer(); // PLAY state
+                {
+                    // PLAY state
+                    Debug.Log("Press Key [SPACE]: Start Timer");
+                    state.StartTimer();
+                }
                 else
                 {
+                    // WAIT or RESULT state
+                    Debug.Log("Press Key [SPACE]: Change State");
                     ISequentialState seqState = AppMain.Instance.sceneStateManager.CurrentState.StateObj as ISequentialState;
                     if(seqState != null)
-                        seqState.ToNextState(); // WAIT or RESULT state
+                        seqState.ToNextState();
                 }
             }
         }

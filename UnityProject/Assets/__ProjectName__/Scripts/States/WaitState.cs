@@ -15,7 +15,7 @@ public class WaitState : AsyncStateBase, ISequentialState
     public override void StateStart(object context)
     {
         base.StateStart(context);
-        
+
         sceneText.text = "this is [Wait] state.";
         timerText.text = "";
         messageText.text = "push [Space] : next state";
@@ -34,7 +34,8 @@ public class WaitState : AsyncStateBase, ISequentialState
 
     public void ToNextState()
     {
-        AppMain.Instance.sceneStateManager.ChangeAsyncState("PLAY");
+        Debug.Log("Change State to [PLAY] with No Fade.");
+        AppMain.Instance.sceneStateManager.ChangeState("PLAY");
     }
 
     public void ToPrevState()

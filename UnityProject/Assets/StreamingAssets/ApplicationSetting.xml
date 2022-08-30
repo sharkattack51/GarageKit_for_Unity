@@ -2,7 +2,7 @@
 <data>
 
     <!-- デバッグ -->
-    <item name="IsDebug" value="false"/>
+    <item name="IsDebug" value="true"/>
 
     <!-- 入力設定 -->
     <item name="UseMouse" value="true"/>

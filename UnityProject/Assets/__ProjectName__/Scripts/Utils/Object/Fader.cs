@@ -18,7 +18,7 @@ namespace GarageKit
         public static List<Fader> Faders { get{ return faders; } }
 
         public float fadeTime = 1.0f;
-        public Color fadeColor = new Color(0.0f, 0.0f, 0.0f, 1.0f);
+        public Color fadeColor = new Color(1.0f, 1.0f, 1.0f, 0.0f);
         public Material fadeMaterial = null;
 
         public enum FADE_TYPE

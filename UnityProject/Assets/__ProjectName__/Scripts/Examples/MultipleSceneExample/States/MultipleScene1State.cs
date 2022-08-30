@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using GarageKit;
 
+using DG.Tweening;
+
 public class MultipleScene1State : MultipleSceneStateBase, ISequentialState
 {
     public override void StateStart(object context)
@@ -34,6 +36,8 @@ public class MultipleScene1State : MultipleSceneStateBase, ISequentialState
     public override void StateExit()
     {
         base.StateExit();
+
+        DOTween.KillAll();
     }
 
     public void ToNextState()

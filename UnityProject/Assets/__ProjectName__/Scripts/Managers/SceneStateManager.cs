@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,6 +41,9 @@ namespace GarageKit
 
         private bool stateChanging = false;
         public bool StateChanging { get{ return stateChanging; } }
+
+        private bool asyncChangeFading = false;
+        public bool AsyncChangeFading { get{ return asyncChangeFading; } }
 
         public bool StateInitted { get{ return currentState != null; } }
 
@@ -86,13 +89,14 @@ namespace GarageKit
             SceneStateData state = sceneStateTable.Find((s) => { return s.AsInitial; });
             if(state == null)
                 state = sceneStateTable[0];
-            
+
             ChangeState(state.StateName);
         }
 
         public void ChangeState(string stateName, object context = null)
         {
             isAsync = false;
+            asyncChangeFading = false;
 
             if(currentState != null)
                 fromStateName = currentState.StateName;
@@ -108,7 +112,8 @@ namespace GarageKit
                 {
                     isAsync = true;
                     stateChanging = true;
-                    
+                    asyncChangeFading = true;
+
                     if(currentState != null)
                         fromStateName = currentState.StateName;
 
@@ -148,11 +153,17 @@ namespace GarageKit
         }	
 #endregion
 
-        // for Async func
+#region async func
         public void SyncState()
         {
             isAsync = false;
         }
+
+        public void AsyncChangeFaded()
+        {
+            asyncChangeFading = false;
+        }
+#endregion
 
 #region find state
         public T FindStateObjectOfType<T>() where T : StateBase
