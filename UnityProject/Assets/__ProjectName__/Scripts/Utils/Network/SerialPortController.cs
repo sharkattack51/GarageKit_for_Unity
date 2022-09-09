@@ -1,5 +1,7 @@
 ﻿// considering an error workaround when building with .Net4 ...
-#if BUILD_ERROR_FIX
+
+// build error fix
+#if UNITY_2021_3 
 
 #if UNITY_STANDALONE
 using UnityEngine;
