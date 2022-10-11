@@ -74,7 +74,7 @@ namespace GarageKit
         public static List<Camera> GetCameraListByDepth()
         {
             List<Camera> cameras = new List<Camera>(Camera.FindObjectsOfType<Camera>());
-            cameras.Sort((a, b) => { return a.depth > b.depth ? 1 : 0; });
+            cameras.Sort((a, b) => { return a.depth < b.depth ? -1 : 1; });
 
             return cameras;
         }

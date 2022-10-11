@@ -10,9 +10,9 @@ namespace GarageKit
     public class TimeManager : ManagerBase
     {
         [Header("Scene timers")]
-        public TimerEvent[] timerEvents;
+        public List<TimerEvent> timerEvents;
 
-        public TimerEvent mainTimer { get{ return (timerEvents.Length > 0) ? timerEvents[0] : null; } }
+        public TimerEvent mainTimer { get{ return (timerEvents.Count > 0) ? timerEvents[0] : null; } }
 
 
         protected override void Awake()

@@ -11,10 +11,10 @@ public class TimelinedExampleState : TimelinedSceneStateBase
 
     public override void StateStart(object context)
     {
+        base.StateStart(context);
+
         // set duration
         this.durationSec = 30;
-
-        base.StateStart(context);
 
         // timeline action sample
         this.actionList = new TimelineEventActionList();
@@ -30,6 +30,9 @@ public class TimelinedExampleState : TimelinedSceneStateBase
         this.actionList.Add(20.0f, () => {
             sceneText.text = "this is [TimelinedExampleState] scene.\n20 seconds elapsed";
         });
+
+        // start timeline
+        this.StartTimeline();
     }
 
     public override void StateUpdate()

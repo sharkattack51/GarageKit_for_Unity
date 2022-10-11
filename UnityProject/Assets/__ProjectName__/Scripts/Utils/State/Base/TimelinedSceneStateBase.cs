@@ -9,7 +9,10 @@ namespace GarageKit
     public class TimelinedSceneStateBase : AsyncStateBase, ITimelinedSceneState
     {
         [Header("TimelinedSceneStateBase")]
-        public int durationSec = 30;
+        public int durationSec = -1;
+
+        private TimerEvent timer;
+        private const string TIMER_NAME = "TimelinedSceneStateTimer";
 
         // イベントAction
         protected TimelineEventActionList actionList;
@@ -27,6 +30,27 @@ namespace GarageKit
         private static List<Animator> managedPausingAnimators;
 
 
+        protected virtual void Start()
+        {
+            // タイムライン用タイマーの作成
+            for(int i = 0; i < AppMain.Instance.timeManager.timerEvents.Count; i++)
+            {
+                if(AppMain.Instance.timeManager.timerEvents[i].gameObject.name.Contains(TIMER_NAME))
+                {
+                    timer = AppMain.Instance.timeManager.timerEvents[i];;
+                    break;
+                }
+            }
+
+            if(timer == null)
+            {
+                GameObject timerGo = new GameObject(TIMER_NAME);
+                timerGo.transform.SetParent(AppMain.Instance.timeManager.gameObject.transform);
+                timer = timerGo.AddComponent<TimerEvent>();
+                AppMain.Instance.timeManager.timerEvents.Add(timer);
+            }
+        }
+
         public override void StateStart(object context)
         {
             base.StateStart(context);
@@ -37,15 +61,6 @@ namespace GarageKit
             isPaused = false;
 
             actionList = new TimelineEventActionList();
-
-            // タイマー設定
-            if(durationSec > 0)
-            {
-                AppMain.Instance.timeManager.mainTimer.OnCompleteTimer += OnStateTimer;
-                AppMain.Instance.timeManager.mainTimer.StartTimer(durationSec);
-            }
-            else
-                AppMain.Instance.timeManager.mainTimer.StartTimer(int.MaxValue);
         }
 
         public override void StateUpdate()
@@ -53,7 +68,7 @@ namespace GarageKit
             base.StateUpdate();
 
             // Timelineイベント実行
-            actionTime = AppMain.Instance.timeManager.mainTimer.ElapsedTime;
+            actionTime = timer.ElapsedTime;
             actionList.Update(actionTime);
         }
 
@@ -66,7 +81,7 @@ namespace GarageKit
             isPlay = false;
             isPaused = false;
 
-            AppMain.Instance.timeManager.mainTimer.OnCompleteTimer -= OnStateTimer;
+            timer.OnCompleteTimer -= OnStateTimer;
         }
 
         public virtual void OnStateTimer(GameObject sender)
@@ -75,13 +90,23 @@ namespace GarageKit
         }
 
 
+        // タイムラインを開始
+        public void StartTimeline()
+        {
+            if(durationSec > 0)
+            {
+                timer.OnCompleteTimer += OnStateTimer;
+                timer.StartTimer(durationSec);
+            }
+        }
+
         // 一時停止
         public virtual void Pause()
         {
             isPaused = true;
 
             // タイマーを停止
-            AppMain.Instance.timeManager.mainTimer.StopTimer();
+            timer.StopTimer();
 
             // Tweenライブラリを停止
             DOTween.PauseAll();
@@ -130,7 +155,7 @@ namespace GarageKit
             isPaused = false;
 
             // タイマーを再開
-            AppMain.Instance.timeManager.mainTimer.ResumeTimer();
+            timer.ResumeTimer();
 
             // Tweenライブラリを再開
             DOTween.PlayAll();

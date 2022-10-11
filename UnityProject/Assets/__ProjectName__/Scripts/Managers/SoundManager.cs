@@ -507,9 +507,6 @@ namespace GarageKit
 
         public void fade_completed()
         {
-            if(audioSource.isPlaying)
-                audioSource.Stop();
-
             SoundFadeCallbackBehabiour.Destroy(this);
         }
     }
