@@ -1,7 +1,9 @@
-﻿using System;
+﻿#define USE_TMP
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 using TMPro;
 
@@ -17,18 +19,29 @@ namespace GarageKit.Localize
                 txt.Localize(lang);
         }
 
+#if USE_TMP
         public List<TMP_FontAsset> localizeFonts;
+#else
+        public List<Font> localizeFonts;
+#endif
         public List<string> localizeStrings;
         public LANGUAGE lang;
 
+#if USE_TMP
         private TMP_Text uiTxt;
-
+#else
+        private Text uiTxt;
+#endif
 
         void Awake()
         {
             localizeList.Add(this);
 
+#if USE_TMP
             uiTxt = this.gameObject.GetComponent<TMP_Text>();
+#else
+            uiTxt = this.gameObject.GetComponent<Text>();
+#endif
         }
 
         void Start()

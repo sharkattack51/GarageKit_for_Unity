@@ -4,24 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-
 using UnityEngine;
 
-/*
- * Csvの読み込みクラス
- */
-namespace GarageKit
+namespace GarageKit.CSV
 {
-    public class CsvLoader : MonoBehaviour 
+    public class CsvReader 
     {
         private bool isVaild = false;
         public bool IsVaild { get{ return isVaild; } }
-
-        // csvファイルパス
-        public string csvUrl;
-
-        // 自動読み込み
-        public bool autoLoad = true;
 
         // csvデータを2次元配列で展開
         private string[,] csvGrid = new string[0, 0];
@@ -30,54 +20,30 @@ namespace GarageKit
         private string csvString = "";
 
 
-        void Awake()
-        {		
-            // 自動読み込み
-            if(autoLoad)
-                LoadCSV();
-        }
-
-        void Start()
-        {
-            //DebugLogGrid(csvGrid);
-        }
-
-
-#region Load
-        public void LoadCSV(string csvUrl)
-        {
-            this.csvUrl = csvUrl;
-
-            LoadCSV();
-        }
-
-        public void LoadCSV()
+        public void Read(string file)
         {
             // クリア
             csvGrid = new string[0, 0];
 
             try
-            {
-                // csv読み込み			
-                StreamReader strem = new StreamReader(csvUrl, Encoding.UTF8);
+            {		
+                StreamReader strem = new StreamReader(file, Encoding.UTF8);
                 csvString = strem.ReadToEnd();
                 strem.Close();
 
-                // csvをパース
-                ParseCSV();
+                Parse();
 
                 isVaild = true;
             }
             catch(Exception err)
             {
                 Debug.Log(err.Message);
-                
+
                 isVaild = true;
             }
         }
-#endregion
-        
-        private void ParseCSV()
+
+        private void Parse()
         {
             string[] lines = csvString.Split("\n"[0]);
 
