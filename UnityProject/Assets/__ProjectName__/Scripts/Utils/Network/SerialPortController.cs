@@ -104,7 +104,7 @@ namespace GarageKit
         }
 
 
-        public void TryRecursiveOpen()
+        public bool TryRecursiveOpen()
         {
             string[] portNames = SerialPort.GetPortNames();
             foreach(string pn in portNames)
@@ -122,7 +122,12 @@ namespace GarageKit
             }
 
             if(port == null)
-                Debug.LogError("SerialPortController :: port not opened"); 
+            {
+                Debug.LogError("SerialPortController :: port not opened");
+                return false;
+            }
+            else
+                return true;
         }
 
         public void Open()

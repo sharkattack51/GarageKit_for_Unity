@@ -57,6 +57,20 @@ namespace GarageKit
                 Debug.LogWarning("UDPSender :: " + e.Message);
             }
         }
+
+        public void TryContinuousSend(string dataStr, int tryCount)
+        {
+            StartCoroutine(ContinuousSendCoroutine(dataStr, tryCount));
+        }
+
+        private IEnumerator ContinuousSendCoroutine(string dataStr, int tryCount)
+        {
+            for(int i = 0; i < tryCount; i++)
+            {
+                Send(dataStr);
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
 #endregion
 
 #region Broadcast
@@ -86,6 +100,20 @@ namespace GarageKit
             catch(Exception e)
             {
                 Debug.LogWarning("UDPSender :: " + e.Message);
+            }
+        }
+
+        public void TryContinuousBroadcast(string dataStr, int tryCount)
+        {
+            StartCoroutine(ContinuousBroadcastCoroutine(dataStr, tryCount));
+        }
+
+        private IEnumerator ContinuousBroadcastCoroutine(string dataStr, int tryCount)
+        {
+            for(int i = 0; i < tryCount; i++)
+            {
+                Broadcast(dataStr);
+                yield return new WaitForSeconds(0.1f);
             }
         }
 #endregion
