@@ -37,10 +37,7 @@ namespace GarageKit
         private bool isValid = false;
         public bool IsValid { get{ return isValid; } }
 
-        private FileSystemWatcher watcher;
-        private bool settingFileChanged = false;
-        public delegate void OnSettingFileChangedHandler();
-        public event OnSettingFileChangedHandler OnSettingFileChanged;
+        public Action OnLoadXML;
 
 
         void Awake()
@@ -54,24 +51,9 @@ namespace GarageKit
 
         void Update()
         {
-            if(settingFileChanged)
-            {
-                if(OnSettingFileChanged != null)
-                    OnSettingFileChanged();
 
-                settingFileChanged = false;
-            }
         }
 
-        void OnApplicationQuit()
-        {
-            if(watcher != null)
-            {
-                watcher.EnableRaisingEvents = false;
-                watcher.Dispose();
-                watcher = null;
-            }
-        }
 
 #region Load
         public void LoadXML()
@@ -116,6 +98,9 @@ namespace GarageKit
 
                 isValid = false;
             }
+
+            if(OnLoadXML != null)
+                OnLoadXML();
         }
 
         private void ParseXML()
@@ -132,27 +117,6 @@ namespace GarageKit
 
                 rawData.Add(paramName, paramValue);
             }
-        }
-#endregion
-
-#region Watch setting file
-        public void StartWatchSettingFile()
-        {
-            if(watcher == null)
-            {
-                FileSystemWatcher watcher = new FileSystemWatcher();
-                watcher.Path = Path.GetDirectoryName(xmlFilePath);
-                watcher.Filter = Path.GetFileName(xmlFilePath);
-                watcher.NotifyFilter = NotifyFilters.LastWrite;
-                watcher.Changed += new FileSystemEventHandler(OnWatchFileChanged);
-                watcher.EnableRaisingEvents = true;
-            }
-        }
-
-        private void OnWatchFileChanged(System.Object source, FileSystemEventArgs e)
-        {
-            LoadXML();
-            settingFileChanged = true;
         }
 #endregion
 
