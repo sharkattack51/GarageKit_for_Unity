@@ -13,7 +13,7 @@ namespace GarageKit
         private Fader fader;
 
 
-        private void Awake()
+        protected virtual void Awake()
         {
             List<Camera> cameras = CameraUtil.GetCameraListByDepth();
             Camera cam = cameras[cameras.Count - 1];
@@ -49,6 +49,7 @@ namespace GarageKit
             base.StateExit();
 
             // フェードOUTを開始
+            CancelInvoke("InvokeAsyncChangeFaded");
             if(Fader.UseFade && AppMain.Instance.sceneStateManager.AsyncChangeFading)
             {
                 if(fader != null)
