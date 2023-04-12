@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using UnityEngine;
 
 /*
@@ -19,13 +19,12 @@ namespace GarageKit
         public bool autoStart = true;
 
         // 受信データ
-        private string receivedDataStr = "";
-        public string ReceivedDataStr { get{ return receivedDataStr; } }
-        private byte[] receivedDataBytes = new byte[0];
-        public byte[] ReceivedDataBytes { get{ return receivedDataBytes; } }
-
-        // スレッド処理でのデータ受信フラグ
-        private bool isDataReceived = false;
+        private List<string> receivedDataStrStack = new List<string>();
+        private string latestReceivedDataStr = "";
+        public string LatestReceivedDataStr { get{ return latestReceivedDataStr; } }
+        private List<byte[]> receivedDataBytesStack = new List<byte[]>();
+        private byte[] latestReceivedDataBytes = new byte[0];
+        public byte[] LatestReceivedDataBytes { get{ return latestReceivedDataBytes; } }
 
         // データ受信イベント
         public Action<string> OnReceived;
@@ -48,14 +47,15 @@ namespace GarageKit
         void Update()
         {
             // 受信イベントをメインスレッドで実行
-            if(isDataReceived)
+            while(receivedDataStrStack.Count > 0 && receivedDataBytesStack.Count > 0)
             {
                 if(OnReceived != null)
-                    OnReceived(receivedDataStr);
+                    OnReceived(receivedDataStrStack[0]);
                 if(OnReceivedBytes != null)
-                    OnReceivedBytes(receivedDataBytes);
+                    OnReceivedBytes(receivedDataBytesStack[0]);
 
-                isDataReceived = false;
+                receivedDataStrStack.RemoveAt(0);
+                receivedDataBytesStack.RemoveAt(0);
             }
         }
 
@@ -85,9 +85,11 @@ namespace GarageKit
             IPEndPoint ipEndPoint = null;
             byte[] bytes = cli.EndReceive(result, ref ipEndPoint);
 
-            receivedDataStr = Encoding.UTF8.GetString(bytes);
-            receivedDataBytes = bytes;
-            isDataReceived = true;
+            receivedDataStrStack.Add(Encoding.UTF8.GetString(bytes));
+            receivedDataBytesStack.Add(bytes);
+
+            latestReceivedDataStr = receivedDataStrStack[receivedDataStrStack.Count - 1];
+            latestReceivedDataBytes = receivedDataBytesStack[receivedDataBytesStack.Count - 1];
 
             cli.BeginReceive(ReceiveData, cli);
         }
