@@ -62,7 +62,9 @@ namespace GarageKit
             File.WriteAllBytes(Path.Combine(dirPath, fileName), bytes);
 
             Texture2D.Destroy(capture);
+            capture = null;
             Texture2D.Destroy(crop);
+            crop = null;
             bytes = new byte[0];
         }
     }

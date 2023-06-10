@@ -12,7 +12,7 @@ namespace GarageKit
         [Header("VRSceneStateBase")]
         public GameObject viewReferenceObj;
         public GameObject viewGuideTarget;
-        public StageControlledObject[] enableStageObjs;
+        public StageManagedObject[] enables;
 
         public Action OnAppFinish;
         private static bool isNotifiedForQuit = false;
@@ -134,8 +134,8 @@ namespace GarageKit
         // 表示オブジェクト切替
         public void SetStagingObjects()
         {
-            StageControlledObject.AllOff();
-            foreach(StageControlledObject ctrObj in enableStageObjs)
+            StageManagedObject.AllOff();
+            foreach(StageManagedObject ctrObj in enables)
             {
                 if(ctrObj != null)
                     ctrObj.On();

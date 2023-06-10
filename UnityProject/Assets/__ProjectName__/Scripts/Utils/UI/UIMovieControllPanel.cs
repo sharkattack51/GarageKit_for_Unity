@@ -57,7 +57,7 @@ namespace GarageKit
 
         void Awake()
         {
-            if(player.m_AutoOpen || player.m_AutoStart)
+            if(player.AutoOpen || player.AutoStart)
                 Debug.LogError("AVPro MediaPlayer setting [Auto Open] & [Auto Play] to False");
         }
 
@@ -69,7 +69,7 @@ namespace GarageKit
 
         void Update()
         {
-            if(player != null && player.VideoOpened)
+            if(player != null && player.MediaOpened)
             {
                 // ボタンスプライトの切り替え
                 if(!player.Control.IsSeeking())
@@ -82,14 +82,14 @@ namespace GarageKit
 
                 // シークバーの更新
                 if(movieLoaded && player.Control.CanPlay() && !player.Control.IsPaused())
-                    uiSeekSlider.value = player.Control.GetCurrentTimeMs() / player.Info.GetDurationMs();
+                    uiSeekSlider.value = (float)player.Control.GetCurrentTime() / (float)player.Info.GetDuration();
 
                 // 経過時間の更新
                 uiElapsedTxt.text = string.Format("{0:D2}:{1:D2} / {2:D2}:{3:D2}",
-                    (int)(player.Control.GetCurrentTimeMs() / 1000.0f / 60.0f),
-                    (int)(player.Control.GetCurrentTimeMs() / 1000.0f % 60.0f),
-                    (int)(player.Info.GetDurationMs() / 1000.0f / 60.0f),
-                    (int)(player.Info.GetDurationMs() / 1000.0f % 60.0f));
+                    (int)(player.Control.GetCurrentTime() / 60.0f),
+                    (int)(player.Control.GetCurrentTime() % 60.0f),
+                    (int)(player.Info.GetDuration() / 60.0f),
+                    (int)(player.Info.GetDuration() % 60.0f));
             }
         }
 
@@ -104,7 +104,7 @@ namespace GarageKit
             if(player != null)
             {
                 player.Stop();
-                player.CloseVideo();
+                player.CloseMedia();
             }
         }
 
@@ -144,9 +144,9 @@ namespace GarageKit
             uiSeekSlider.onValueChanged.AddListener((v) => {
                 if(EventSystem.current.currentSelectedGameObject == uiSeekSlider.gameObject && isSeeking)
                 {
-                    float timeMs = v * player.Info.GetDurationMs();
-                    OnSeek?.Invoke(timeMs);
-                    player.Control.Seek(timeMs);
+                    float time = v * (float)player.Info.GetDuration();
+                    OnSeek?.Invoke(time);
+                    player.Control.Seek(time);
                 }
             });
 
@@ -158,8 +158,8 @@ namespace GarageKit
             pointerDown.callback.AddListener((e) => {
                 isSeeking = true;
 
-                float timeMs = uiSeekSlider.value * player.Info.GetDurationMs();
-                OnSeekStart?.Invoke(timeMs);
+                float time = uiSeekSlider.value * (float)player.Info.GetDuration();
+                OnSeekStart?.Invoke(time);
                 player.Pause();
             });
             seekEventTrg.triggers.Add(pointerDown);
@@ -170,17 +170,17 @@ namespace GarageKit
             pointerUp.callback.AddListener((e) => {
                 isSeeking = false;
 
-                float timeMs = uiSeekSlider.value * player.Info.GetDurationMs();
-                OnSeekEnd?.Invoke(timeMs);
-                player.Control.Seek(timeMs);
+                float time = uiSeekSlider.value * (float)player.Info.GetDuration();
+                OnSeekEnd?.Invoke(time);
+                player.Control.Seek(time);
             });
             seekEventTrg.triggers.Add(pointerUp);
         }
 
-        public bool Load(string moviePathOrUrl, MediaPlayer.FileLocation location = MediaPlayer.FileLocation.AbsolutePathOrURL, bool autoPlay = false)
+        public bool Load(string moviePathOrUrl, MediaPathType pathType = MediaPathType.AbsolutePathOrURL, bool autoPlay = false)
         {
             // 動画の読み込み
-            movieLoaded = player.OpenVideoFromFile(moviePathOrUrl, location, autoPlay);
+            movieLoaded = player.OpenMedia(pathType, moviePathOrUrl, autoPlay);
 
             return movieLoaded;
         }

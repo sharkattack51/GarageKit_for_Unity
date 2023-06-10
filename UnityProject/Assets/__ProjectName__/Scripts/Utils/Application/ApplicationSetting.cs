@@ -115,7 +115,10 @@ namespace GarageKit
                 string paramName = element.GetAttribute("name");
                 string paramValue = element.GetAttribute("value");
 
-                rawData.Add(paramName, paramValue);
+                if(!rawData.ContainsKey(paramName))
+                    rawData.Add(paramName, paramValue);
+                else
+                    Debug.LogErrorFormat("ApplicationSetting :: same param name exists [{0}].", paramName);
             }
         }
 #endregion

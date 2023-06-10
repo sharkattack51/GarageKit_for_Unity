@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace GarageKit
 {
-    public class StageControlledObject : MonoBehaviour
+    public class StageManagedObject : MonoBehaviour
     {
-        private static List<StageControlledObject> controlledList = new List<StageControlledObject>();
+        private static List<StageManagedObject> managedList = new List<StageManagedObject>();
 
 
         void Awake()
         {
-            controlledList.Add(this);
+            managedList.Add(this);
         }
 
         void Start()
@@ -32,7 +32,7 @@ namespace GarageKit
 
         public static void AllOff()
         {
-            foreach(StageControlledObject obj in controlledList)
+            foreach(StageManagedObject obj in managedList)
                 obj.gameObject.SetActive(false);
         }
     }
