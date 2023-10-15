@@ -54,7 +54,7 @@ namespace GarageKit
         public override void StateStart(object context)
         {
             base.StateStart(context);
-            
+
             actionTime = 0.0f;
 
             isPlay = true;
@@ -93,11 +93,11 @@ namespace GarageKit
         // タイムラインを開始
         public void StartTimeline()
         {
-            if(durationSec > 0)
-            {
-                timer.OnCompleteTimer += OnStateTimer;
-                timer.StartTimer(durationSec);
-            }
+            if(durationSec < 0)
+                durationSec = int.MaxValue;
+
+            timer.OnCompleteTimer += OnStateTimer;
+            timer.StartTimer(durationSec);
         }
 
         // 一時停止

@@ -58,7 +58,7 @@ namespace GarageKit
             {
                 arrow.GetComponent<Image>().color = modeGreen;
 
-                arrow.transform.DOMove(new Vector3(0.0f, 50.0f, 0.0f), 0.5f)
+                arrow.transform.DOLocalMove(new Vector3(0.0f, 50.0f, 0.0f), 0.5f)
                     .SetRelative()
                     .SetEase(Ease.Linear)
                     .SetLoops(-1);
@@ -77,7 +77,7 @@ namespace GarageKit
                 && !AppMain.Instance.sceneStateManager.StateChanging
                 && state != null && state.viewGuideTarget != null)
             {
-                Vector3 viewPt = Camera.main.WorldToViewportPoint(state.viewGuideTarget.transform.position);
+                Vector3 viewPt = viewCamera.WorldToViewportPoint(state.viewGuideTarget.transform.position);
                 
                 if(viewPt.x > 1.0f - screenRatio && viewPt.x < screenRatio
                     && viewPt.y > 1.0f - screenRatio && viewPt.y < screenRatio
