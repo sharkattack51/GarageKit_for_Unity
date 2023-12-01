@@ -31,6 +31,7 @@ namespace GarageKit
         public Action<byte[]> OnReceivedBytes;
 
         private UdpClient udpClient = null;
+        private bool receivedOne = false;
 
 
         void Awake()
@@ -59,7 +60,7 @@ namespace GarageKit
             }
         }
 
-        void OnApplicationQuit()
+        void OnDestroy()
         {
             Close();
         }
@@ -75,7 +76,13 @@ namespace GarageKit
         {
             // udpクライアントを閉じる
             if(udpClient != null)
+            {   
+                if(receivedOne)
+                    udpClient.Client.Shutdown(SocketShutdown.Receive);
+                udpClient.Client.Close();
                 udpClient.Close();
+                udpClient.Dispose();
+            }
             udpClient = null;
         }
 
@@ -83,14 +90,22 @@ namespace GarageKit
         {
             UdpClient cli = (UdpClient)result.AsyncState;
             IPEndPoint ipEndPoint = null;
-            byte[] bytes = cli.EndReceive(result, ref ipEndPoint);
 
-            receivedDataStrStack.Add(Encoding.UTF8.GetString(bytes));
-            receivedDataBytesStack.Add(bytes);
+            try
+            {
+                byte[] bytes = cli.EndReceive(result, ref ipEndPoint);
+                receivedDataStrStack.Add(Encoding.UTF8.GetString(bytes));
+                receivedDataBytesStack.Add(bytes);
 
-            latestReceivedDataStr = receivedDataStrStack[receivedDataStrStack.Count - 1];
-            latestReceivedDataBytes = receivedDataBytesStack[receivedDataBytesStack.Count - 1];
+                latestReceivedDataStr = receivedDataStrStack[receivedDataStrStack.Count - 1];
+                latestReceivedDataBytes = receivedDataBytesStack[receivedDataBytesStack.Count - 1];
+            }
+            catch
+            {
+                // pass
+            }
 
+            receivedOne = true;
             cli.BeginReceive(ReceiveData, cli);
         }
     }

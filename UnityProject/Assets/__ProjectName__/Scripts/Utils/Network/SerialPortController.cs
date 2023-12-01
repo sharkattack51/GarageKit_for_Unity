@@ -1,7 +1,7 @@
 ﻿// considering an error workaround when building with .Net4 ...
 
 // build error fix
-#if UNITY_2021_3 
+#if UNITY_2021_3_OR_NEWER
 
 #if UNITY_STANDALONE
 using UnityEngine;
@@ -12,6 +12,9 @@ using System.IO.Ports;
 using System.Text;
 using System.Threading;
 
+using Cysharp.Threading.Tasks;
+using System.Linq;
+
 /*
  * シリアル通信を行うクラス
  */
@@ -20,8 +23,9 @@ namespace GarageKit
 {
     public class SerialPortController : MonoBehaviour
     {
-        public bool autoSearchPort = false;
         public bool autoOpen = true;
+        public bool autoSearchPort = false;
+        public bool autoSearchInReverse = false;
 
         /// <summary>
         /// シリアルポートのインスタンス
@@ -107,6 +111,8 @@ namespace GarageKit
         public bool TryRecursiveOpen()
         {
             string[] portNames = SerialPort.GetPortNames();
+            if(autoSearchInReverse)
+                portNames = portNames.Reverse().ToArray();
             foreach(string pn in portNames)
             {
                 try
@@ -235,9 +241,16 @@ namespace GarageKit
                 }
                 catch(Exception e)
                 {
-                    Debug.LogError(e.Message);
+                    Console.WriteLine(e.Message);
                 }
             }
+        }
+
+        public async UniTask SendCommandAsync(string str)
+        {
+            await UniTask.RunOnThreadPool(() => {
+                SendCommand(str);
+            });
         }
 
         // コマンド文字列をバイトに変換して送信する
@@ -246,8 +259,15 @@ namespace GarageKit
             List<byte> bytes = new List<byte>();
             for(int i = 0; i < str.Length; i++)
                 bytes.Add((byte)str[i]);
-            
+
             SendByte(bytes.ToArray());
+        }
+
+        public async UniTask SendCommandByteAsync(string str)
+        {
+            await UniTask.RunOnThreadPool(() => {
+                SendCommandByte(str);
+            });
         }
 
         // スペース区切りの数字のコマンド配列を16進数に変換してデータ送信
@@ -262,6 +282,13 @@ namespace GarageKit
             SendByte(bytes.ToArray());
         }
 
+        public async UniTask SendCommandArrayHexByteAsync(string str)
+        {
+            await UniTask.RunOnThreadPool(() => {
+                SendCommandArrayHexByte(str);
+            });
+        }
+
         // バイトデータを送信
         public void SendByte(byte[] strBytes)
         {
@@ -273,9 +300,16 @@ namespace GarageKit
                 }
                 catch(Exception e)
                 {
-                    Debug.LogError(e.Message);
+                    Console.WriteLine(e.Message);
                 }
             }
+        }
+
+        public async UniTask SendByteAsync(byte[] strBytes)
+        {
+            await UniTask.RunOnThreadPool(() => {
+                SendByte(strBytes);
+            });
         }
     }
 }

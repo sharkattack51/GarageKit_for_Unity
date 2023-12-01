@@ -20,6 +20,8 @@ http://debuglog.tumblr.com/post/100742681354/garagekit-for-unity
   - `$ openupm add com.yasirkula.ingamedebugconsole`
 - dotween
   - `$ openupm add com.demigiant.dotween`
+- UniTask
+  - `$ openupm add com.cysharp.unitask`
 
 #### /Editor (already in)
 

@@ -96,11 +96,11 @@ namespace GarageKit
 
                 if(startTime - Mathf.FloorToInt(elapsedTime) == -1)
                 {
-                    // onCompleteTimerイベント
-                    InvokeOnCompleteTimer();
-
                     isRunning = false;
                     currentTime = 0;
+
+                    // onCompleteTimerイベント
+                    InvokeOnCompleteTimer();
                 }
                 else
                     currentTime = startTime - Mathf.FloorToInt(elapsedTime);
