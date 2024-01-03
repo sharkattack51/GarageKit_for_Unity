@@ -93,6 +93,12 @@ namespace GarageKit
             }
         }
 
+        void OnEnable()
+        {
+            if(movieLoaded && player.Control.CanPlay())
+                uiSeekSlider.value = (float)player.Control.GetCurrentTime() / (float)player.Info.GetDuration();
+        }
+
         void OnDestroy()
         {
             Clear();
