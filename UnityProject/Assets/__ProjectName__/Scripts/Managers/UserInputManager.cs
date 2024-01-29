@@ -74,6 +74,15 @@ namespace GarageKit
                         seqState.ToNextState();
                 }
             }
+
+            // Backspace
+            if(Input.GetKeyDown(KeyCode.Backspace))
+            {
+                Debug.Log("Press Key [Backspace]: Screen Capture");
+
+                // Screen Capture
+                StartCoroutine(CaptureUtil.CaptureRect("capture.png", true));
+            }
         }
     }
 }

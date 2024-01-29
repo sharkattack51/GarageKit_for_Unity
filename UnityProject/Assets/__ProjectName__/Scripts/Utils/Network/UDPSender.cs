@@ -74,7 +74,7 @@ namespace GarageKit
         {
             for(int i = 0; i < tryCount; i++)
             {
-                Send(dataStr);
+                Send(dataStr, address, port);
                 yield return new WaitForSeconds(span);
             }
         }
@@ -123,7 +123,7 @@ namespace GarageKit
         {
             for(int i = 0; i < tryCount; i++)
             {
-                Broadcast(dataStr);
+                Broadcast(dataStr, port);
                 yield return new WaitForSeconds(span);
             }
         }
