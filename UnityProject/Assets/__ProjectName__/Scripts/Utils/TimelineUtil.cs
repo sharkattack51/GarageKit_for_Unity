@@ -125,11 +125,21 @@ namespace GarageKit
             List<TrackAsset> tracks = GetAllTracks(playableDirector);
             foreach(TrackAsset track in tracks)
             {
-                if(track != null && track.hasClips)
+                if(track != null)
                 {
-                    IEnumerable<TimelineClip> clips = track.GetClips();
-                    foreach(TimelineClip clip in clips)
-                        track.DeleteClip(clip);
+                    SignalTrack signalTrack = track as SignalTrack;
+                    if(signalTrack != null)
+                    {
+                        IEnumerable<IMarker> markers = signalTrack.GetMarkers();
+                        foreach(IMarker marker in markers)
+                            signalTrack.DeleteMarker(marker);
+                    }
+                    else if(track.hasClips)
+                    {
+                        IEnumerable<TimelineClip> clips = track.GetClips();
+                        foreach(TimelineClip clip in clips)
+                            track.DeleteClip(clip);
+                    }
                 }
             }
 
@@ -243,7 +253,7 @@ namespace GarageKit
 
         public static void SetAnimationTrack(PlayableDirector playableDirector, string trackName, AnimationClip animClip, double start, double end)
         {
-            AnimationTrack track = GetTrackByName(playableDirector, trackName) as AnimationTrack;
+            UnityEngine.Timeline.AnimationTrack track = GetTrackByName(playableDirector, trackName) as UnityEngine.Timeline.AnimationTrack;
             if(track != null)
             {
                 TimelineClip clip = track.CreateDefaultClip();
@@ -256,6 +266,24 @@ namespace GarageKit
 
                 playableDirector.RebuildGraph();
             }
+        }
+
+        public static void SetSignalTrack(PlayableDirector playableDirector, string trackName, SignalAsset signal, double time, string emitterName = "")
+        {
+            SignalTrack track = GetTrackByName(playableDirector, trackName) as SignalTrack;
+            if(track != null)
+            {
+                SignalEmitter emitter = track.CreateMarker<SignalEmitter>(time);
+                emitter.name = emitterName;
+                emitter.asset = signal;
+
+                playableDirector.RebuildGraph();
+            }
+        }
+
+        public static void SetSignalTrack(PlayableDirector playableDirector, SignalAsset signal, double time, string emitterName = "")
+        {
+            SetSignalTrack(playableDirector, "Signal Track", signal, time, emitterName);
         }
 
         // トラック内各ClipのIn/Out時間の取得
