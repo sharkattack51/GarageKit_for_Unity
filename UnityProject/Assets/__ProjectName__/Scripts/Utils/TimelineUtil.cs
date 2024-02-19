@@ -34,6 +34,9 @@ namespace GarageKit
                         DeleteTrack(managedDirector, track);
                 }
             }
+
+            Resources.UnloadUnusedAssets();
+            System.GC.Collect();
         }
 
         public static TrackAsset AddTrack<T>(PlayableDirector playableDirector, string trackName, UnityEngine.Object bindObj, TrackAsset parent = null) where T : TrackAsset
@@ -117,6 +120,9 @@ namespace GarageKit
                     track.DeleteClip(clip);
             }
 
+            Resources.UnloadUnusedAssets();
+            System.GC.Collect();
+
             playableDirector.RebuildGraph();
         }
 
@@ -142,6 +148,9 @@ namespace GarageKit
                     }
                 }
             }
+
+            Resources.UnloadUnusedAssets();
+            System.GC.Collect();
 
             playableDirector.RebuildGraph();
         }
@@ -212,6 +221,7 @@ namespace GarageKit
                 MediaPlayer bindMp = playableDirector.GetGenericBinding(track) as MediaPlayer;
                 if(bindMp != null)
                 {
+                    bindMp.CloseMedia();
                     bindMp.OpenMedia(mediaPathType, moviePath, false);
 
                     if(end == null)
