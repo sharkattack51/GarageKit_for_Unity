@@ -232,7 +232,7 @@ namespace GarageKit
             SetMediaPlayerTrack(playableDirector, trackName, start, end);
         }
 
-        public static void SetMediaPlayerTrack(PlayableDirector playableDirector, string trackName, double start, double? end = null)
+        public static void SetMediaPlayerTrack(PlayableDirector playableDirector, string trackName, double start, double? end = null, float vol = 1.0f)
         {
             MediaPlayerControlTrack track = GetTrackByName(playableDirector, trackName) as MediaPlayerControlTrack;
             if(track != null && start < end)
@@ -241,6 +241,9 @@ namespace GarageKit
                 clip.start = start;
                 if(end != null && start < end)
                     clip.duration = (double)end - start;
+
+                MediaPlayerControlAsset mpAsset = clip.asset as MediaPlayerControlAsset;
+                mpAsset.audioVolume = vol;
 
                 playableDirector.RebuildGraph();
             }
