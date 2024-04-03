@@ -268,6 +268,34 @@ namespace GarageKit
 
             return result;
         }
+
+        public Color GetColor(string key, string separator = ",", Color defaultValue = default(Color))
+        {
+            Color result = Color.white;
+            float[] arr = GetFloatArray(key, separator);
+            if(arr.Length >= 4)
+                result = new Color(arr[0], arr[1], arr[2], arr[3]);
+            else if(arr.Length >= 3)
+                result = new Color(arr[0], arr[1], arr[2]);
+            else
+                result = defaultValue;
+
+            return result;
+        }
+
+        public Color GetColor255(string key, string separator = ",", Color defaultValue = default(Color))
+        {
+            Color result = Color.white;
+            float[] arr = GetFloatArray(key, separator);
+            if(arr.Length >= 4)
+                result = new Color(arr[0] / 255.0f, arr[1] / 255.0f, arr[2] / 255.0f, arr[3] / 255.0f);
+            else if(arr.Length >= 3)
+                result = new Color(arr[0] / 255.0f, arr[1] / 255.0f, arr[2] / 255.0f);
+            else
+                result = defaultValue;
+
+            return result;
+        }
 #endregion
     }
 }

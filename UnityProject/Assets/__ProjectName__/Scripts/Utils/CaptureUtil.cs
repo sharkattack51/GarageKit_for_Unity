@@ -44,7 +44,7 @@ namespace GarageKit
                 bytes = crop.EncodeToJPG();
 
             // 保存先の確認
-            if(string.IsNullOrEmpty(Path.GetDirectoryName(fileName)))
+            if(!string.IsNullOrEmpty(Path.GetDirectoryName(fileName)))
             {
                 dirPath = Path.GetDirectoryName(fileName);
                 fileName = Path.GetFileName(fileName);

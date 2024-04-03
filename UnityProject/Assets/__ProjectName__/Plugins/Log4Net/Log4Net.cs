@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UnityEngine;
 
 // Log4Net warapper for unity
@@ -68,6 +69,7 @@ public class Log4Net : MonoBehaviour
         rollingFileAppender.File = Path.GetFullPath(outputLogDir) + "/";
         rollingFileAppender.DatePattern = "yyyyMMdd\".log\"";
         rollingFileAppender.Layout = new log4net.Layout.PatternLayout("%date{yyyy/MM/dd  HH:mm:ss} %message%newline");
+        rollingFileAppender.Encoding = new UTF8Encoding(true);
 
         log4net.Filter.LevelRangeFilter filter = new log4net.Filter.LevelRangeFilter();
         switch(filterLevel)
