@@ -234,7 +234,7 @@ namespace Tenebrous.EditorEnhancements
             bool doPreview    = Common.Modifier( _setting_showHoverPreview, _setting_showHoverPreviewShift, _setting_showHoverPreviewCtrl, _setting_showHoverPreviewAlt );
             bool doTooltip    = Common.Modifier( _setting_showHoverTooltip, _setting_showHoverTooltipShift, _setting_showHoverTooltipCtrl, _setting_showHoverTooltipAlt );
             bool doComponents = Common.Modifier( _setting_showComponents,   _setting_showComponentsShift,   _setting_showComponentsCtrl,   _setting_showComponentsAlt   );
-            bool doEnabled    = Common.Modifier( _setting_showEnabled,      _setting_showEnabledShift,      _setting_showEnabledCtrl,      _setting_showEnabledAlt);
+            bool doEnabled    = false; //Common.Modifier( _setting_showEnabled,      _setting_showEnabledShift,      _setting_showEnabledCtrl,      _setting_showEnabledAlt);
             bool doLockIcon   = Common.Modifier( _setting_showLock,         _setting_showLockShift,         _setting_showLockCtrl,         _setting_showLockAlt         );
             doLockIcon |= _setting_showLock && _setting_showLockLocked && currentLock;
 

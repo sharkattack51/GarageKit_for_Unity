@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.cysharp.unitask": {
-      "version": "2.5.0",
+      "version": "2.5.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -15,21 +15,41 @@
       "url": "https://package.openupm.com"
     },
     "com.tayx.graphy": {
-      "version": "3.0.2",
+      "version": "3.0.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
-    "com.unity.ide.vscode": {
-      "version": "1.2.5",
-      "depth": 0,
+    "com.unity.ext.nunit": {
+      "version": "1.0.6",
+      "depth": 2,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.ide.visualstudio": {
+      "version": "2.0.22",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.test-framework": "1.1.9"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.test-framework": {
+      "version": "1.1.33",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.ext.nunit": "1.0.6",
+        "com.unity.modules.imgui": "1.0.0",
+        "com.unity.modules.jsonserialize": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.textmeshpro": {
-      "version": "3.0.6",
+      "version": "3.0.9",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -47,7 +67,7 @@
       }
     },
     "com.yasirkula.ingamedebugconsole": {
-      "version": "1.5.8",
+      "version": "1.6.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
