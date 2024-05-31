@@ -14,12 +14,15 @@ http://debuglog.tumblr.com/post/100742681354/garagekit-for-unity
 
 - TextMesh Pro
 
+#### from AssetStore
+
+- dotween
+  - https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676
+
 #### from OpenUPM (https://openupm.com/)
 
 - In-game Debug Console
   - `$ openupm add com.yasirkula.ingamedebugconsole`
-- dotween
-  - `$ openupm add com.demigiant.dotween`
 - UniTask
   - `$ openupm add com.cysharp.unitask`
 
