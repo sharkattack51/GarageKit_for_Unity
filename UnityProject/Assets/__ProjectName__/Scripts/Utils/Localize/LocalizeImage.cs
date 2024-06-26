@@ -16,17 +16,17 @@ namespace GarageKit.Localize
                 img.Localize(lang);
         }
 
+        public Image uiImage;
         public List<Sprite> localizeSprites;
         public LANGUAGE lang;
-
-        private Image uiImg;
 
 
         void Awake()
         {
             localizeList.Add(this);
 
-            uiImg = this.gameObject.GetComponent<Image>();
+            if(uiImage == null)
+                uiImage = this.gameObject.GetComponent<Image>();
         }
 
         void Start()
@@ -50,8 +50,10 @@ namespace GarageKit.Localize
         {
             this.lang = lang;
 
-            if(localizeSprites.Count > (int)lang)
-                uiImg.sprite = localizeSprites[(int)lang];
+            if(localizeSprites.Count == 1)
+                uiImage.sprite = localizeSprites[0];
+            else if(localizeSprites.Count > (int)lang)
+                uiImage.sprite = localizeSprites[(int)lang];
         }
     }
 }

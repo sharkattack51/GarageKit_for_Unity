@@ -22,17 +22,17 @@ namespace GarageKit.Localize
                 dd.Localize(lang);
         }
 
+        public TMP_Dropdown uiDropdown;
         public List<TMP_FontAsset> localizeFonts;
         public List<LocalizeDropdownStrings> localizeDropdownStrings;
-
-        private TMP_Dropdown uiDrpdwn;
 
 
         void Awake()
         {
             localizeList.Add(this);
 
-            uiDrpdwn = this.gameObject.GetComponent<TMP_Dropdown>();
+            if(uiDropdown == null)
+                uiDropdown = this.gameObject.GetComponent<TMP_Dropdown>();
         }
 
         void Start()
@@ -48,17 +48,17 @@ namespace GarageKit.Localize
 
         public void Localize(LANGUAGE lang)
         {
-            if(uiDrpdwn == null)
-                uiDrpdwn = this.gameObject.GetComponent<TMP_Dropdown>();
+            if(uiDropdown == null)
+                uiDropdown = this.gameObject.GetComponent<TMP_Dropdown>();
 
-            TMP_Text[] texts = uiDrpdwn.GetComponentsInChildren<TMP_Text>();
+            TMP_Text[] texts = uiDropdown.GetComponentsInChildren<TMP_Text>();
             foreach(TMP_Text text in texts)
                 text.font = localizeFonts[(int)lang];
 
-            uiDrpdwn.options.Clear();
+            uiDropdown.options.Clear();
             foreach(string str in localizeDropdownStrings[(int)lang].localizeStrings)
-                uiDrpdwn.options.Add(new TMP_Dropdown.OptionData(str));
-            uiDrpdwn.RefreshShownValue();
+                uiDropdown.options.Add(new TMP_Dropdown.OptionData(str));
+            uiDropdown.RefreshShownValue();
         }
     }
 }

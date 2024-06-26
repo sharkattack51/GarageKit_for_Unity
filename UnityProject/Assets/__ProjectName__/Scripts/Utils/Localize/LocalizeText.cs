@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+#if USE_TMP
 using TMPro;
+#endif
 
 namespace GarageKit.Localize
 {
@@ -20,28 +22,29 @@ namespace GarageKit.Localize
         }
 
 #if USE_TMP
+        public TMP_Text uiText;
         public List<TMP_FontAsset> localizeFonts;
 #else
+        public Text uiTxt;
         public List<Font> localizeFonts;
 #endif
+        public LocalizeFontScriptable localizeFontScriptable;
         public List<string> localizeStrings;
         public LANGUAGE lang;
 
-#if USE_TMP
-        private TMP_Text uiTxt;
-#else
-        private Text uiTxt;
-#endif
 
         void Awake()
         {
             localizeList.Add(this);
 
+            if(uiText == null)
+            {
 #if USE_TMP
-            uiTxt = this.gameObject.GetComponent<TMP_Text>();
+                uiText = this.gameObject.GetComponent<TMP_Text>();
 #else
-            uiTxt = this.gameObject.GetComponent<Text>();
+                uiText = this.gameObject.GetComponent<Text>();
 #endif
+            }
         }
 
         void Start()
@@ -65,10 +68,25 @@ namespace GarageKit.Localize
         {
             this.lang = lang;
 
-            if(localizeFonts.Count > (int)lang)
-                uiTxt.font = localizeFonts[(int)lang];
-            if(localizeStrings.Count > (int)lang)
-                uiTxt.text = localizeStrings[(int)lang];
+            if(uiText == null)
+                return;
+
+            if(localizeFontScriptable == null)
+            {
+                if(localizeFonts.Count > (int)lang)
+                    uiText.font = localizeFonts[(int)lang];
+            }
+            else
+            {
+                LocalizeFont locFont = localizeFontScriptable.localizeFonts.Find(f => f.lang == lang);
+                if(locFont != null && locFont.font != null)
+                    uiText.font = locFont.font;
+            }
+
+            if(localizeStrings.Count == 1)
+                uiText.text = localizeStrings[0];
+            else if(localizeStrings.Count > (int)lang)
+                uiText.text = localizeStrings[(int)lang];
         }
     }
 }

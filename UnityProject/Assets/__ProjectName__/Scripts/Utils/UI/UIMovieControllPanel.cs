@@ -1,5 +1,5 @@
 ﻿//#define AVPRO_VIDEO
-//#define TMP
+#define TMP
 
 /*
 If you want to use this script, please import AVProVideo and TextMeshPro. and Uncomment #define.
@@ -84,12 +84,15 @@ namespace GarageKit
                 if(movieLoaded && player.Control.CanPlay() && !player.Control.IsPaused())
                     uiSeekSlider.value = (float)player.Control.GetCurrentTime() / (float)player.Info.GetDuration();
 
-                // 経過時間の更新
-                uiElapsedTxt.text = string.Format("{0:D2}:{1:D2} / {2:D2}:{3:D2}",
-                    (int)(player.Control.GetCurrentTime() / 60.0f),
-                    (int)(player.Control.GetCurrentTime() % 60.0f),
-                    (int)(player.Info.GetDuration() / 60.0f),
-                    (int)(player.Info.GetDuration() % 60.0f));
+                if(uiElapsedTxt != null)
+                {
+                    // 経過時間の更新
+                    uiElapsedTxt.text = string.Format("{0:D2}:{1:D2} / {2:D2}:{3:D2}",
+                        (int)(player.Control.GetCurrentTime() / 60.0f),
+                        (int)(player.Control.GetCurrentTime() % 60.0f),
+                        (int)(player.Info.GetDuration() / 60.0f),
+                        (int)(player.Info.GetDuration() % 60.0f));
+                }
             }
         }
 
@@ -117,6 +120,7 @@ namespace GarageKit
         public void Setup()
         {
             // MediaPlayerイベント
+            player.Events.RemoveAllListeners();
             player.Events.AddListener((mp, e, err) => {
                 switch(e)
                 {
@@ -129,6 +133,7 @@ namespace GarageKit
             });
 
             // 再生/一時停止ボタン
+            uiPlayPauseBtn.onClick.RemoveAllListeners();
             uiPlayPauseBtn.onClick.AddListener(() => {
                 if(!player.Control.IsPlaying() || player.Control.IsFinished())
                 {

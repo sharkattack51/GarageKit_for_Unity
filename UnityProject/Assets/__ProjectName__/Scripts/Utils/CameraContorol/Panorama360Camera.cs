@@ -14,7 +14,7 @@ namespace GarageKit
             GAME_PAD
         };
         public	OPERATION_MODE mode = OPERATION_MODE.GYRO;
-        
+
         public float rotationSpeed = 0.1f;
         private float rotationX = 0.0f;
         private float rotationY = 0.0f;
@@ -28,12 +28,17 @@ namespace GarageKit
         public bool invertRotH = false;
         public bool invertRotV = false;
 
-
         private	float appliedGyroYAngle = 0.0f;
         private	float calibrationYAngle = 0.0f;
         private	bool calibrated = false;
 
         private Vector3 dragPrePosition = Vector3.zero;
+
+        [Header("Smooth")]
+        public bool useSmooth = false;
+        public float smoothTime = 0.1f;
+        private float smoothVelX;
+        private float smoothVelY;
 
 
         void Awake()
@@ -90,7 +95,9 @@ namespace GarageKit
 
                     rotationX = Mathf.Max(rotationX, -90.0f);
                     rotationX = Mathf.Min(rotationX, 90.0f);
-                    this.gameObject.transform.localEulerAngles = new Vector3(rotationX, rotationY, 0.0f);
+
+                    if(!useSmooth)
+                        this.gameObject.transform.localEulerAngles = new Vector3(rotationX, rotationY, 0.0f);
 
                     dragPrePosition = Input.mousePosition;
                 }
@@ -105,7 +112,9 @@ namespace GarageKit
 
                     rotationX = Mathf.Max(rotationX, -90.0f);
                     rotationX = Mathf.Min(rotationX, 90.0f);
-                    this.gameObject.transform.localEulerAngles = new Vector3(rotationX, rotationY, 0.0f);
+
+                    if(!useSmooth)
+                        this.gameObject.transform.localEulerAngles = new Vector3(rotationX, rotationY, 0.0f);
                 }
             }
             else if(mode == OPERATION_MODE.GAME_PAD)
@@ -113,6 +122,14 @@ namespace GarageKit
                 float rotH = Input.GetAxis("Horizontal") * (invertRotH ? -1.0f : 1.0f);
                 float rotV = Input.GetAxis("Vertical") * (invertRotV ? -1.0f : 1.0f);
                 SetRotate(rotH, rotV, rotationSpeed);
+            }
+
+            if(mode != OPERATION_MODE.GYRO && useSmooth)
+            {
+                this.gameObject.transform.localEulerAngles = new Vector3(
+                    Mathf.SmoothDampAngle(this.gameObject.transform.localEulerAngles.x, rotationX, ref smoothVelX, smoothTime),
+                    Mathf.SmoothDampAngle(this.gameObject.transform.localEulerAngles.y, rotationY, ref smoothVelY, smoothTime),
+                    0.0f);
             }
 
             if(useLimit)
