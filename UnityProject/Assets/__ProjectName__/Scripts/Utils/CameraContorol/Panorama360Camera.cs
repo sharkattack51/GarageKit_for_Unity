@@ -77,8 +77,8 @@ namespace GarageKit
                 if(!calibrated)
                     CalibrateYAngle();
 
-                transform.Rotate(0.0f, -this.calibrationYAngle, 0.0f, Space.World);
-                transform.localEulerAngles = transform.eulerAngles;
+                this.gameObject.transform.Rotate(0.0f, -this.calibrationYAngle, 0.0f, Space.World);
+                this.gameObject.transform.localEulerAngles = this.gameObject.transform.eulerAngles;
             }
             else if(mode == OPERATION_MODE.DRAG_MOUSE)
             {
@@ -180,12 +180,12 @@ namespace GarageKit
             rotationX = 0.0f;
             rotationY = 0.0f;
 
-            transform.localEulerAngles = new Vector3(rotationX, rotationY, 0.0f);
+            this.gameObject.transform.localEulerAngles = new Vector3(rotationX, rotationY, 0.0f);
 
             CalibrateYAngle();
         }
 
-        public void RotationReset()
+        public void ResetRotation(bool force = false)
         {
             appliedGyroYAngle = 0.0f;
             calibrationYAngle = 0.0f;
@@ -193,6 +193,9 @@ namespace GarageKit
 
             rotationX = 0.0f;
             rotationY = 0.0f;
+
+            if(force)
+                this.gameObject.transform.localRotation = Quaternion.identity;
         }
 
         public void SetRotate(float h, float v, float speed)

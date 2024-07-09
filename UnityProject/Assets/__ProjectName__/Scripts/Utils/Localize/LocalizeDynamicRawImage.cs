@@ -83,7 +83,7 @@ namespace GarageKit.Localize
             }
         }
 
-        public async UniTask TryCatchLocalizeAsync(LANGUAGE lang, Action<string> onCatch)
+        public async UniTask TryCatchLocalizeAsync(LANGUAGE lang, Action<Exception> onCatch, Action onFinally = null)
         {
             try
             {
@@ -91,7 +91,11 @@ namespace GarageKit.Localize
             }
             catch(Exception err)
             {
-                onCatch?.Invoke(err.Message);
+                onCatch?.Invoke(err);
+            }
+            finally
+            {
+                onFinally?.Invoke();
             }
         }
     }
