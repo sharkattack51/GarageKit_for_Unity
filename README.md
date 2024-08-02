@@ -23,6 +23,8 @@ http://debuglog.tumblr.com/post/100742681354/garagekit-for-unity
 
 - In-game Debug Console
   - `$ openupm add com.yasirkula.ingamedebugconsole`
+- Graphy - Ultimate Stats Monitor
+  - `$ openupm add com.tayx.graphy`
 - UniTask
   - `$ openupm add com.cysharp.unitask`
 

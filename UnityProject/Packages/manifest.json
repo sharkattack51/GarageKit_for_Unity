@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.cysharp.unitask": "2.5.4",
+    "com.cysharp.unitask": "2.5.5",
     "com.demigiant.dotween": "1.2.632",
     "com.tayx.graphy": "3.0.5",
     "com.unity.ide.visualstudio": "2.0.22",
