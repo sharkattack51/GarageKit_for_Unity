@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /*
- * ターゲットを中心に回転するカメラコントロールクラスス
+ * ターゲットを中心に回転するカメラコントロールクラス
  * マウス&タッチ対応
  */
 namespace GarageKit

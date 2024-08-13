@@ -12,7 +12,7 @@ namespace GarageKit.ARFoundationExtention
 {
     public class ARCoreCoachingView : MonoBehaviour
     {
-    #if USE_ARFOUNDATION
+#if USE_ARFOUNDATION
         public ARPlaneManager planeManager;
         public CanvasGroup view;
 
@@ -26,19 +26,19 @@ namespace GarageKit.ARFoundationExtention
 
         void Start()
         {
-    #if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
             ActivateCoaching();
-    #else
+#else
             DisableCoaching();
-    #endif
+#endif
         }
 
         void Update()
         {
-    #if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
             targetAlpha = (planeManager.trackables.count == 0) ? 1.0f : 0.0f;
             view.alpha += (targetAlpha - view.alpha) * 5.0f * Time.deltaTime;
-    #endif
+#endif
         }
 
 
@@ -51,6 +51,6 @@ namespace GarageKit.ARFoundationExtention
         {
             view.gameObject.SetActive(false);
         }
-    #endif
+#endif
     }
 }

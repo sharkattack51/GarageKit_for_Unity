@@ -10,7 +10,7 @@ using UnityEngine;
 namespace GarageKit
 {
     [Serializable]
-    public class AnimationTrack
+    public class C4DAnimationTrack
     {
         // C4Dでのアニメ―ショントラックタイプ
         public enum TRACK_TYPE
@@ -28,7 +28,7 @@ namespace GarageKit
         public AnimationCurve curve;
 
 
-        public AnimationTrack()
+        public C4DAnimationTrack()
         {
 
         }
@@ -53,13 +53,13 @@ namespace GarageKit
         }
     }
 
-    public class AnimDataApply : MonoBehaviour
+    public class C4DAnimDataApply : MonoBehaviour
     {
         // 参照ファイル(json)
         public string filePath = "animdata.txt";
 
         // アニメーションデータ反映トラック
-        public AnimationTrack[] animTracks;
+        public C4DAnimationTrack[] animTracks;
 
         private Dictionary<string, List<float>> data;
         public Dictionary<string, List<float>> Data { get{ return data; } }
@@ -86,16 +86,16 @@ namespace GarageKit
         // アニメーションカーブを初期化
         private void InitAnimCurve()
         {
-            foreach(AnimationTrack track in animTracks)
+            foreach(C4DAnimationTrack track in animTracks)
             {
                 if(data.ContainsKey(track.GetTrackName()))
                 {
                     List<float> keyframes = new List<float>();
-                    
+
                     //C4Dの座標系を変換してキーフレームを取得
                     foreach(float keyframe in data[track.GetTrackName()])
                         keyframes.Add(ConvertC4DSpace(track.type, keyframe));
-                    
+
                     //アニメーションカーブに反映
                     track.curve = new AnimationCurve();
                     for(int i = 0; i < keyframes.Count; i++)
@@ -105,10 +105,10 @@ namespace GarageKit
         }
 
         // カーブを選択取得
-        public AnimationCurve GetCurve(AnimationTrack.TRACK_TYPE type)
+        public AnimationCurve GetCurve(C4DAnimationTrack.TRACK_TYPE type)
         {
             AnimationCurve curve = null;
-            AnimationTrack track = Array.Find(animTracks, t => (t.type == type));
+            C4DAnimationTrack track = Array.Find(animTracks, t => (t.type == type));
 
             if(track != null)
                 curve = track.curve;
@@ -120,7 +120,7 @@ namespace GarageKit
         public int GetTotalFrame()
         {
             int totalFrame = 0;
-            foreach(AnimationTrack track in animTracks)
+            foreach(C4DAnimationTrack track in animTracks)
             {
                 if(totalFrame < track.curve.keys.Length)
                     totalFrame = track.curve.keys.Length;
@@ -129,16 +129,16 @@ namespace GarageKit
         }
 
         // C4Dの座標系を変換
-        private float ConvertC4DSpace(AnimationTrack.TRACK_TYPE type, float keyValue)
+        private float ConvertC4DSpace(C4DAnimationTrack.TRACK_TYPE type, float keyValue)
         {
             switch(type)
             {
-                case AnimationTrack.TRACK_TYPE.POS_X: keyValue = keyValue / 100.0f * -1.0f; break;
-                case AnimationTrack.TRACK_TYPE.POS_Y: keyValue = keyValue / 100.0f; break;
-                case AnimationTrack.TRACK_TYPE.POS_Z: keyValue = keyValue / 100.0f * -1.0f; break;
-                case AnimationTrack.TRACK_TYPE.ROT_X: keyValue = keyValue * Mathf.Rad2Deg * -1.0f; break;
-                case AnimationTrack.TRACK_TYPE.ROT_Y: keyValue = (keyValue < 0.0f) ? 180.0f - (keyValue * Mathf.Rad2Deg) : (keyValue * Mathf.Rad2Deg) + 180.0f; break;
-                case AnimationTrack.TRACK_TYPE.ROT_Z: keyValue = keyValue * Mathf.Rad2Deg * -1.0f; break;
+                case C4DAnimationTrack.TRACK_TYPE.POS_X: keyValue = keyValue / 100.0f * -1.0f; break;
+                case C4DAnimationTrack.TRACK_TYPE.POS_Y: keyValue = keyValue / 100.0f; break;
+                case C4DAnimationTrack.TRACK_TYPE.POS_Z: keyValue = keyValue / 100.0f * -1.0f; break;
+                case C4DAnimationTrack.TRACK_TYPE.ROT_X: keyValue = keyValue * Mathf.Rad2Deg * -1.0f; break;
+                case C4DAnimationTrack.TRACK_TYPE.ROT_Y: keyValue = (keyValue < 0.0f) ? 180.0f - (keyValue * Mathf.Rad2Deg) : (keyValue * Mathf.Rad2Deg) + 180.0f; break;
+                case C4DAnimationTrack.TRACK_TYPE.ROT_Z: keyValue = keyValue * Mathf.Rad2Deg * -1.0f; break;
                 default: break;
             }
 

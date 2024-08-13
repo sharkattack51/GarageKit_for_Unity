@@ -10,7 +10,7 @@ namespace GarageKit
         [Header("VRSceneStateBase")]
         public GameObject viewReferenceObj;
         public GameObject viewGuideTarget;
-        public StageManagedObject [] enables;
+        public StageManagedObject[] enables;
 
 
         public override void StateStart(object context)

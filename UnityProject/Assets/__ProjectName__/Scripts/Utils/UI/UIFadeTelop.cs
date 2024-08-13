@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using TMPro;
+
 namespace GarageKit
 {
     public class UIFadeTelop : UIFadeGroupComponent
     {
+        public TMP_Text uiText;
+        public Image uiTextBg;
         public bool resizeBg = true;
-
-        private Text uiText;
-        private Image uiTextBg;
 
 
         protected override void Awake()
@@ -21,9 +22,6 @@ namespace GarageKit
         protected override void Start()
         {
             base.Start();
-
-            uiText = this.gameObject.GetComponentInChildren<Text>();
-            uiTextBg = this.gameObject.GetComponentInChildren<Image>();
         }
 
         protected override void Update()

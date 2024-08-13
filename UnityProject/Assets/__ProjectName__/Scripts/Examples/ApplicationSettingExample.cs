@@ -26,8 +26,6 @@ public class ApplicationSettingExample : MonoBehaviour
 
         GUILayout.Label("-- ApplicationSetting --");
         GUILayout.Label("IsDebug : " + ApplicationSetting.Instance.GetBool("IsDebug").ToString());
-        GUILayout.Label("UseDebugConsole : " + ApplicationSetting.Instance.GetBool("UseDebugConsole").ToString());
-        GUILayout.Label("DebugConsoleLogEnable : " + ApplicationSetting.Instance.GetBool("DebugConsoleLogEnable").ToString());
         GUILayout.Label("UseMouse : " + ApplicationSetting.Instance.GetBool("UseMouse").ToString());
         GUILayout.Label("UseSE : " + ApplicationSetting.Instance.GetBool("UseSE").ToString());
         GUILayout.Label("VolSE : " + ApplicationSetting.Instance.GetFloat("VolSE").ToString());

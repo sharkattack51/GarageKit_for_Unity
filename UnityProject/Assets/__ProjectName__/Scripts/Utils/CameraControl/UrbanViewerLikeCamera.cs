@@ -30,7 +30,8 @@ namespace GarageKit
 		public bool invertCamRotYForPad = false;
 		public enum PadType
 		{
-			DEFAULT = 0,
+			NONE = 0,
+			DEFAULT,
 			XBOXONE
 		}
 		public PadType padType = PadType.DEFAULT;
@@ -226,13 +227,16 @@ namespace GarageKit
 				characterController.Move(pad_up2 * pad_pos_y2);
 			}
 
-			// 左右旋回
-			float pad_rot_y = Input.GetAxisRaw("Horizontal2") * Time.deltaTime * rotateSpeed * camRotSpeedForPad * (invertCamRotYForPad ? -1.0f : 1.0f);
-			this.gameObject.transform.Rotate(Vector3.up, pad_rot_y, Space.Self);
+			if(padType != PadType.NONE)
+			{
+				// 左右旋回
+				float pad_rot_y = Input.GetAxisRaw("Horizontal2") * Time.deltaTime * rotateSpeed * camRotSpeedForPad * (invertCamRotYForPad ? -1.0f : 1.0f);
+				this.gameObject.transform.Rotate(Vector3.up, pad_rot_y, Space.Self);
 
-			// 上下旋回
-			float pad_rot_x = Input.GetAxisRaw("Vertical2") * Time.deltaTime * rotateSpeed * camRotSpeedForPad * (invertCamRotXForPad ? -1.0f : 1.0f);
-			childCamera.transform.Rotate(Vector3.right, -pad_rot_x, Space.Self);
+				// 上下旋回
+				float pad_rot_x = Input.GetAxisRaw("Vertical2") * Time.deltaTime * rotateSpeed * camRotSpeedForPad * (invertCamRotXForPad ? -1.0f : 1.0f);
+				childCamera.transform.Rotate(Vector3.right, -pad_rot_x, Space.Self);
+			}
 #endregion
 		}
 		

@@ -31,7 +31,7 @@ namespace GarageKit
 
         private WebCamDevice[] devices;
         private WebCamTexture webCamTexture;
-        public WebCamTexture GetWebCamTexture() { return webCamTexture; }
+        public WebCamTexture WebCamTexture { get{ return webCamTexture; } }
 
         private RectTransform rectTrans;
         private RawImage uiRawImage;
@@ -176,15 +176,6 @@ namespace GarageKit
                 && webCamTexture.isPlaying
                 && webCamTexture.width > 16
                 && webCamTexture.height > 16;
-        }
-
-        // 現在使用しているWebカメラ映像を取得
-        public WebCamTexture GetTexture()
-        {
-            if(webCamTexture != null)
-                return webCamTexture;
-            else
-                return null;
         }
     }
 }

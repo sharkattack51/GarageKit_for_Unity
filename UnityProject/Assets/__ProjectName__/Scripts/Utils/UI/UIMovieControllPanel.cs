@@ -3,7 +3,7 @@
 
 /*
 If you want to use this script, please import AVProVideo and TextMeshPro. and Uncomment #define.
-Add the DIsplayUGUI and Text components to the Prefabs/Utils/UI/MovieControllPanel
+Add the DisplayUGUI and Text components to the Prefabs/Utils/UI/MovieControllPanel
 */
 
 using System;

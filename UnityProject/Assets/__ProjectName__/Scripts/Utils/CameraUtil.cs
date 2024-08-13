@@ -27,7 +27,18 @@ namespace GarageKit
         }
 
         /// <summary>
-        /// スクリーン座標をOrsoカメラ座標で正規化(-1.0～1.0)
+        /// デプスによるカメラリストを取得
+        /// </summary>
+        public static List<Camera> GetCameraListByDepth()
+        {
+            List<Camera> cameras = new List<Camera>(Camera.FindObjectsOfType<Camera>());
+            cameras.Sort((a, b) => { return a.depth < b.depth ? -1 : 1; });
+
+            return cameras;
+        }
+
+        /// <summary>
+        /// スクリーン座標をカメラ座標で正規化(-1.0～1.0)
         /// </summary>
         public static Vector3 NormalizeScreenPosition(Camera orthoCamera, Vector3 screenPosition)
         {
@@ -66,17 +77,6 @@ namespace GarageKit
                 protY = viewportPosition.y;
 
             return new Vector3(protX, protY, viewportPosition.z);
-        }
-
-        /// <summary>
-        /// デプスによるカメラリストを取得
-        /// </summary>
-        public static List<Camera> GetCameraListByDepth()
-        {
-            List<Camera> cameras = new List<Camera>(Camera.FindObjectsOfType<Camera>());
-            cameras.Sort((a, b) => { return a.depth < b.depth ? -1 : 1; });
-
-            return cameras;
         }
     }
 }

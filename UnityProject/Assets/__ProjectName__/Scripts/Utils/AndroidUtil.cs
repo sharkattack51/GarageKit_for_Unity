@@ -9,7 +9,7 @@ namespace GarageKit
     public class AndroidUtil
     {
 #region ANDROID_PATH
-        static public string FileDir()
+        public static string FileDir()
         {
             string _FilesDir = "";
 
@@ -28,7 +28,7 @@ namespace GarageKit
             return _FilesDir;
         }
 
-        static public string CacheDir()
+        public static string CacheDir()
         {
             string _CacheDir = "";
 
@@ -47,7 +47,7 @@ namespace GarageKit
             return _CacheDir;
         }
 
-        static public string ExternalFilesDir()
+        public static string ExternalFilesDir()
         {
             string _ExternalFilesDir = "";
 
@@ -66,7 +66,7 @@ namespace GarageKit
             return _ExternalFilesDir;
         }
 
-        static public string ExternalCacheDir()
+        public static string ExternalCacheDir()
         {
             string _ExternalCacheDir = "";
 
@@ -85,7 +85,7 @@ namespace GarageKit
             return _ExternalCacheDir;
         }
 
-        static public string ExternalStorageDir()
+        public static string ExternalStorageDir()
         {
             string _ExternalStorageDir = "";
 
@@ -101,7 +101,7 @@ namespace GarageKit
             return _ExternalStorageDir;
         }
 
-        static public string ExternalStoragePublicDir()
+        public static string ExternalStoragePublicDir()
         {
             string _ExternalStoragePublicDir = "";
 

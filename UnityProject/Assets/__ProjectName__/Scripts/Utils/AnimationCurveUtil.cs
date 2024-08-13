@@ -58,13 +58,7 @@ namespace GarageKit
             Stepped = Linear | Smooth,
         }
 
-        public enum TangentDirection
-        {
-            Left,
-            Right
-        }
-
-        public static Keyframe GetNewKey( float time, float value, TangentMode leftAndRight)
+        public static Keyframe GetNewKey(float time, float value, TangentMode leftAndRight)
         {
             return GetNewKey(time, value, leftAndRight, leftAndRight);
         }

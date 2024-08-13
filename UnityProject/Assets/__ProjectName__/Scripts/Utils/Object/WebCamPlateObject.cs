@@ -29,7 +29,7 @@ namespace GarageKit
 
         private WebCamDevice[] devices;
         private WebCamTexture webCamTexture;
-        public WebCamTexture GetWebCamTexture() { return webCamTexture; }
+        public WebCamTexture WebCamTexture { get{ return webCamTexture; } }
 
         private Renderer rend;
         private Vector3 defaultAspect;
@@ -130,14 +130,6 @@ namespace GarageKit
             }
         }
 
-        // 現在使用しているWebカメラ映像を取得
-        public WebCamTexture GetTexture()
-        {
-            if(webCamTexture != null)
-                return webCamTexture;
-            else
-                return null;
-        }
 
         // WebCamがPlayされた後に正常に開かれたかどうか
         public bool IsWebCamPlaySuccess()

@@ -10,13 +10,9 @@ using UnityEngine;
  * 
  *	GameObject obj = new GameObject("TimerEventObject"); 
  * 	obj.AddComponent<TimerEvent>();
- * 	obj.GetComponent<TimerEvent>().OnTimerEvent += new TimerEvent.OnTimerDelegate(OnTimerFunction);
- * 	obj.GetComponent<TimerEvent>().OnCompleteTimerEvent += new TimerEvent.OnCompleteTimerDelegate(OnCompFunction);
+ * 	obj.GetComponent<TimerEvent>().OnTimer += (sender, sec) => {};
+ * 	obj.GetComponent<TimerEvent>().OnCompleteTimer += (sender) => {};
  * 	obj.GetComponent<TimerEvent>().StartTimer(10);
- * 
- * 	---
- * 	OnTimerFunction(GameObject senderObject,int fixedTime){ Debug.Log("on timer"); }
- * 	OnCompFunction(GameObject senderObject){ Debug.Log("on complete timer"); }
  */
 namespace GarageKit
 {
@@ -45,7 +41,7 @@ namespace GarageKit
         /// <summary>
         /// OnTimerイベント
         /// </summary>
-        public delegate void OnTimerDelegate(GameObject senderObject, int fixedTime);
+        public delegate void OnTimerDelegate(GameObject sender, int sec);
         public event OnTimerDelegate OnTimer;
         protected void InvokeOnTimer()
         {
@@ -56,7 +52,7 @@ namespace GarageKit
         /// <summary>
         /// OnCompleteTimerイベント
         /// </summary>
-        public delegate void OnCompleteTimerDelegate(GameObject senderObject);
+        public delegate void OnCompleteTimerDelegate(GameObject sender);
         public event OnCompleteTimerDelegate OnCompleteTimer;
         protected void InvokeOnCompleteTimer()
         {

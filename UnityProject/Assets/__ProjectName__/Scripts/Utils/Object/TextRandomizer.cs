@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using TMPro;
+
 namespace GarageKit
 {
-    [RequireComponent(typeof(Text))]
     public class TextRandomizer : MonoBehaviour
     {
         public string randomChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!#$%&()-=^~|@[{;+:*]}<>?";
-
-        private Text uiText;
+        public TMP_Text uiText;
 
 
         void Awake()
@@ -20,7 +20,7 @@ namespace GarageKit
 
         void Start()
         {
-            uiText = this.gameObject.GetComponent<Text>();
+
         }
 
         void Update()

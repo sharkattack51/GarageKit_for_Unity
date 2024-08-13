@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 #if USE_ARFOUNDATION
+using Unity.XR.CoreUtils;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 #endif
@@ -36,7 +37,7 @@ namespace GarageKit.ARFoundationExtention
 
         private ARTrackedImageManager trackedImageManager;
         private Camera arCamera;
-        private ARSessionOrigin sessionOrigin;
+        private XROrigin sessionOrigin;
         private GameObject worldOrigin;
 
         // トラッキング中のイメージ
@@ -56,7 +57,7 @@ namespace GarageKit.ARFoundationExtention
             trackedImageManager.trackedImagePrefab = null;
 
             arCamera = FindObjectOfType<ARCameraManager>().GetComponent<Camera>();
-            sessionOrigin = FindObjectOfType<ARSessionOrigin>();
+            sessionOrigin = FindObjectOfType<XROrigin>();
 
             worldOrigin = new GameObject("AR Foundation World Origin");
             worldOrigin.transform.position = Vector3.zero;
@@ -173,7 +174,8 @@ namespace GarageKit.ARFoundationExtention
 
         private void UpdateImageMarker(ARTrackedImage trackedImage)
         {
-            sessionOrigin.MakeContentAppearAt(
+            MakeContentAppearAt(
+                sessionOrigin,
                 worldOrigin.transform,
                 trackedImage.transform.position,
                 trackedImage.transform.localRotation);
@@ -208,6 +210,14 @@ namespace GarageKit.ARFoundationExtention
         {
             Vector3 vp = arCamera.WorldToViewportPoint(worldPosition);
             return (vp.x < 0.0f || vp.x > 1.0f || vp.y < 0.0f || vp.y > 1.0f);
+        }
+
+        // https://github.com/Unity-Technologies/arfoundation-samples/blob/main/Assets/Scripts/Runtime/XROriginExtensions.cs
+        private void MakeContentAppearAt(XROrigin origin, Transform content, Vector3 position, Quaternion rotation)
+        {
+            origin.CameraFloorOffsetObject.transform.position += origin.transform.position - position;
+            origin.transform.position = content.position;
+            origin.transform.rotation = Quaternion.Inverse(rotation) * content.rotation;
         }
 #endif
     }

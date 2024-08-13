@@ -6,7 +6,7 @@ using UnityEngine;
 namespace GarageKit
 {
     [RequireComponent(typeof(Camera))]
-    public class OnPostRenderActions : MonoBehaviour
+    public class OnRenderHandler : MonoBehaviour
     {
         public Action OnPreRenderAction;
         public Action OnPostRenderAction;

@@ -6,7 +6,7 @@ namespace GarageKit
 {
     public class MathUtil
     {
-        static public float LowPassFilter(float pre, float current, float weight = 0.05f)
+        public static float LowPassFilter(float pre, float current, float weight = 0.05f)
         {
             return ((1.0f - weight) * pre) + (weight * current);
         }

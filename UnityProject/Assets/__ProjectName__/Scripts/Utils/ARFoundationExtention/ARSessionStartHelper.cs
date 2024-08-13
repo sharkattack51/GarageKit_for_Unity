@@ -21,7 +21,7 @@ namespace GarageKit.ARFoundationExtention
         // AR機能の初期化失敗
         public Action OnFailARSession;
 
-        // ARラブラリのインストールリクエスト(ARCore)
+        // ARライブラリのインストールリクエスト(ARCore)
         public Action OnRequestARLibInstall;
 
         // AR機能の初期化完了
