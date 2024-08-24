@@ -12,12 +12,9 @@ using UnityEditor;
  */
 
 #if UNITY_STANDALONE_WIN
+
 /*
- * 1) Download nuget package
- *     https://www.nuget.org/packages/Microsoft.Win32.Registry
- * 2) Rename .zip and unzip
- * 3) Copy /lib/net461/Microsoft.Win32.Registry.dll to Plugins
- * 5) Player settings ApiCompatibilityLevel to [.NET Framework]
+ * To use it, change ApiCompatibilityLevel in PlayerSettings to .NET Framework.
  */
 
 namespace GarageKit
@@ -25,14 +22,10 @@ namespace GarageKit
     [ExecuteInEditMode]
     public class StandalonePlayerResolutionHelper : MonoBehaviour
     {
-        /*
-        * ビルド設定のPlayerSettingsよりCompanyNameを入力してください
-        */
+        // ビルド設定のPlayerSettingsよりCompanyNameを入力してください
         public string playerSettingsCompanyName = "";
 
-        /*
-        *　ビルド設定のPlayerSettingsよりProductNameを入力してください
-        */
+        // ビルド設定のPlayerSettingsよりProductNameを入力してください
         public string playerSettingsProductName = "";
 
 
@@ -54,7 +47,7 @@ namespace GarageKit
             }
 #endif
 
-#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+#if !UNITY_EDITOR
             Microsoft.Win32.SystemEvents.SessionEnding += new Microsoft.Win32.SessionEndingEventHandler((s, e) => {
                 e.Cancel = true;
                 RemoveFromRegistry();
@@ -64,11 +57,12 @@ namespace GarageKit
 
         void OnApplicationQuit()
         {
-#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+#if !UNITY_EDITOR
             RemoveFromRegistry();
 #endif
         }
 
+#if !UNITY_EDITOR
         private void RemoveFromRegistry()
         {
             Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser;
@@ -92,6 +86,7 @@ namespace GarageKit
                 }
             }
         }
+#endif
     }
 }
 #endif

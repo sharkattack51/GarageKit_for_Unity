@@ -1,6 +1,11 @@
-﻿// considering an error workaround when building with .Net4 ...
+﻿//#define USE_SERIALPORT
 
-// build error fix
+/*
+ * To use it, change ApiCompatibilityLevel in PlayerSettings to .NET Framework.
+ */
+
+#if USE_SERIALPORT
+
 #if UNITY_2021_3_OR_NEWER
 
 #if UNITY_STANDALONE
@@ -313,6 +318,8 @@ namespace GarageKit
         }
     }
 }
+#endif
+
 #endif
 
 #endif
