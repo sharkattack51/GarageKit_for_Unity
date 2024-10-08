@@ -11,8 +11,6 @@ using UnityEditor;
  * レジストリから該当keyを削除
  */
 
-#if UNITY_STANDALONE_WIN
-
 /*
  * To use it, change ApiCompatibilityLevel in PlayerSettings to .NET Framework.
  */
@@ -31,7 +29,7 @@ namespace GarageKit
 
         void Start()
         {
-#if UNITY_EDITOR
+#if UNITY_EDITOR && UNITY_STANDALONE_WIN
             if(Application.platform == RuntimePlatform.WindowsEditor)
             {
                 if(playerSettingsCompanyName == "" || playerSettingsCompanyName != PlayerSettings.companyName)
@@ -57,12 +55,12 @@ namespace GarageKit
 
         void OnApplicationQuit()
         {
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR && UNITY_STANDALONE_WIN
             RemoveFromRegistry();
 #endif
         }
 
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR && UNITY_STANDALONE_WIN
         private void RemoveFromRegistry()
         {
             Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser;
@@ -89,4 +87,3 @@ namespace GarageKit
 #endif
     }
 }
-#endif

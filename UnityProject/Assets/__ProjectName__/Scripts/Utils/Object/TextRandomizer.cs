@@ -29,12 +29,12 @@ namespace GarageKit
         }
 
 
-        public void TextRandomizeIn(string goalText, float delay = 0.0f, int insertRndChrs = 10, bool defaultSalt = true)
+        public void TextRandomizeIn(string goalText, float delay = 0.0f, int insertRndChrs = 10, bool defaultSalt = true, float tick = 0.03f)
         {
-            StartCoroutine(RandomizeCoroutine(goalText, delay, insertRndChrs, defaultSalt));
+            StartCoroutine(RandomizeCoroutine(goalText, delay, insertRndChrs, defaultSalt, tick));
         }
 
-        private IEnumerator RandomizeCoroutine(string goalText, float delay, int insertRndChars, bool defaultSalt)
+        private IEnumerator RandomizeCoroutine(string goalText, float delay, int insertRndChars, bool defaultSalt, float tick)
         {
             List<List<string>> charTable = new List<List<string>>();
             for(int i = 0; i < goalText.Length; i++)
@@ -74,7 +74,7 @@ namespace GarageKit
                 for(int i = 0; i < goalText.Length; i++)
                     uiText.text += charTable[i][frame];
 
-                yield return new WaitForSeconds(0.03f);
+                yield return new WaitForSeconds(tick);
 
                 frame++;
             }
