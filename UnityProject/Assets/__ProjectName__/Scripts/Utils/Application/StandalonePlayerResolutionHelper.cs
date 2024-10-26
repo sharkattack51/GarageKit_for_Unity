@@ -45,7 +45,7 @@ namespace GarageKit
             }
 #endif
 
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR && UNITY_STANDALONE_WIN
             Microsoft.Win32.SystemEvents.SessionEnding += new Microsoft.Win32.SessionEndingEventHandler((s, e) => {
                 e.Cancel = true;
                 RemoveFromRegistry();

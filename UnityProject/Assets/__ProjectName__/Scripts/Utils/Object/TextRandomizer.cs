@@ -28,10 +28,27 @@ namespace GarageKit
 
         }
 
+        void OnDisable()
+        {
+            StopCoroutine("InternalRandomizeCoroutine");
+        }
+
 
         public void TextRandomizeIn(string goalText, float delay = 0.0f, int insertRndChrs = 10, bool defaultSalt = true, float tick = 0.03f)
         {
-            StartCoroutine(RandomizeCoroutine(goalText, delay, insertRndChrs, defaultSalt, tick));
+            object[] args = new object[]{ goalText, delay, insertRndChrs, defaultSalt, tick };
+            StartCoroutine("InternalRandomizeCoroutine", args);
+        }
+
+        private IEnumerator InternalRandomizeCoroutine(object[] args)
+        {
+            string goalText = (string)args[0];
+            float delay = (float)args[1];
+            int insertRndChrs = (int)args[2];
+            bool defaultSalt = (bool)args[3];
+            float tick = (float)args[4];
+
+            yield return RandomizeCoroutine(goalText, delay, insertRndChrs, defaultSalt, tick);
         }
 
         private IEnumerator RandomizeCoroutine(string goalText, float delay, int insertRndChars, bool defaultSalt, float tick)
