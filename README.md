@@ -2,13 +2,13 @@ GarageKit for Unity
 ===================
 You can start the project immediately in Unity using GarageKit.
 
-![](http://media.tumblr.com/1ad50e485e709219816e2cc0057d65b1/tumblr_inline_ndw8fqGnIb1qzb8ql.png)
+![](https://raw.githubusercontent.com/sharkattack51/GarageKit_for_Unity/refs/heads/master/garagekit.png)
 
 ## What is it?
 
 GarageKit is Unity C# framework. provide the template scene, some manager scripts, state scripts, utility scripts and directory structure.
 
-http://debuglog.tumblr.com/post/100742681354/garagekit-for-unity
+https://sharkattack51.github.io/garagekit_doc
 
 ## Require Modules
 
