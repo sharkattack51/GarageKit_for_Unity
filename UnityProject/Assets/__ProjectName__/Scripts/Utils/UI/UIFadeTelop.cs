@@ -9,7 +9,7 @@ namespace GarageKit
 {
     public class UIFadeTelop : UIFadeGroupComponent
     {
-        public TMP_Text uiText;
+        public Text uiText;
         public Image uiTextBg;
         public bool resizeBg = true;
 

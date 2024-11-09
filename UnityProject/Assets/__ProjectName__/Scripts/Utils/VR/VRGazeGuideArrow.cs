@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.XR;
 
 using DG.Tweening;
 
@@ -11,6 +10,7 @@ namespace GarageKit
     public class VRGazeGuideArrow : MonoBehaviour
     {
         public Camera viewCamera;
+        public Transform viewGuideTarget;
         public float smoothTime = 0.3f;
         public float screenRatio = 0.9f;
         public GameObject[] arrows;
@@ -46,10 +46,12 @@ namespace GarageKit
 
             directionRoot = new GameObject("GuideArrowTarget [Direction Root]");
             directionRoot.transform.parent = viewCamera.transform;
+            directionRoot.transform.localPosition = new Vector3(0.0f, 0.0f, 10.0f);
             directionRoot.transform.localRotation = Quaternion.Euler(new Vector3(-90.0f, 0.0f, 0.0f));
 
             billbording = new GameObject("GuideArrowTarget [Billbording]");
             billbording.transform.parent = directionRoot.transform;
+            billbording.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
 
             guideArrowRotRoot = this.gameObject.GetComponent<RectTransform>();
             canvsGroup = this.gameObject.GetComponent<CanvasGroup>();
@@ -61,7 +63,8 @@ namespace GarageKit
                 arrow.transform.DOLocalMove(new Vector3(0.0f, 50.0f, 0.0f), 0.5f)
                     .SetRelative()
                     .SetEase(Ease.Linear)
-                    .SetLoops(-1);
+                    .SetLoops(-1)
+                    .Play();
             }
         }
 
@@ -71,14 +74,10 @@ namespace GarageKit
                 || guideArrowRotRoot == null || canvsGroup == null)
                 return;
 
-            VRSceneStateBase state = AppMain.Instance.sceneStateManager.CurrentState.StateObj as VRSceneStateBase;
-            if(IsDevicePresent()
-                && useArrow
-                && !AppMain.Instance.sceneStateManager.StateChanging
-                && state != null && state.viewGuideTarget != null)
+            if(useArrow && viewGuideTarget != null)
             {
-                Vector3 viewPt = viewCamera.WorldToViewportPoint(state.viewGuideTarget.transform.position);
-                
+                Vector3 viewPt = viewCamera.WorldToViewportPoint(viewGuideTarget.position);
+
                 if(viewPt.x > 1.0f - screenRatio && viewPt.x < screenRatio
                     && viewPt.y > 1.0f - screenRatio && viewPt.y < screenRatio
                     && viewPt.z >= 0)
@@ -89,7 +88,7 @@ namespace GarageKit
                 {
                     canvsGroup.alpha = 1.0f;
 
-                    billbording.transform.LookAt(state.viewGuideTarget.transform.position);
+                    billbording.transform.LookAt(viewGuideTarget.position);
                     billbording.transform.localRotation = Quaternion.Euler(
                         new Vector3(0.0f, billbording.transform.localRotation.eulerAngles.y, 0.0f));
 
@@ -101,25 +100,6 @@ namespace GarageKit
                 canvsGroup.alpha = 0.0f;
 
             guideArrowRotRoot.localRotation = Quaternion.AngleAxis(targetAngle, Vector3.back);
-        }
-
-
-        public bool IsDevicePresent()
-        {
-            bool present = false;
-
-            List<XRDisplaySubsystem> subsystems = new List<XRDisplaySubsystem>();
-            SubsystemManager.GetInstances<XRDisplaySubsystem>(subsystems);
-            foreach(XRDisplaySubsystem subsystem in subsystems)
-            {
-                if(subsystem.running)
-                {
-                    present = true;
-                    break;
-                }
-            }
-
-            return present;
         }
 
         // 色変更

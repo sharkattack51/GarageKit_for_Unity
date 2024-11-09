@@ -46,6 +46,8 @@ namespace GarageKit
             DirectoryInfo srcDirInfo = new DirectoryInfo(src);
             if(!srcDirInfo.Exists)
                 return;
+            if(srcDirInfo.Name.Substring(0, 1) == ".")
+                return;
 
             DirectoryInfo destDirInfo = new DirectoryInfo(dest);
             if(destDirInfo.Exists == false)
@@ -60,6 +62,8 @@ namespace GarageKit
             {
                 string[] ignores = new string[]{ ".DS_Store", "Thumb.db" };
                 if(ignores.Contains(srcFileInfo.Name))
+                    continue;
+                if(srcFileInfo.Name.Substring(0, 1) == ".")
                     continue;
 
                 string dstFile = Path.Join(destDirInfo.FullName, srcFileInfo.Name);

@@ -29,10 +29,6 @@ namespace GarageKit
 
         protected virtual void Update()
         {
-            TimelinedSceneStateBase stateObj = AppMain.Instance.sceneStateManager.CurrentState.StateObj as TimelinedSceneStateBase;
-            if(stateObj == null || stateObj.IsPaused)
-                return;
-
             if(!isFadeStarted || isFadeEnded)
                 return;
             
