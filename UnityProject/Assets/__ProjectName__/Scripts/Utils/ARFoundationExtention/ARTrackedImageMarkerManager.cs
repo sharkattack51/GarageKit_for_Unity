@@ -5,9 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 #if USE_ARFOUNDATION
-using Unity.XR.CoreUtils;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using Unity.XR.CoreUtils;
 #endif
 
 namespace GarageKit.ARFoundationExtention
@@ -30,7 +30,7 @@ namespace GarageKit.ARFoundationExtention
         public List<ARTrackedImageMarkerData> trackedImageMarkerDatas;
 
         // 画面外判定でDestroyを行う
-        public bool destroyOnInvisible = false;
+        public bool destroyOnInvisible = true;
 
         // トラッキングされるイメージ数の制限
         public int numberOfTrackingImage = 1;
@@ -56,8 +56,8 @@ namespace GarageKit.ARFoundationExtention
             trackedImageManager = this.gameObject.GetComponent<ARTrackedImageManager>();
             trackedImageManager.trackedImagePrefab = null;
 
-            arCamera = FindObjectOfType<ARCameraManager>().GetComponent<Camera>();
-            sessionOrigin = FindObjectOfType<XROrigin>();
+            arCamera = FindFirstObjectByType<ARCameraManager>().GetComponent<Camera>();
+            sessionOrigin = FindFirstObjectByType<XROrigin>();
 
             worldOrigin = new GameObject("AR Foundation World Origin");
             worldOrigin.transform.position = Vector3.zero;
@@ -72,12 +72,12 @@ namespace GarageKit.ARFoundationExtention
 
         void OnEnable()
         {
-            trackedImageManager.trackedImagesChanged += OnTrackedImagesChanged;
+            trackedImageManager.trackablesChanged.AddListener(OnTrackedImagesChanged);
         }
 
         void OnDisable()
         {
-            trackedImageManager.trackedImagesChanged -= OnTrackedImagesChanged;
+            trackedImageManager.trackablesChanged.AddListener(OnTrackedImagesChanged);
         }
 
         void Update()
@@ -102,14 +102,11 @@ namespace GarageKit.ARFoundationExtention
         }
 
 
-        private void OnTrackedImagesChanged(ARTrackedImagesChangedEventArgs e)
+        private void OnTrackedImagesChanged(ARTrackablesChangedEventArgs<ARTrackedImage> e)
         {
             // 新規イメージの認識
             foreach(ARTrackedImage trackedImage in e.added)
-            {
-                if(trackedImage.trackingState != TrackingState.None)
-                    AddImageMarker(trackedImage);
-            }
+                AddImageMarker(trackedImage);
 
             // イメージ認識の継続更新
             foreach(ARTrackedImage trackedImage in e.updated)
@@ -125,30 +122,30 @@ namespace GarageKit.ARFoundationExtention
             }
 
             // イメージ認識のロスト
-            foreach(ARTrackedImage trackedImage in e.removed)
-                RemoveImageMarkerByImageName(trackedImage.referenceImage.name);
+            foreach(KeyValuePair<TrackableId, ARTrackedImage> kvp in e.removed)
+                RemoveImageMarkerByImageName(kvp.Value.referenceImage.name);
         }
 
         private void AddImageMarker(ARTrackedImage trackedImage)
         {
             trackedImage.destroyOnRemoval = true;
 
+            // トラッキングされるイメージ数の制限
             if(trackedImages.Count >= numberOfTrackingImage)
             {
-                // トラッキングされるイメージ数の制限
                 Debug.LogWarning("ARTrackedImageMarkerManager :: Limit of number recognized.");
                 return;
             }
 
+            // 同一イメージの複数認識を拒否
             if(trackedImages.ContainsKey(trackedImage.referenceImage.name))
             {
-                // 同一イメージの複数認識を拒否
                 Debug.LogWarning("ARTrackedImageMarkerManager :: Multiple identical markers have been recognized.");
                 return;
             }
 
-            // 画面外判定
-            if(IsOutOfView(trackedImage.transform.position))
+            // 画面外での生成をキャンセル
+            if(!IsOutOfView(trackedImage.pose.position))
                 return;
 
             Debug.LogFormat("ARTrackedImageMarkerManager :: ImageMarker added [{0}].", trackedImage.referenceImage.name);
@@ -181,6 +178,18 @@ namespace GarageKit.ARFoundationExtention
                 trackedImage.transform.localRotation);
         }
 
+        private void MakeContentAppearAt(XROrigin origin, Transform content, Vector3 position, Quaternion rotation)
+        {
+            if(content != null)
+            {
+                Transform originTransform = origin.transform;
+                origin.CameraFloorOffsetObject.transform.position += originTransform.position - position;
+                originTransform.position = content.position;
+
+                origin.transform.rotation = Quaternion.Inverse(rotation) * content.rotation;
+            }
+        }
+
         public void RemoveImageMarkerByImageName(string imageName)
         {
             if(trackedImages.ContainsKey(imageName))
@@ -210,14 +219,6 @@ namespace GarageKit.ARFoundationExtention
         {
             Vector3 vp = arCamera.WorldToViewportPoint(worldPosition);
             return (vp.x < 0.0f || vp.x > 1.0f || vp.y < 0.0f || vp.y > 1.0f);
-        }
-
-        // https://github.com/Unity-Technologies/arfoundation-samples/blob/main/Assets/Scripts/Runtime/XROriginExtensions.cs
-        private void MakeContentAppearAt(XROrigin origin, Transform content, Vector3 position, Quaternion rotation)
-        {
-            origin.CameraFloorOffsetObject.transform.position += origin.transform.position - position;
-            origin.transform.position = content.position;
-            origin.transform.rotation = Quaternion.Inverse(rotation) * content.rotation;
         }
 #endif
     }
