@@ -13,7 +13,7 @@ public class StartupState : StateBase
         // You can start the application safely.
         // Even if it is unnecessary, it is better to leave it better.
 
-        // srart app
+        // start app
         AppMain.Instance.sceneStateManager.ChangeState("WAIT");
     }
 
