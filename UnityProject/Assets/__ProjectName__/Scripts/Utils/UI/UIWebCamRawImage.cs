@@ -19,15 +19,23 @@ namespace GarageKit
         public int anisoLevel = 9;
         public FilterMode filteMode = FilterMode.Bilinear;
         public TextureWrapMode wrapMode = TextureWrapMode.Clamp;
-        public bool isAutoScreenAspect = true;
         public bool isMirror = false;
 
         public enum APP_ORIENTATION
         {
             PORTRAIT = 0,
-            LANDSCAPE
+            LANDSCAPE,
+            LANDSCAPE_LEFT
         }
         public APP_ORIENTATION appOrientation = APP_ORIENTATION.PORTRAIT;
+
+        public enum ASPECT_FIT_MODE
+        {
+            NONE = 0,
+            FIT_WIDTH,
+            FIT_HEIGHT
+        }
+        public ASPECT_FIT_MODE aspectFitMode = ASPECT_FIT_MODE.FIT_WIDTH;
 
         private WebCamDevice[] devices;
         private WebCamTexture webCamTexture;
@@ -129,15 +137,20 @@ namespace GarageKit
                 uiRawImage.texture = webCamTexture;
 
                 // アスペクトを自動調整
-                if(isAutoScreenAspect)
+                switch(aspectFitMode)
                 {
-                    float webcamAspect = (float)webCamTexture.width / (float)webCamTexture.height;
-                    float screenAspect =  (float)Screen.width / (float)Screen.height;
-                    rectTrans.localScale = new Vector3(webcamAspect / screenAspect, 1.0f);
+                    case ASPECT_FIT_MODE.FIT_WIDTH:
+                        rectTrans.localScale = new Vector3(1.0f, (float)webCamTexture.height / (float)webCamTexture.width);
+                        break;
 
-                    if(appOrientation == APP_ORIENTATION.PORTRAIT)
-                        rectTrans.localRotation = Quaternion.Euler(0.0f, 0.0f, -90.0f);
+                    case ASPECT_FIT_MODE.FIT_HEIGHT:
+                        rectTrans.localScale = new Vector3((float)webCamTexture.width / (float)webCamTexture.height, 1.0f);
+                        break;
                 }
+                if(appOrientation == APP_ORIENTATION.PORTRAIT)
+                    rectTrans.localRotation = Quaternion.Euler(0.0f, 0.0f, -90.0f);
+                else if(appOrientation == APP_ORIENTATION.LANDSCAPE_LEFT)
+                    rectTrans.localRotation = Quaternion.Euler(0.0f, 0.0f, 180.0f);
 
                 // 反転設定
 #if UNITY_IOS
@@ -147,7 +160,7 @@ namespace GarageKit
 #endif
                 if(isMirror)
                 {
-                    if(appOrientation == APP_ORIENTATION.LANDSCAPE)
+                    if(appOrientation == APP_ORIENTATION.LANDSCAPE || appOrientation == APP_ORIENTATION.LANDSCAPE_LEFT)
                         rectTrans.localScale = new Vector3(-rectTrans.localScale.x, rectTrans.localScale.y);
                     else if(appOrientation == APP_ORIENTATION.PORTRAIT)
                         rectTrans.localScale = new Vector3(rectTrans.localScale.x, -rectTrans.localScale.y);

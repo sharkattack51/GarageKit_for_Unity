@@ -181,8 +181,8 @@ namespace GarageKit
 #region SCOPED STRAGE ACCESS
         public static void RequestAllFilesAccessPermission()
         {
-#if UNITY_ANDROID
-            Debug.LogWarning("add to AndroidManifest.xml: <uses-permission android:name=\"android.permission.MANAGE_EXTERNAL_STORAGE\" />");
+#if UNITY_EDITOR
+            Debug.LogWarning("don't forget add to AndroidManifest.xml: <uses-permission android:name=\"android.permission.MANAGE_EXTERNAL_STORAGE\" />");
 #endif
 
 #if !UNITY_EDITOR && UNITY_ANDROID
