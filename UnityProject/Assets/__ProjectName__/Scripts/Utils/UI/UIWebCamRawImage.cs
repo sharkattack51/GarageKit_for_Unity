@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_ANDROID
+using UnityEngine.Android;
+#endif
 
 namespace GarageKit
 {
@@ -88,17 +91,24 @@ namespace GarageKit
                 || Application.platform == RuntimePlatform.WindowsPlayer
                 || Application.platform == RuntimePlatform.OSXEditor
                 || Application.platform == RuntimePlatform.OSXPlayer)
-                {
-                    appOrientation = APP_ORIENTATION.LANDSCAPE;
-                }
+            {
+                appOrientation = APP_ORIENTATION.LANDSCAPE;
+            }
 
-#if UNITY_ANDROID || UNITY_IPHONE
-            yield return Application.RequestUserAuthorization(UserAuthorization.WebCam);
-            
+#if UNITY_IPHONE
+            if(!Application.HasUserAuthorization(UserAuthorization.WebCam))
+                yield return Application.RequestUserAuthorization(UserAuthorization.WebCam);
+
             if(Application.HasUserAuthorization(UserAuthorization.WebCam))
             {
+#elif UNITY_ANDROID
+            if(!Permission.HasUserAuthorizedPermission(Permission.Camera))
+                Permission.RequestUserPermission(Permission.Camera);
+
+            if(Permission.HasUserAuthorizedPermission(Permission.Camera))
+            {
 #endif
-                yield return new WaitForEndOfFrame();
+                yield return null;
 
                 for(int i = 0; i < WebCamTexture.devices.Length; i++)
                     Debug.LogFormat("UIWebCamRawImage :: devices[{0}] name:{1}", i, WebCamTexture.devices[i].name);
@@ -150,7 +160,7 @@ namespace GarageKit
                 if(appOrientation == APP_ORIENTATION.PORTRAIT)
                     rectTrans.localRotation = Quaternion.Euler(0.0f, 0.0f, -90.0f);
                 else if(appOrientation == APP_ORIENTATION.LANDSCAPE_LEFT)
-                    rectTrans.localRotation = Quaternion.Euler(0.0f, 0.0f, 180.0f);
+                    rectTrans.localRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
 
                 // 反転設定
 #if UNITY_IOS

@@ -13,6 +13,32 @@ namespace GarageKit
 {
     public class CommonUtil
     {
+        public static string GetPlatformResourceRootDirectory(string appRootDir)
+        {
+            string dir;
+            if(Application.platform == RuntimePlatform.IPhonePlayer && !Application.isEditor)
+            {
+                dir = Path.Combine(Application.persistentDataPath, appRootDir);
+
+                //no backup flag
+                IOSUtil.NoBackupDocumentsFolder();
+            }
+            else if(Application.platform == RuntimePlatform.Android && !Application.isEditor)
+            {
+                dir = Path.Combine(AndroidUtil.ExternalStorageDir(), appRootDir);
+
+                // full file access permission
+                AndroidUtil.RequestAllFilesAccessPermission();
+            }
+            else
+                dir = Path.GetFullPath(Path.Combine(".", appRootDir));
+
+            if(!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            return dir;
+        }
+
         public static void OpenFolder(string path)
         {
             Process.Start(new ProcessStartInfo() {
