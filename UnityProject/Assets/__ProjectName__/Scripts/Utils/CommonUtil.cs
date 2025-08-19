@@ -13,14 +13,14 @@ namespace GarageKit
 {
     public class CommonUtil
     {
-        public static string GetPlatformResourceRootDirectory(string appRootDir)
+        public static string GetPlatformResourceRootDirectory(string appRootDir = "")
         {
             string dir;
             if(Application.platform == RuntimePlatform.IPhonePlayer && !Application.isEditor)
             {
                 dir = Path.Combine(Application.persistentDataPath, appRootDir);
 
-                //no backup flag
+                // no backup flag
                 IOSUtil.NoBackupDocumentsFolder();
             }
             else if(Application.platform == RuntimePlatform.Android && !Application.isEditor)

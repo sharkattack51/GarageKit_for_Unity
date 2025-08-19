@@ -1,5 +1,5 @@
 ﻿#define ENABLE_IOS_FILE_SHARING
-//#define DISABLE_BITCODE
+//#define DISABLE_IOS_BITCODE
 
 using System.IO;
 using System.Collections;
@@ -49,7 +49,7 @@ namespace GarageKit
                     pbx.ReadFromString(File.ReadAllText(projectPath));
                     string target = pbx.GetUnityMainTargetGuid();
 
-#if DISABLE_BITCODE
+#if DISABLE_IOS_BITCODE
                     pbx.SetBuildProperty(target, "ENABLE_BITCODE", "NO");
 #endif
 
