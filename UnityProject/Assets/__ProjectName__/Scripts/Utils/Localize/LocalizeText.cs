@@ -73,7 +73,7 @@ namespace GarageKit.Localize
 
             if(localizeFontScriptable == null)
             {
-                if(localizeFonts.Count > (int)lang)
+                if(localizeFonts != null &&  localizeFonts.Count > (int)lang)
                     uiText.font = localizeFonts[(int)lang];
             }
             else

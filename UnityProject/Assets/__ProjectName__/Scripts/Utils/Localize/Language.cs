@@ -6,7 +6,7 @@ namespace GarageKit.Localize
 {
     public enum LANGUAGE
     {
-        JP = 0, // Japanese
+        JA = 0, // Japanese
         EN, // English
         TC, // Traditional Chinese
         SC, // Simplified Chinese

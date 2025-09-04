@@ -13,6 +13,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+using Cysharp.Threading.Tasks;
+
 #if AVPRO_VIDEO
 using RenderHeads.Media.AVProVideo;
 #endif
@@ -87,11 +89,9 @@ namespace GarageKit
                 if(uiElapsedTxt != null)
                 {
                     // 経過時間の更新
-                    uiElapsedTxt.text = string.Format("{0:D2}:{1:D2} / {2:D2}:{3:D2}",
+                    uiElapsedTxt.text = string.Format("{0:D2}:{1:D2}",
                         (int)(player.Control.GetCurrentTime() / 60.0f),
-                        (int)(player.Control.GetCurrentTime() % 60.0f),
-                        (int)(player.Info.GetDuration() / 60.0f),
-                        (int)(player.Info.GetDuration() % 60.0f));
+                        (int)(player.Control.GetCurrentTime() % 60.0f));
                 }
             }
         }
@@ -188,10 +188,17 @@ namespace GarageKit
             seekEventTrg.triggers.Add(pointerUp);
         }
 
-        public bool Load(string moviePathOrUrl, MediaPathType pathType = MediaPathType.AbsolutePathOrURL, bool autoPlay = false)
+        public async UniTask<bool> LoadAsync(string moviePathOrUrl, MediaPathType pathType = MediaPathType.AbsolutePathOrURL, bool autoPlay = false)
         {
+            Clear();
+
             // 動画の読み込み
             movieLoaded = player.OpenMedia(pathType, moviePathOrUrl, autoPlay);
+
+            await UniTask.Delay(100);
+
+            player.Control.SeekFast(0.0);
+            uiSeekSlider.value = 0.0f;
 
             return movieLoaded;
         }

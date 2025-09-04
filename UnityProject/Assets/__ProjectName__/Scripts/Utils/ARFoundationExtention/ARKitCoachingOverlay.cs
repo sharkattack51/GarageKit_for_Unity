@@ -127,7 +127,7 @@ namespace GarageKit.ARFoundationExtention
             else
 #endif
             {
-                Debug.LogError("ARCoachingOverlayView is not supported by this device.");
+                Debug.LogWarning("ARCoachingOverlayView is not supported by this device.");
             }
         }
 

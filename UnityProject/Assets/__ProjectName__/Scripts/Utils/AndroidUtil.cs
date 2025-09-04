@@ -130,7 +130,7 @@ namespace GarageKit
 #endregion
 
 #region EXTERNAL_ACTIVITY
-        public static void OpenActivity(string packageName, string className, bool asNewTask)
+        public static void OpenActivity(string packageName, string className = "com.unity3d.player.UnityPlayerActivity", bool asNewTask = true)
         {
 #if !UNITY_EDITOR && UNITY_ANDROID
             AndroidJavaClass cUnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
@@ -140,7 +140,7 @@ namespace GarageKit
             oIntent.Call<AndroidJavaObject>("setAction", "android.intent.action.VIEW");
             if(asNewTask)
                 oIntent.Call<AndroidJavaObject>("setFlags", 0x10000000); // FLAG_ACTIVITY_NEW_TASK
-            oIntent.Call<AndroidJavaObject>("setClassName", packageName, packageName + "." + className);
+            oIntent.Call<AndroidJavaObject>("setClassName", packageName, className);
             oCurrentActivity.Call("startActivity", oIntent);
 
             oIntent.Dispose();
@@ -181,8 +181,8 @@ namespace GarageKit
 #region SCOPED STRAGE ACCESS
         public static void RequestAllFilesAccessPermission()
         {
-#if UNITY_EDITOR
-            Debug.LogWarning("don't forget add to AndroidManifest.xml: <uses-permission android:name=\"android.permission.MANAGE_EXTERNAL_STORAGE\" />");
+#if UNITY_ANDROID
+            Debug.LogWarning("add to AndroidManifest.xml: <uses-permission android:name=\"android.permission.MANAGE_EXTERNAL_STORAGE\" />");
 #endif
 
 #if !UNITY_EDITOR && UNITY_ANDROID
