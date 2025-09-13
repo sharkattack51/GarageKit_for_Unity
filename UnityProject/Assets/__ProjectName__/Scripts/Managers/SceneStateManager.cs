@@ -39,6 +39,9 @@ namespace GarageKit
         private string fromStateName = "";
         public string FromStateName { get{ return fromStateName; } }
 
+        private string toStateName = "";
+        public string ToStateName { get{ return toStateName; } }
+
         private bool stateChanging = false;
         public bool StateChanging { get{ return stateChanging; } }
 
@@ -99,7 +102,10 @@ namespace GarageKit
             asyncChangeFading = false;
 
             if(currentState != null)
+            {
                 fromStateName = currentState.StateName;
+                toStateName = stateName;
+            }
 
             StartCoroutine(ChangeStateCoroutine(stateName, context));
         }
@@ -115,7 +121,10 @@ namespace GarageKit
                     asyncChangeFading = true;
 
                     if(currentState != null)
+                    {
                         fromStateName = currentState.StateName;
+                        toStateName = stateName;
+                    }
 
                     StartCoroutine(ChangeStateCoroutine(stateName, context));
                 }

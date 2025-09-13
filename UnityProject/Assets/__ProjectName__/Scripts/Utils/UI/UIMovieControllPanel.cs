@@ -115,6 +115,9 @@ namespace GarageKit
                 player.Stop();
                 player.CloseMedia();
             }
+
+            Resources.UnloadUnusedAssets();
+            GC.Collect();
         }
 
         public void Setup()
