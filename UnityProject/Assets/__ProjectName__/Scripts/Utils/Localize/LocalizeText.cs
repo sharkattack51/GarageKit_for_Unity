@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+
 
 #if USE_TMP
 using TMPro;
@@ -54,7 +56,7 @@ namespace GarageKit.Localize
 
         void Update()
         {
-            if(Application.isEditor)
+            if(Application.isEditor && !Application.isPlaying)
                 Localize(this.lang);
         }
 
@@ -84,9 +86,9 @@ namespace GarageKit.Localize
             }
 
             if(localizeStrings.Count == 1)
-                uiText.text = localizeStrings[0];
+                uiText.SetText(localizeStrings[0]);
             else if(localizeStrings.Count > (int)lang)
-                uiText.text = localizeStrings[(int)lang];
+                uiText.SetText(localizeStrings[(int)lang]);
         }
     }
 }

@@ -89,9 +89,14 @@ namespace GarageKit
                 if(uiElapsedTxt != null)
                 {
                     // 経過時間の更新
-                    uiElapsedTxt.text = string.Format("{0:D2}:{1:D2}",
+                    string elapsed = string.Format("{0:D2}:{1:D2}",
                         (int)(player.Control.GetCurrentTime() / 60.0f),
                         (int)(player.Control.GetCurrentTime() % 60.0f));
+#if TMP
+                    uiElapsedTxt.SetText(elapsed); 
+#else
+                    uiElapsedTxt.text = elapsed;
+#endif
                 }
             }
         }

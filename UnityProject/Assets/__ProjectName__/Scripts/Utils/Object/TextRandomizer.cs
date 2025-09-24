@@ -80,16 +80,16 @@ namespace GarageKit
                 charTable.Add(charSeq);
             }
 
-            uiText.text = "";
+            uiText.SetText("");
             yield return new WaitForSeconds(delay);
 
             int frame = 0;
             int length = charTable[0].Count;
             while(frame < length)
             {
-                uiText.text = "";
+                uiText.SetText("");
                 for(int i = 0; i < goalText.Length; i++)
-                    uiText.text += charTable[i][frame];
+                    uiText.SetText(uiText.text + charTable[i][frame]);
 
                 yield return new WaitForSeconds(tick);
 

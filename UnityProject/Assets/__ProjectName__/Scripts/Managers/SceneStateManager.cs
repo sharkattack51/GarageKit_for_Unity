@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -51,6 +51,7 @@ namespace GarageKit
         public bool StateInitted { get{ return currentState != null; } }
 
         private bool isAsync = false;
+        private string displayStateName;
 
 
         protected override void Awake()
@@ -77,7 +78,11 @@ namespace GarageKit
                 return;
 
             // Display current state name
-            this.gameObject.name = "SceneStateManager [" + currentState.StateName + "]";
+            if(displayStateName != currentState.StateName)
+            {
+                displayStateName = currentState.StateName;
+                this.gameObject.name = "SceneStateManager [" + displayStateName + "]";
+            }
 
             // Update curent state
             if(currentState.StateObj != null && currentState.StateObj.IsUpdateEnable)
