@@ -14,9 +14,6 @@ Logs
 /*.userprefs
 .vscode
 
-/Assets/Demigiant
-/Assets/TextMesh Pro
-
 # for Mac
 .DS_Store
 
