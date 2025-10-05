@@ -15,8 +15,11 @@ namespace GarageKit
         public static Camera FindCameraForLayer(int layer)
         {
             int layerMask = (1 << layer);
-            Camera[] cameras = GameObject.FindObjectsOfType(typeof(Camera)) as Camera[];
-
+#if UNITY_2023_2_OR_NEWER
+            Camera[] cameras = GameObject.FindObjectsByType<Camera>(FindObjectsSortMode.None);
+#else
+            Camera[] cameras = GameObject.FindObjectsOfType<Camera>();
+#endif
             for(int i = 0; i < cameras.Length; i++)
             {
                 if((cameras[i].cullingMask & layerMask) != 0)
@@ -31,7 +34,11 @@ namespace GarageKit
         /// </summary>
         public static List<Camera> GetCameraListByDepth()
         {
-            List<Camera> cameras = new List<Camera>(Camera.FindObjectsOfType<Camera>());
+#if UNITY_2023_2_OR_NEWER
+            List<Camera> cameras = new List<Camera>(GameObject.FindObjectsByType<Camera>(FindObjectsSortMode.None));
+#else
+            List<Camera> cameras = new List<Camera>(GameObject.FindObjectsOfType<Camera>());
+#endif
             cameras.Sort((a, b) => { return a.depth < b.depth ? -1 : 1; });
 
             return cameras;

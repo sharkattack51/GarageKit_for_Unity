@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor.Build;
+
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -38,7 +41,10 @@ namespace GarageKit
                 if(playerSettingsProductName == "" || playerSettingsProductName != PlayerSettings.productName)
                     playerSettingsProductName = PlayerSettings.productName;
 
-#if UNITY_2021_1_OR_NEWER
+#if UNITY_6000_2_OR_NEWER
+                if(PlayerSettings.GetApiCompatibilityLevel(NamedBuildTarget.Standalone) != ApiCompatibilityLevel.NET_Unity_4_8)
+                    Debug.LogError("StandalonePlayerResolutionHelper :: PlayerSettings.ApiCompatibilityLevel to .NET Framework");
+#elif UNITY_2021_1_OR_NEWER
                 if(PlayerSettings.GetApiCompatibilityLevel(BuildTargetGroup.Standalone) != ApiCompatibilityLevel.NET_Unity_4_8)
                     Debug.LogError("StandalonePlayerResolutionHelper :: PlayerSettings.ApiCompatibilityLevel to .NET Framework");
 #endif

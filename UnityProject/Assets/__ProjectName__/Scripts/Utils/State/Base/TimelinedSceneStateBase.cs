@@ -113,7 +113,11 @@ namespace GarageKit
 
             // 再生中のAudioを一時停止
             managedPausingAudios = new List<AudioSource>();
+#if UNITY_2023_2_OR_NEWER
+            AudioSource[] sources = FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+#else
             AudioSource[] sources = FindObjectsOfType<AudioSource>();
+#endif
             foreach(AudioSource source in sources)
             {
                 if(source.isPlaying)
@@ -125,7 +129,11 @@ namespace GarageKit
 
             // 再生中のAnimationを一時停止
             managedPausingAnimations = new Dictionary<Animation, float>();
+#if UNITY_2023_2_OR_NEWER
+            Animation[] anims = FindObjectsByType<Animation>(FindObjectsSortMode.None);
+#else
             Animation[] anims = FindObjectsOfType<Animation>();
+#endif
             foreach(Animation anim in anims)
             {
                 if(anim.isPlaying)
@@ -137,7 +145,11 @@ namespace GarageKit
 
             // 再生中のAnimatorを一時停止
             managedPausingAnimators = new List<Animator>();
+#if UNITY_2023_2_OR_NEWER
+            Animator[] animators = FindObjectsByType<Animator>(FindObjectsSortMode.None);
+#else
             Animator[] animators = FindObjectsOfType<Animator>();
+#endif
             foreach(Animator animator in animators)
             {
                 managedPausingAnimators.Add(animator);

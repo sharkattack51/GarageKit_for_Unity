@@ -98,7 +98,11 @@ namespace GarageKit
 
             if(masterMixerGroup != null)
             {
+#if UNITY_2023_2_OR_NEWER
+                AudioSource[] audioSources = FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+#else
                 AudioSource[] audioSources = FindObjectsOfType<AudioSource>();
+#endif
                 foreach(AudioSource source in audioSources)
                     source.outputAudioMixerGroup = masterMixerGroup;
             }

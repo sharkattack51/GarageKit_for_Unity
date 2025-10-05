@@ -35,7 +35,11 @@ namespace GarageKit
             }
             else
             {
+#if UNITY_2023_2_OR_NEWER
+                sceneRepository = FindFirstObjectByType<SceneRepositoryBase>();
+#else
                 sceneRepository = FindObjectOfType<SceneRepositoryBase>();
+#endif
                 this.SceneLoaded();
             }
         }
@@ -44,8 +48,11 @@ namespace GarageKit
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
 
+#if UNITY_2023_2_OR_NEWER
+            sceneRepository = FindFirstObjectByType<SceneRepositoryBase>();
+#else
             sceneRepository = FindObjectOfType<SceneRepositoryBase>();
-
+#endif
             this.SceneLoaded();
         }
 

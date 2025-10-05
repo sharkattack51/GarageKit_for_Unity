@@ -70,7 +70,11 @@ namespace GarageKit
 
         public static void SetAllInputType(INPUT_TYPE type)
         {
-            ButtonObjectEvent[] btns = FindObjectsOfType<ButtonObjectEvent>();
+#if UNITY_2023_2_OR_NEWER
+            ButtonObjectEvent[] btns = GameObject.FindObjectsByType<ButtonObjectEvent>(FindObjectsSortMode.None);
+#else
+            ButtonObjectEvent[] btns = GameObject.FindObjectsOfType<ButtonObjectEvent>();
+#endif
             foreach(ButtonObjectEvent btn in btns)
                 btn.inputType = type;
         }
