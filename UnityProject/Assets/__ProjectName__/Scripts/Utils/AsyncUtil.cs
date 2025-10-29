@@ -54,9 +54,9 @@ namespace GarageKit
             {
                 tex = new Texture2D(2, 2, texFormat, mipChain);
                 tex.LoadImage(req.downloadHandler.data);
-                tex.wrapModeU = TextureWrapMode.Repeat;
-                tex.wrapModeV = TextureWrapMode.Mirror;
-                tex.filterMode = FilterMode.Bilinear;
+                tex.wrapModeU = wrapModeU;
+                tex.wrapModeV = wrapModeV;
+                tex.filterMode = filterMode;
                 tex.Apply();
             }
 
