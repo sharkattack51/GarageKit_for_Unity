@@ -35,6 +35,36 @@ namespace GarageKit
             return tex;
         }
 
+        public static async UniTask<Texture2D> LoadTextureWithOptionAsync(string path, TextureFormat texFormat, bool mipChain, TextureWrapMode wrapModeU, TextureWrapMode wrapModeV, FilterMode filterMode, CancellationToken ct = default)
+        {
+            Texture2D tex = null;
+
+            UnityWebRequest req = UnityWebRequest.Get("file://" + path);
+            try
+            {
+                ct.ThrowIfCancellationRequested();
+                await req.SendWebRequest();
+            }
+            catch(Exception err)
+            {
+                throw new Exception(string.Format("texture load error: {0} [ {1} ]", path, err.Message));
+            }
+
+            if(req.result == UnityWebRequest.Result.Success)
+            {
+                tex = new Texture2D(2, 2, texFormat, mipChain);
+                tex.LoadImage(req.downloadHandler.data);
+                tex.wrapModeU = TextureWrapMode.Repeat;
+                tex.wrapModeV = TextureWrapMode.Mirror;
+                tex.filterMode = FilterMode.Bilinear;
+                tex.Apply();
+            }
+
+            req.Dispose();
+
+            return tex;
+        }
+
         public static async UniTask<Texture2D[]> LoadTextureAllAsync(string[] paths, CancellationToken ct = default)
         {
             List<UniTask<Texture2D>> tasks = new List<UniTask<Texture2D>>();
