@@ -22,7 +22,7 @@ namespace GarageKit
 
         public SceneStateData(string stateName, StateBase stateObj, bool asInitial)
         {
-            this.stateName = StateName;
+            this.stateName = stateName;
             this.stateObj = stateObj;
             this.asInitial = asInitial;
         }
