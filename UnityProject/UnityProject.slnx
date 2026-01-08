@@ -1,0 +1,21 @@
+﻿<Solution>
+  <Project Path="UniTask.Linq.csproj" />
+  <Project Path="UnityEngine.UI.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="UnityEditor.UI.csproj" />
+  <Project Path="UniTask.csproj" />
+  <Project Path="UnityEngine.TestRunner.csproj" />
+  <Project Path="UnityEditor.TestRunner.csproj" />
+  <Project Path="Unity.VisualStudio.Editor.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="Unity.TextMeshPro.csproj" />
+  <Project Path="Unity.TextMeshPro.Editor.csproj" />
+  <Project Path="Tayx.Graphy.csproj" />
+  <Project Path="Tayx.Graphy.Editor.csproj" />
+  <Project Path="IngameDebugConsole.Runtime.csproj" />
+  <Project Path="IngameDebugConsole.Editor.csproj" />
+  <Project Path="UniTask.Addressables.csproj" />
+  <Project Path="UniTask.DOTween.csproj" />
+  <Project Path="UniTask.Editor.csproj" />
+  <Project Path="UniTask.TextMeshPro.csproj" />
+</Solution>

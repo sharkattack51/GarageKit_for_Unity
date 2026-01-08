@@ -21,11 +21,11 @@
       "dependencies": {}
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.23",
+      "version": "2.0.26",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.test-framework": "1.1.9"
+        "com.unity.test-framework": "1.1.33"
       },
       "url": "https://packages.unity.com"
     },
@@ -49,7 +49,7 @@
       }
     },
     "com.yasirkula.ingamedebugconsole": {
-      "version": "1.8.2",
+      "version": "1.8.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {},

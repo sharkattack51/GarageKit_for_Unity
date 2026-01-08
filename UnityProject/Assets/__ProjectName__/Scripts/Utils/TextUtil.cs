@@ -105,7 +105,7 @@ namespace GarageKit
         /// </summary>
         public static string RemoveEOL(string text)
         {
-            return text.Replace("\n", "");
+            return text.Replace("\\n", "").Replace("\n", "").Replace("\\r", "").Replace("\r", "");
         }
 
         /// <summary>
