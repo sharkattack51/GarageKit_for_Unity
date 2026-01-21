@@ -46,9 +46,12 @@ namespace GarageKit
         public Sprite playSprite;
         public Sprite pauseSprite;
 
-        private bool movieLoaded = false;
+        private bool isLoading = false;
+        private bool isLoaded = false;
         private bool isSeeking = false;
+        private bool isAutoPlay = false;
 
+        public Action OnReadyToPlay;
         public Action OnPlay;
         public Action OnPause;
         public Action<float> OnSeekStart;
@@ -83,7 +86,7 @@ namespace GarageKit
                 }
 
                 // シークバーの更新
-                if(movieLoaded && player.Control.CanPlay() && !player.Control.IsPaused())
+                if(isLoaded && player.Control.CanPlay() && !player.Control.IsPaused())
                     uiSeekSlider.value = (float)player.Control.GetCurrentTime() / (float)player.Info.GetDuration();
 
                 if(uiElapsedTxt != null)
@@ -103,7 +106,7 @@ namespace GarageKit
 
         void OnEnable()
         {
-            if(movieLoaded && player.Control.CanPlay())
+            if(isLoaded && player.Control.CanPlay())
                 uiSeekSlider.value = (float)player.Control.GetCurrentTime() / (float)player.Info.GetDuration();
         }
 
@@ -115,6 +118,11 @@ namespace GarageKit
 
         public void Clear()
         {
+            isLoading = false;
+            isLoaded = false;
+            isSeeking = false;
+            isAutoPlay = false;
+
             if(player != null)
             {
                 player.Stop();
@@ -132,6 +140,11 @@ namespace GarageKit
             player.Events.AddListener((mp, e, err) => {
                 switch(e)
                 {
+                    case MediaPlayerEvent.EventType.ReadyToPlay:
+                        OnReadyToPlayInternal();
+                        OnReadyToPlay?.Invoke();
+                        break;
+
                     case MediaPlayerEvent.EventType.FinishedPlaying:
                         OnFinishedPlaying?.Invoke();
                         break;
@@ -145,7 +158,7 @@ namespace GarageKit
             uiPlayPauseBtn.onClick.AddListener(() => {
                 if(!player.Control.IsPlaying() || player.Control.IsFinished())
                 {
-                    if(!movieLoaded)
+                    if(!isLoaded)
                         Debug.LogWarning("not loaded movie. please use UIMovieControllPanel.Load()");
 
                     OnPlay?.Invoke();
@@ -198,17 +211,31 @@ namespace GarageKit
 
         public async UniTask<bool> LoadAsync(string moviePathOrUrl, MediaPathType pathType = MediaPathType.AbsolutePathOrURL, bool autoPlay = false)
         {
+            if(isLoading)
+                return isLoaded;
+
             Clear();
+            isLoading = true;
+            isAutoPlay = autoPlay;
+
+            await UniTask.DelayFrame(1);
 
             // 動画の読み込み
-            movieLoaded = player.OpenMedia(pathType, moviePathOrUrl, autoPlay);
-
+            isLoaded = player.OpenMedia(pathType, moviePathOrUrl, false);
             await UniTask.Delay(100);
 
+            isLoading = false;
+
+            return isLoaded;
+        }
+
+        private void OnReadyToPlayInternal()
+        {
             player.Control.SeekFast(0.0);
             uiSeekSlider.value = 0.0f;
 
-            return movieLoaded;
+            if(isAutoPlay)
+                player.Play();
         }
 #endif
     }
