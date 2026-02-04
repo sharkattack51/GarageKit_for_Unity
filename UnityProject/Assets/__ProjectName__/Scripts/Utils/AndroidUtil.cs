@@ -179,13 +179,8 @@ namespace GarageKit
         }
 
 #region SCOPED STRAGE ACCESS
-        private static bool AllFilesAccessPermissionRequested = false;
-        public static void RequestAllFilesAccessPermission(bool requestAlways = false)
+        public static void RequestAllFilesAccessPermission()
         {
-            if(!requestAlways && AllFilesAccessPermissionRequested)
-                return;
-            AllFilesAccessPermissionRequested = true;
-
 #if UNITY_ANDROID
             Debug.LogWarning("add to AndroidManifest.xml: <uses-permission android:name=\"android.permission.MANAGE_EXTERNAL_STORAGE\" />");
 #endif
@@ -218,6 +213,23 @@ namespace GarageKit
                     Debug.LogWarning("restart app for set all files access permission.");
                     Application.Quit();
                 }
+            }
+#endif
+        }
+#endregion
+
+#region WIFI SETTING
+        public static void OpenWifiSettingActivity(bool asNewTask = true)
+        {
+#if !UNITY_EDITOR && UNITY_ANDROID
+            using(AndroidJavaClass cUnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            using(AndroidJavaObject oCurrentActivity = cUnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+            using(AndroidJavaObject oIntent = new AndroidJavaObject("android.content.Intent", "android.settings.WIFI_SETTINGS"))
+            {
+                if(asNewTask)
+                    oIntent.Call<AndroidJavaObject>("setFlags", 0x10000000); // FLAG_ACTIVITY_NEW_TASK
+
+                oCurrentActivity.Call("startActivity", oIntent);
             }
 #endif
         }
