@@ -19,6 +19,11 @@ namespace GarageKit
             yield return CaptureRect("", fileName, new Rect(0, 0, Screen.width, Screen.height), withTimestamp);
         }
 
+        public static IEnumerator CaptureRect(string dirPath, string fileName, bool withTimestamp)
+        {
+            yield return CaptureRect(dirPath, fileName, new Rect(0, 0, Screen.width, Screen.height), withTimestamp);
+        }
+
         public static IEnumerator CaptureRect(string dirPath, string fileName, Rect range, bool withTimestamp)
         {
             yield return new WaitForEndOfFrame();
@@ -59,7 +64,8 @@ namespace GarageKit
                 fileName = Path.GetFileNameWithoutExtension(fileName) + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ext;
 
             // 保存
-            File.WriteAllBytes(Path.Combine(dirPath, fileName), bytes);
+            latestCaptureFile = Path.Combine(dirPath, fileName);
+            File.WriteAllBytes(latestCaptureFile, bytes);
 
             Texture2D.Destroy(capture);
             capture = null;
@@ -67,5 +73,8 @@ namespace GarageKit
             crop = null;
             bytes = new byte[0];
         }
+
+        private static string latestCaptureFile;
+        public static string LatestCaptureFile { get{ return latestCaptureFile; } }
     }
 }
