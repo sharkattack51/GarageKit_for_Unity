@@ -41,10 +41,15 @@ namespace GarageKit
 
         public static void OpenFolder(string path)
         {
+            string cmd = "open";
+            if(Application.platform == RuntimePlatform.WindowsEditor
+                || Application.platform == RuntimePlatform.WindowsPlayer)
+                cmd = "start";
+
             Process.Start(new ProcessStartInfo() {
                 FileName = path,
                 UseShellExecute = true,
-                Verb = "open"
+                Verb = cmd
             });
         }
 

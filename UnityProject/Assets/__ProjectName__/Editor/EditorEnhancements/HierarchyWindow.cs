@@ -224,11 +224,13 @@ namespace Tenebrous.EditorEnhancements
         private void Draw( int pInstanceID, Rect pDrawingRect )
         {
             // called per-line in the hierarchy window
+
 #if UNITY_6000_3_OR_NEWER
             GameObject gameObject = EditorUtility.EntityIdToObject( pInstanceID ) as GameObject;
 #else
             GameObject gameObject = EditorUtility.InstanceIDToObject( pInstanceID ) as GameObject;
 #endif
+
             if( gameObject == null )
                 return;
 
