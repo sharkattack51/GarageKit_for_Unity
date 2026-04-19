@@ -1,18 +1,16 @@
 {
   "dependencies": {
     "com.cysharp.unitask": {
-      "version": "2.5.10",
+      "version": "file:com.cysharp.unitask",
       "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://package.openupm.com"
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.tayx.graphy": {
-      "version": "3.0.5",
+      "version": "file:com.tayx.graphy",
       "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://package.openupm.com"
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.unity.ext.nunit": {
       "version": "2.0.5",
@@ -21,7 +19,7 @@
       "dependencies": {}
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.26",
+      "version": "2.0.27",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -49,11 +47,10 @@
       }
     },
     "com.yasirkula.ingamedebugconsole": {
-      "version": "1.8.4",
+      "version": "file:com.yasirkula.ingamedebugconsole",
       "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://package.openupm.com"
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
