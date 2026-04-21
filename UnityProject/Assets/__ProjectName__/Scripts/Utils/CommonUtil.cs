@@ -41,16 +41,24 @@ namespace GarageKit
 
         public static void OpenFolder(string path)
         {
-            string cmd = "open";
             if(Application.platform == RuntimePlatform.WindowsEditor
                 || Application.platform == RuntimePlatform.WindowsPlayer)
-                cmd = "start";
-
-            Process.Start(new ProcessStartInfo() {
-                FileName = path,
-                UseShellExecute = true,
-                Verb = cmd
-            });
+            {
+                Process.Start(new ProcessStartInfo() {
+                    FileName = "cmd",
+                    Arguments = string.Format("/c start {0}", path),
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                });
+            }
+            else
+            {
+                Process.Start(new ProcessStartInfo() {
+                    Verb = "open",
+                    FileName = path,
+                    UseShellExecute = true
+                });
+            }
         }
 
         public static async UniTask CopyDirectoryAsync(string src, string dest, bool overwriteAsLatest = true, CancellationToken ct = default)
