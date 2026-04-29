@@ -20,7 +20,7 @@ namespace GarageKit
             for(int i = 0; i < rootObject.transform.childCount; i++)
             {
                 GameObject child = rootObject.transform.GetChild(i).gameObject;
-                child.layer = rootObject.layer;
+                child.layer = layer;
 
                 SetLayerChildren(child, child.layer);
 
