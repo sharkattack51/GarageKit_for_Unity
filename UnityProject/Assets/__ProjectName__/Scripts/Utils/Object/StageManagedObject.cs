@@ -31,6 +31,7 @@ namespace GarageKit
                 managedList.Remove(this);
         }
 
+
         public void On()
         {
             this.gameObject.SetActive(true);
@@ -41,10 +42,17 @@ namespace GarageKit
             this.gameObject.SetActive(false);
         }
 
+
         public static void AllOff()
         {
             foreach(StageManagedObject obj in managedList)
                 obj.Off();
+        }
+
+        public static void Alone(StageManagedObject view)
+        {
+            AllOff();
+            view.On();
         }
 
         public static void ListOn(List<StageManagedObject> ons)

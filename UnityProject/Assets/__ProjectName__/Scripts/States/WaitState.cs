@@ -1,24 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using GarageKit;
 
 public class WaitState : AsyncStateBase, ISequentialState
 {
     [Header("WaitState")]
-    public Text sceneText;
-    public Text timerText;
-    public Text messageText;
+    public StageManagedObject view;
 
 
     public override void StateStart(object context)
     {
         base.StateStart(context);
 
-        sceneText.text = "this is [Wait] state.";
-        timerText.text = "";
-        messageText.text = "push [Space] : next state";
+        StageManagedObject.Alone(view);
     }
 
     public override void StateUpdate()

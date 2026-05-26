@@ -16,21 +16,33 @@ namespace GarageKit
         {
             Texture2D tex = null;
 
-            UnityWebRequest req = UnityWebRequestTexture.GetTexture("file://" + path);
+            if(!path.Contains("file://"))
+                path = "file://" + path;
+            UnityWebRequest req = UnityWebRequestTexture.GetTexture(path);
             try
             {
-                ct.ThrowIfCancellationRequested();
-                await req.SendWebRequest();
+                await req.SendWebRequest().WithCancellation(ct);
+
+                if(req.result == UnityWebRequest.Result.Success)
+                    tex = DownloadHandlerTexture.GetContent(req);
+                else
+                    Debug.LogWarningFormat("texture load error: {0} [ {1} ]", path, req.error);
+            }
+            catch(OperationCanceledException)
+            {
+                Debug.LogWarningFormat("texture load error: {0} [ {1} ]", path, "operation canceled");
+                throw;
             }
             catch(Exception err)
             {
-                throw new Exception(string.Format("texture load error: {0} [ {1} ]", path, err.Message));
+                Debug.LogWarningFormat("texture load error: {0} [ {1} ]", path, err.Message);
+                throw;
             }
-
-            if(req.result == UnityWebRequest.Result.Success)
-                tex = DownloadHandlerTexture.GetContent(req);
-
-            req.Dispose();
+            finally
+            {
+                req.Dispose();
+                req = null;
+            }
 
             return tex;
         }
@@ -39,28 +51,40 @@ namespace GarageKit
         {
             Texture2D tex = null;
 
-            UnityWebRequest req = UnityWebRequest.Get("file://" + path);
+            if(!path.Contains("file://"))
+                path = "file://" + path;
+            UnityWebRequest req = UnityWebRequest.Get(path);
             try
             {
-                ct.ThrowIfCancellationRequested();
-                await req.SendWebRequest();
+                await req.SendWebRequest().WithCancellation(ct);
+
+                if(req.result == UnityWebRequest.Result.Success)
+                {
+                    tex = new Texture2D(2, 2, texFormat, mipChain);
+                    tex.LoadImage(req.downloadHandler.data);
+                    tex.wrapModeU = wrapModeU;
+                    tex.wrapModeV = wrapModeV;
+                    tex.filterMode = filterMode;
+                    tex.Apply();
+                }
+                else
+                    Debug.LogWarningFormat("texture load error: {0} [ {1} ]", path, req.error);
+            }
+            catch(OperationCanceledException)
+            {
+                Debug.LogWarningFormat("texture load error: {0} [ {1} ]", path, "operation canceled");
+                throw;
             }
             catch(Exception err)
             {
-                throw new Exception(string.Format("texture load error: {0} [ {1} ]", path, err.Message));
+                Debug.LogWarningFormat("texture load error: {0} [ {1} ]", path, err.Message);
+                throw;
             }
-
-            if(req.result == UnityWebRequest.Result.Success)
+            finally
             {
-                tex = new Texture2D(2, 2, texFormat, mipChain);
-                tex.LoadImage(req.downloadHandler.data);
-                tex.wrapModeU = wrapModeU;
-                tex.wrapModeV = wrapModeV;
-                tex.filterMode = filterMode;
-                tex.Apply();
+                req.Dispose();
+                req = null;
             }
-
-            req.Dispose();
 
             return tex;
         }
@@ -71,7 +95,6 @@ namespace GarageKit
             foreach(string path in paths)
                 tasks.Add(LoadTextureAsync(path, ct));
 
-            ct.ThrowIfCancellationRequested();
             return await UniTask.WhenAll(tasks);
         }
 
@@ -82,18 +105,28 @@ namespace GarageKit
             UnityWebRequest req = UnityWebRequest.Get(url);
             try
             {
-                ct.ThrowIfCancellationRequested();
-                await req.SendWebRequest();
+                await req.SendWebRequest().WithCancellation(ct);
+
+                if(req.result == UnityWebRequest.Result.Success)
+                    res = req.downloadHandler.text;
+                else
+                    Debug.LogWarningFormat("download error: {0} [ {1} ]", url, req.error);
+            }
+            catch(OperationCanceledException)
+            {
+                Debug.LogWarningFormat("download error: {0} [ {1} ]", url, "operation canceled");
+                throw;
             }
             catch(Exception err)
             {
-                throw new Exception(string.Format("download error: {0} [ {1} ]", url, err.Message));
+                Debug.LogWarningFormat("download error: {0} [ {1} ]", url, err.Message);
+                throw;
             }
-
-            if(req.result == UnityWebRequest.Result.Success)
-                res = req.downloadHandler.text;
-
-            req.Dispose();
+            finally
+            {
+                req.Dispose();
+                req = null;
+            }
 
             return res;
         }
@@ -103,22 +136,38 @@ namespace GarageKit
             UnityWebRequest req = UnityWebRequest.Get(url);
             try
             {
-                ct.ThrowIfCancellationRequested();
-                await req.SendWebRequest();
-            }
-            catch(Exception err)
-            {
-                throw new Exception(string.Format("download file error: {0} [ {1} ]", url, err.Message));
-            }
+                await req.SendWebRequest().WithCancellation(ct);
 
-            if(req.result == UnityWebRequest.Result.Success)
+                if(req.result == UnityWebRequest.Result.Success)
+                {
+                    if(File.Exists(dstFile))
+                        File.Delete(dstFile);
+                    await File.WriteAllBytesAsync(dstFile, req.downloadHandler.data, ct);
+                }
+                else
+                    Debug.LogWarningFormat("download error: {0} [ {1} ]", url, req.error);
+            }
+            catch(OperationCanceledException)
             {
                 if(File.Exists(dstFile))
                     File.Delete(dstFile);
-                await File.WriteAllBytesAsync(dstFile, req.downloadHandler.data, ct);
-            }
 
-            req.Dispose();
+                Debug.LogWarningFormat("download error: {0} [ {1} ]", url, "operation canceled");
+                throw;
+            }
+            catch(Exception err)
+            {
+                if(File.Exists(dstFile))
+                    File.Delete(dstFile);
+
+                Debug.LogWarningFormat("download error: {0} [ {1} ]", url, err.Message);
+                throw;
+            }
+            finally
+            {
+                req.Dispose();
+                req = null;
+            }
         }
 
         public static async UniTask DownloadFileAllAsync(string[] urls, string[] dstFiles, CancellationToken ct = default)
@@ -130,7 +179,6 @@ namespace GarageKit
             for(int i = 0; i < urls.Length; i++)
                 tasks.Add(DownloadFileAsync(urls[i], dstFiles[i], ct));
 
-            ct.ThrowIfCancellationRequested();
             await UniTask.WhenAll(tasks);
         }
     }

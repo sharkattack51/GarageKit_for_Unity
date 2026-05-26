@@ -65,7 +65,8 @@ namespace GarageKit
         {
             bool copied = false;
 
-            try{
+            try
+            {
                 await UniTask.RunOnThreadPool(() => {
                     CopyDirectory(src, dest, overwriteAsLatest);
                 }, true, ct);
@@ -142,6 +143,12 @@ namespace GarageKit
             return Enumerable.Range(1, int.MaxValue)
                 .Select(i => Path.Combine(dir, $"{name} ({i}){ext}"))
                 .First(p => !File.Exists(p));
+        }
+
+        public static async UniTask GCAsync()
+        {
+            await Resources.UnloadUnusedAssets();
+            GC.Collect();
         }
     }
 }

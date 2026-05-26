@@ -7,14 +7,12 @@ using GarageKit;
 public class PlayState : AsyncStateBase, ISequentialState
 {
     [Header("PlayState")]
-    public Text sceneText;
+    public StageManagedObject view;
     public Text timerText;
-    public Text messageText;
 
 
     void Start()
     {
-        // タイマー設定
         AppMain.Instance.timeManager.mainTimer.OnCompleteTimer += OnCompleteGameTimer;
     }
 
@@ -22,15 +20,14 @@ public class PlayState : AsyncStateBase, ISequentialState
     public override void StateStart(object context)
     {
         base.StateStart(context);
-        
-        sceneText.text = "this is [Play] state.";
-        messageText.text = "push [Space] : timer start";
+
+        StageManagedObject.Alone(view);
     }
     
     public override void StateUpdate()
     {
         base.StateUpdate();
-        
+
         if(AppMain.Instance.timeManager.mainTimer.IsRunning)
             timerText.text = AppMain.Instance.timeManager.mainTimer.CurrentTime.ToString();
         else

@@ -4,7 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using UnityEngine;
+using UnityEngine.Networking;
+
+using Cysharp.Threading.Tasks;
 
 namespace GarageKit.CSV
 {
@@ -20,9 +24,8 @@ namespace GarageKit.CSV
         private string csvString = "";
 
 
-        public void Read(string file)
+        public void ReadFileStream(string file)
         {
-            // クリア
             csvGrid = new string[0, 0];
 
             try
@@ -38,14 +41,55 @@ namespace GarageKit.CSV
             catch(Exception err)
             {
                 Debug.Log(err.Message);
-
-                isVaild = true;
+                isVaild = false;
             }
+        }
+
+        public async UniTask ReadWebRequestAsync(string file, Encoding enc, CancellationToken tkn = default)
+        {
+            csvGrid = new string[0, 0];
+
+            try
+            {
+                UnityWebRequest req = UnityWebRequest.Get(file);
+                await req.SendWebRequest().WithCancellation(tkn);
+
+                if(req.result == UnityWebRequest.Result.Success)
+                {
+                    csvString = enc.GetString(req.downloadHandler.data);
+
+                    Parse();
+                    isVaild = true;
+                }
+                else
+                {
+                    Debug.LogError(req.error);
+                    isVaild = false;
+                }
+
+                req.Dispose();
+                req = null;
+            }
+            catch(Exception err)
+            {
+                Debug.Log(err.Message);
+                isVaild = false;
+            }
+        }
+
+        public void ReadFromString(string csvString)
+        {
+            csvGrid = new string[0, 0];
+            this.csvString = csvString;
+
+            Parse();
+            isVaild = true;
         }
 
         private void Parse()
         {
-            string[] lines = csvString.Split("\n"[0]);
+            csvString = csvString.Replace("\r\n", "\n");
+            string[] lines = csvString.Split("\n");
 
             // 行数設定
             int width = 0; 
@@ -56,16 +100,16 @@ namespace GarageKit.CSV
             }
 
             // 2次元配列を作成
-            csvGrid = new string[width + 1, lines.Length + 1]; 
-            for(int y = 0; y < lines.Length; y++)
+            csvGrid = new string[lines.Length + 1, width + 1]; 
+            for(int row = 0; row < lines.Length; row++)
             {
-                string[] row = SplitCsvLine(lines[y]); 
-                for(int x = 0; x < row.Length; x++) 
+                string[] cols = SplitCsvLine(lines[row]); 
+                for(int col = 0; col < cols.Length; col++) 
                 {
-                    csvGrid[x,y] = row[x]; 
+                    csvGrid[row, col] = cols[col]; 
 
                     // 置き換え処理
-                    csvGrid[x,y] = csvGrid[x,y].Replace("\"\"", "\"");
+                    csvGrid[row, col] = csvGrid[row, col].Replace("\"\"", "\"");
                 }
             }
         }
@@ -83,11 +127,11 @@ namespace GarageKit.CSV
         static public void DebugLogGrid(string[,] grid)
         {
             string outputText = ""; 
-            for (int y = 0; y < grid.GetUpperBound(1); y++)
+            for(int row = 0; row < grid.GetUpperBound(0); row++)
             {
-                for (int x = 0; x < grid.GetUpperBound(0); x++)
+                for(int col = 0; col < grid.GetUpperBound(1); col++)
                 {
-                    outputText += grid[x, y];
+                    outputText += grid[row, col];
                     outputText += "|";
                 }
 

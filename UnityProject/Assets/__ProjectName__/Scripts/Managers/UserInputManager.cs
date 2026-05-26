@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 /*
@@ -27,28 +28,37 @@ namespace GarageKit
             if(Input.GetKeyDown(KeyCode.Escape))
             {
                 Debug.Log("Press Key [ESC]: Application Quit");
-                
+
                 if(Application.platform != RuntimePlatform.WindowsEditor)			
                     Application.Quit();
             }
 
             // D
-            if(Input.GetKeyDown(KeyCode.D))
+            else if(Input.GetKeyDown(KeyCode.D))
             {
                 Debug.Log("Press Key [D]: Visible Debug View");
-                
+
                 DebugManager debugManager = AppMain.Instance.debugManager;
                 debugManager.isDebug = !debugManager.isDebug;
                 debugManager.ToggleShowDebugView();
             }
 
             // R
-            if(Input.GetKeyDown(KeyCode.R))
+            else if(Input.GetKeyDown(KeyCode.R))
             {
                 Debug.Log("Press Key [R]: Reload ApplicationSetting");
 
                 // Reload settings
                 ApplicationSetting.Instance.LoadXML();
+            }
+
+            // G
+            else if(Input.GetKeyDown(KeyCode.G))
+            {
+                Debug.Log("Press Key [G]: Garbage collect");
+
+                // GC
+                CommonUtil.GCAsync().Forget();
             }
 
             // Space

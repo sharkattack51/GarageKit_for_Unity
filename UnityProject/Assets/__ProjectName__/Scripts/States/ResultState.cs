@@ -1,24 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using GarageKit;
 
 public class ResultState : AsyncStateBase, ISequentialState
 {
     [Header("ResultState")]
-    public Text sceneText;
-    public Text timerText;
-    public Text messageText;
+    public StageManagedObject view;
 
 
     public override void StateStart(object context)
     {
         base.StateStart(context);
 
-        sceneText.text = "this is [Result] state.";
-        timerText.text = "timer is end";
-        messageText.text = "push [Space] return to [Wait] state.";
+        StageManagedObject.Alone(view);
     }
 
     public override void StateUpdate()

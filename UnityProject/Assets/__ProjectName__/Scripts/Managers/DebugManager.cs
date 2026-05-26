@@ -14,6 +14,9 @@ namespace GarageKit
         public bool useIngameDebugConsole = true;
         public bool useGraphy = false;
 
+        private bool isShowDebug;
+        public bool IsShowDebug { get{ return isShowDebug; } }
+
         private GameObject ingameDebugConsole;
         private GameObject graphy;
 
@@ -22,13 +25,15 @@ namespace GarageKit
         {
             base.Awake();
         }
-        
+
         protected override void Start()
         {
             base.Start();
 
-            isDebug = ApplicationSetting.Instance.GetBool("IsDebug");
             VisibleMouseCursor.showCursor = Application.isEditor || ApplicationSetting.Instance.GetBool("UseMouse");
+
+            isDebug = ApplicationSetting.Instance.GetBool("IsDebug");
+            isShowDebug = isDebug;
 
             ingameDebugConsole = GameObject.Find("IngameDebugConsole");
             graphy = GameObject.Find("[Graphy]");
@@ -42,6 +47,8 @@ namespace GarageKit
                         Debug.LogWarning(
                             "DebugManager :: package not found. recommend using the [IngameDebugConsole]. please install with OpenUPM. and re-open unity.\n> openupm add com.yasirkula.ingamedebugconsole");
                     }
+                    else
+                        ingameDebugConsole.SetActive(isShowDebug);
                 }
 
                 if(useGraphy)
@@ -51,6 +58,8 @@ namespace GarageKit
                         Debug.LogWarning(
                             "DebugManager :: package not found. recommend using the [Graphy]. please install with OpenUPM. and re-open unity.\n> openupm add com.tayx.graphy");
                     }
+                    else
+                        graphy.SetActive(isShowDebug);
                 }
             }
             else
@@ -75,11 +84,13 @@ namespace GarageKit
         // Toggle debug infomation
         public void ToggleShowDebugView()
         {
+            isShowDebug = !isShowDebug;
+
             if(ingameDebugConsole != null)
-                ingameDebugConsole.SetActive(!ingameDebugConsole.activeSelf);
+                ingameDebugConsole.SetActive(isShowDebug);
 
             if(graphy != null)
-                graphy.SetActive(!graphy.activeSelf);
+                graphy.SetActive(isShowDebug);
         }
     }
 }
