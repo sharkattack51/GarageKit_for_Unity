@@ -53,18 +53,22 @@ namespace GarageKit
                 if(ct.IsCancellationRequested)
                     return;
 
-                try
+                using(Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
                 {
-                    Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                     socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, 255);
                     IPEndPoint ipEndPoint = new IPEndPoint(Dns.GetHostAddresses(address)[0], (int)port);
-                    socket.SendTo(data, 0, data.Length, SocketFlags.None, ipEndPoint);
-                    socket.Close();
-                    socket.Dispose();
-                }
-                catch(Exception e)
-                {
-                    Debug.LogWarning("UDPSender :: " + e.Message);
+                    try
+                    {
+                        socket.SendTo(data, 0, data.Length, SocketFlags.None, ipEndPoint);
+                    }
+                    catch(Exception e)
+                    {
+                        Debug.LogWarning("UDPSender :: " + e.Message);
+                    }
+                    finally
+                    {
+                        socket.Close();
+                    }
                 }
             }, cancellationToken: ct).Forget();
         }
@@ -178,19 +182,23 @@ namespace GarageKit
                 if(ct.IsCancellationRequested)
                     return;
 
-                try
+                using(Socket broadcastSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
                 {
-                    Socket broadcastSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                     broadcastSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, 16);
                     broadcastSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
                     IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Broadcast, (int)port);
-                    broadcastSocket.SendTo(data, 0, data.Length, SocketFlags.None, ipEndPoint);
-                    broadcastSocket.Close();
-                    broadcastSocket.Dispose();
-                }
-                catch(Exception e)
-                {
-                    Debug.LogWarning("UDPSender :: " + e.Message);
+                    try
+                    {
+                        broadcastSocket.SendTo(data, 0, data.Length, SocketFlags.None, ipEndPoint);
+                    }
+                    catch(Exception e)
+                    {
+                        Debug.LogWarning("UDPSender :: " + e.Message);
+                    }
+                    finally
+                    {
+                        broadcastSocket.Close();
+                    }
                 }
             }, cancellationToken: ct).Forget();
         }

@@ -425,7 +425,11 @@ namespace GarageKit
             if(audioSources2D.ContainsKey(layerName))
             {
                 GameObject target = audioSources2D[layerName].gameObject;
-                SoundFadeCallbackBehabiour cb = target.AddComponent<SoundFadeCallbackBehabiour>();
+                SoundFadeCallbackBehabiour cb = target.GetComponent<SoundFadeCallbackBehabiour>();
+                if(cb != null)
+                    return;
+
+                cb = target.AddComponent<SoundFadeCallbackBehabiour>();
                 cb.audioSource = audioSources2D[layerName];
 
                 DOVirtual.Float(fromVol, toVol, time,

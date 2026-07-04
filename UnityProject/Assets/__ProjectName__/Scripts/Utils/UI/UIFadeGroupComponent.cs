@@ -20,11 +20,13 @@ namespace GarageKit
         protected virtual void Awake()
         {
             uiGroup = this.gameObject.GetComponent<CanvasGroup>();
+
+            ResetFade();
         }
 
         protected virtual void Start()
         {
-            ResetFade();
+
         }
 
         protected virtual void Update()
@@ -80,7 +82,8 @@ namespace GarageKit
 
         public void SetUiPosition3D(Vector3 camPos, Vector3 targetPos, float height = 1.8f, float depth = 1.5f)
         {
-            Vector3 pos = Vector3.Lerp(camPos, targetPos, depth /  Vector3.Distance(camPos, targetPos));
+            float dist = Vector3.Distance(camPos, targetPos);
+            Vector3 pos = Vector3.Lerp(camPos, targetPos, depth / (dist == 0.0f ? 0.0000001f : dist));
             this.gameObject.transform.position = new Vector3(pos.x, height, pos.z);
 
             this.gameObject.transform.LookAt(camPos);

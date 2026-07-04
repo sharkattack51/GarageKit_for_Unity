@@ -43,5 +43,29 @@ namespace GarageKit
 
             return new Vector2(x_max, y);
         }
+
+        public static float ScrollToPosition(ScrollRect scrlRect, RectTransform toTarget, float padding = 0.0f, bool asVertical = true)
+        {
+            if(scrlRect == null || toTarget == null)
+                return 0.0f;
+
+            if(asVertical)
+            {
+                // ScrollRectのスクロール可能範囲は content.height - viewport.height 
+                float scrollableHeight = scrlRect.content.rect.height - scrlRect.viewport.rect.height;
+                if(scrollableHeight > 0.0f)
+                    return Mathf.Clamp01(1.0f - ((-toTarget.anchoredPosition.y - padding) / scrollableHeight));
+                else
+                    return 1.0f;
+            }
+            else
+            {
+                float scrollableWidth = scrlRect.content.rect.width - scrlRect.viewport.rect.width;
+                if(scrollableWidth > 0.0f)
+                    return Mathf.Clamp01(1.0f - ((-toTarget.anchoredPosition.x - padding) / scrollableWidth));
+                else
+                    return 1.0f;
+            }
+        }
     }
 }
