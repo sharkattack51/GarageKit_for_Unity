@@ -33,7 +33,7 @@ namespace Tayx.Graphy.Ram
 
         private G_RamMonitor m_ramMonitor = null;
 
-        private float m_updateRate = 4f; // 4 updates per sec.
+        private int m_updateRate = 4; // 4 updates per sec.
 
         private float m_deltaTime = 0.0f;
 
@@ -82,7 +82,7 @@ namespace Tayx.Graphy.Ram
         {
             // We assume no game will consume more than 16GB of RAM.
             // If it does, who cares about some minuscule garbage allocation lol.
-            G_IntString.Init( 0, 16386 );
+            G_IntString.Init( 0, 16384 );
 
             m_graphyManager = transform.root.GetComponentInChildren<GraphyManager>();
 

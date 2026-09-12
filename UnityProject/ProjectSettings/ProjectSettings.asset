@@ -114,6 +114,7 @@ PlayerSettings:
   xboxEnableGuest: 0
   xboxEnablePIXSampling: 0
   metalFramebufferOnly: 0
+  metalUseMetalDisplayLink: 0
   xboxOneResolution: 0
   xboxOneSResolution: 0
   xboxOneXResolution: 3
@@ -905,6 +906,7 @@ PlayerSettings:
     Kepler: DOTWEEN
     LinuxHeadlessSimulation: DOTWEEN
     Nintendo Switch: DOTWEEN
+    Nintendo Switch 2: DOTWEEN
     PS4: DOTWEEN
     PS5: DOTWEEN
     QNX: DOTWEEN

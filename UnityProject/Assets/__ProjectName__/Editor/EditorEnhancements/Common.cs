@@ -283,7 +283,8 @@ namespace Tenebrous.EditorEnhancements
 		{
 			get
 			{
-				_hierarchyWindow = _hierarchyWindow 
+				_hierarchyWindow = _hierarchyWindow
+								?? GetWindowByName( "Unity.Hierarchy.Editor.HierarchyWindow" )
 								?? GetWindowByName( "UnityEditor.HierarchyWindow" )
 								?? GetWindowByName( "UnityEditor.SceneHierarchyWindow" );
 

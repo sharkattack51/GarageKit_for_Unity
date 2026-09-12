@@ -25,17 +25,6 @@ namespace Tayx.Graphy
 
         private GraphyManager m_target;
 
-        private int[] m_spectrumSizeValues =
-        {
-            128,
-            256,
-            512,
-            1024,
-            2048,
-            4096,
-            8192
-        };
-
         #region Section -> Settings
 
         private SerializedProperty m_graphyMode;
@@ -46,14 +35,25 @@ namespace Tayx.Graphy
 
         private SerializedProperty m_background;
         private SerializedProperty m_backgroundColor;
+        private SerializedProperty m_uiScale;
 
         private SerializedProperty m_enableHotkeys;
 
+#pragma warning disable 0414 // Both backend-specific properties must remain cached while either backend is inactive.
         private SerializedProperty m_toggleModeKeyCode;
+#if GRAPHY_NEW_INPUT
+        private SerializedProperty m_toggleModeInputSystemKey;
+#endif
+#pragma warning restore 0414
         private SerializedProperty m_toggleModeCtrl;
         private SerializedProperty m_toggleModeAlt;
 
+#pragma warning disable 0414 // Both backend-specific properties must remain cached while either backend is inactive.
         private SerializedProperty m_toggleActiveKeyCode;
+#if GRAPHY_NEW_INPUT
+        private SerializedProperty m_toggleActiveInputSystemKey;
+#endif
+#pragma warning restore 0414
         private SerializedProperty m_toggleActiveCtrl;
         private SerializedProperty m_toggleActiveAlt;
 
@@ -153,15 +153,22 @@ namespace Tayx.Graphy
 
             m_background = serObj.FindProperty( "m_background" );
             m_backgroundColor = serObj.FindProperty( "m_backgroundColor" );
+            m_uiScale = serObj.FindProperty( "m_uiScale" );
 
             m_enableHotkeys = serObj.FindProperty( "m_enableHotkeys" );
 
             m_toggleModeKeyCode = serObj.FindProperty( "m_toggleModeKeyCode" );
+#if GRAPHY_NEW_INPUT
+            m_toggleModeInputSystemKey = serObj.FindProperty( "m_toggleModeInputSystemKey" );
+#endif
 
             m_toggleModeCtrl = serObj.FindProperty( "m_toggleModeCtrl" );
             m_toggleModeAlt = serObj.FindProperty( "m_toggleModeAlt" );
 
             m_toggleActiveKeyCode = serObj.FindProperty( "m_toggleActiveKeyCode" );
+#if GRAPHY_NEW_INPUT
+            m_toggleActiveInputSystemKey = serObj.FindProperty( "m_toggleActiveInputSystemKey" );
+#endif
 
             m_toggleActiveCtrl = serObj.FindProperty( "m_toggleActiveCtrl" );
             m_toggleActiveAlt = serObj.FindProperty( "m_toggleActiveAlt" );
@@ -346,6 +353,16 @@ namespace Tayx.Graphy
 
             EditorGUILayout.EndHorizontal();
 
+            EditorGUILayout.PropertyField
+            (
+                m_uiScale,
+                new GUIContent
+                (
+                    text: "UI Scale",
+                    tooltip: "Multiplies Graphy's scale after the Canvas Scaler has adjusted it for the screen."
+                )
+            );
+
             GUILayout.Space( 10 );
 
             m_enableHotkeys.boolValue = EditorGUILayout.Toggle
@@ -368,7 +385,11 @@ namespace Tayx.Graphy
 
                 EditorGUILayout.PropertyField
                 (
+#if GRAPHY_NEW_INPUT && ENABLE_INPUT_SYSTEM
+                    m_toggleModeInputSystemKey,
+#else
                     m_toggleModeKeyCode,
+#endif
                     new GUIContent
                     (
                         text: "Toggle Mode Key",
@@ -408,7 +429,11 @@ namespace Tayx.Graphy
 
                 EditorGUILayout.PropertyField
                 (
+#if GRAPHY_NEW_INPUT && ENABLE_INPUT_SYSTEM
+                    m_toggleActiveInputSystemKey,
+#else
                     m_toggleActiveKeyCode,
+#endif
                     new GUIContent
                     (
                         text: "Toggle Active Key",
@@ -739,6 +764,14 @@ namespace Tayx.Graphy
                         value: m_audioGraphColor.colorValue
                     );
 
+                    int maxAudioGraphResolution = m_graphyMode.intValue == 0
+                        ? 300
+                        : G_GraphShader.ArrayMaxSizeLight;
+
+                    maxAudioGraphResolution = Mathf.Min( maxAudioGraphResolution, m_spectrumSize.intValue );
+                    maxAudioGraphResolution -= maxAudioGraphResolution % 3;
+                    maxAudioGraphResolution = Mathf.Max( 21, maxAudioGraphResolution );
+
                     m_audioGraphResolution.intValue = EditorGUILayout.IntSlider
                     (
                         new GUIContent
@@ -747,16 +780,14 @@ namespace Tayx.Graphy
                             tooltip: "Defines the amount of points that are in the graph."
                         ),
                         m_audioGraphResolution.intValue,
-                        leftValue: 20,
-                        rightValue: m_graphyMode.intValue == 0 ? 300 : 128
+                        leftValue: 21,
+                        rightValue: maxAudioGraphResolution
                     );
 
-                    // Forces the value to be a multiple of 3, this way the audio graph is painted correctly
-                    if( m_audioGraphResolution.intValue % 3 != 0 && m_audioGraphResolution.intValue < 300 )
-                    {
-                        m_audioGraphResolution.intValue += 3 - m_audioGraphResolution.intValue % 3;
-                    }
-                    //TODO: Figure out why a static version of the ForceMultipleOf3 isnt used.
+                    m_audioGraphResolution.intValue =
+                        Mathf.Clamp( Mathf.RoundToInt( m_audioGraphResolution.intValue / 3f ) * 3,
+                            21,
+                            maxAudioGraphResolution );
                 }
 
                 EditorGUILayout.PropertyField
@@ -776,31 +807,14 @@ namespace Tayx.Graphy
                     (
                         text: "Spectrum size",
                         tooltip:
-                        "Has to be a power of 2 between 128-8192. The higher sample rate, the less precision but also more impact on performance. Careful with mobile devices"
+                        "Has to be a power of 2 between 64-8192. Higher values improve frequency resolution but have more impact on performance. Careful with mobile devices"
                     ),
                     m_spectrumSize.intValue,
-                    leftValue: 128,
+                    leftValue: 64,
                     rightValue: 8192
                 );
 
-                int closestSpectrumIndex = 0;
-                int minDistanceToSpectrumValue = 100000;
-
-                for( int i = 0; i < m_spectrumSizeValues.Length; i++ )
-                {
-                    int newDistance = Mathf.Abs
-                    (
-                        value: m_spectrumSize.intValue - m_spectrumSizeValues[ i ]
-                    );
-
-                    if( newDistance < minDistanceToSpectrumValue )
-                    {
-                        minDistanceToSpectrumValue = newDistance;
-                        closestSpectrumIndex = i;
-                    }
-                }
-
-                m_spectrumSize.intValue = m_spectrumSizeValues[ closestSpectrumIndex ];
+                m_spectrumSize.intValue = Mathf.ClosestPowerOfTwo( m_spectrumSize.intValue );
 
                 m_audioTextUpdateRate.intValue = EditorGUILayout.IntSlider
                 (

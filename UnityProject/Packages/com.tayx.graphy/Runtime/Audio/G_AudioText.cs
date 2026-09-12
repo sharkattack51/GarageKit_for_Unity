@@ -56,7 +56,7 @@ namespace Tayx.Graphy.Audio
                 }
                 else
                 {
-                    m_deltaTimeOffset += Time.deltaTime;
+                    m_deltaTimeOffset += Time.unscaledDeltaTime;
                 }
             }
         }

@@ -94,7 +94,12 @@ namespace Tenebrous.EditorEnhancements
 
         public override void OnEnable()
         {
+#if UNITY_6000_5_OR_NEWER
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI += Draw;
+#else
             EditorApplication.hierarchyWindowItemOnGUI += Draw;
+#endif
+
             EditorApplication.update += Update;
 #if UNITY_2019_3_OR_NEWER
             SceneView.duringSceneGui += Updated;
@@ -108,7 +113,11 @@ namespace Tenebrous.EditorEnhancements
 
         public override void OnDisable()
         {
+#if UNITY_6000_5_OR_NEWER
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI -= Draw;
+#else
             EditorApplication.hierarchyWindowItemOnGUI -= Draw;
+#endif
             EditorApplication.update -= Update;
 #if UNITY_2019_3_OR_NEWER
             SceneView.duringSceneGui += Updated;
@@ -138,7 +147,7 @@ namespace Tenebrous.EditorEnhancements
 
         private void ModifierKeysChanged()
         {
-            Common.HierarchyWindow.Repaint();
+            Common.HierarchyWindow?.Repaint();
         }
 
         private void Update()
@@ -221,10 +230,16 @@ namespace Tenebrous.EditorEnhancements
                 Common.HierarchyWindow.Repaint();
         }
 
+#if UNITY_6000_5_OR_NEWER
+        private void Draw( EntityId entityId, Rect pDrawingRect )
+#else
         private void Draw( int pInstanceID, Rect pDrawingRect )
+#endif
         {
             // called per-line in the hierarchy window
-#if UNITY_6000_3_OR_NEWER
+#if UNITY_6000_5_OR_NEWER
+            GameObject gameObject = EditorUtility.EntityIdToObject( entityId ) as GameObject;
+#elif UNITY_6000_3_OR_NEWER
             GameObject gameObject = EditorUtility.EntityIdToObject( pInstanceID ) as GameObject;
 #else
             GameObject gameObject = EditorUtility.InstanceIDToObject( pInstanceID ) as GameObject;

@@ -12,7 +12,7 @@ using DG.Tweening.Plugins.Options;
 namespace DG.Tweening
 {
     /// <summary>
-    /// Utility functions that deal with available Modules.
+    /// Utility functions that deal with available Modules and rewrite them.
     /// Modules defines:
     /// - DOTAUDIO
     /// - DOTPHYSICS
@@ -25,13 +25,16 @@ namespace DG.Tweening
     /// </summary>
 	public static class DOTweenModuleUtils
     {
+#pragma warning disable UDR0001
         static bool _initialized;
+#pragma warning restore UDR0001
 
         #region Reflection
 
         /// <summary>
         /// Called via Reflection by DOTweenComponent on Awake
         /// </summary>
+#pragma warning disable UDR0001
 #if UNITY_2018_1_OR_NEWER
         [UnityEngine.Scripting.Preserve]
 #endif
@@ -40,16 +43,20 @@ namespace DG.Tweening
             if (_initialized) return;
 
             _initialized = true;
+            DOTweenExternalCommand.SetOrientationOnPath -= Physics.SetOrientationOnPath;
             DOTweenExternalCommand.SetOrientationOnPath += Physics.SetOrientationOnPath;
 
 #if UNITY_EDITOR
 #if UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5 || UNITY_2017_1
+            UnityEditor.EditorApplication.playmodeStateChanged -= PlaymodeStateChanged;
             UnityEditor.EditorApplication.playmodeStateChanged += PlaymodeStateChanged;
 #else
+            UnityEditor.EditorApplication.playModeStateChanged -= PlaymodeStateChanged;
             UnityEditor.EditorApplication.playModeStateChanged += PlaymodeStateChanged;
 #endif
 #endif
         }
+#pragma warning restore UDR0001
 
 #if UNITY_2018_1_OR_NEWER
 #pragma warning disable
@@ -87,7 +94,7 @@ namespace DG.Tweening
             // Called via DOTweenExternalCommand callback
             public static void SetOrientationOnPath(PathOptions options, Tween t, Quaternion newRot, Transform trans)
             {
-#if true // PHYSICS_MARKER
+#if !DOTWEEN_NOPHYSICS // PHYSICS_MARKER
                 if (options.isRigidbody) ((Rigidbody)t.target).rotation = newRot;
                 else trans.rotation = newRot;
 #else
@@ -98,7 +105,7 @@ namespace DG.Tweening
             // Returns FALSE if the DOTween's Physics2D Module is disabled, or if there's no Rigidbody2D attached
             public static bool HasRigidbody2D(Component target)
             {
-#if true // PHYSICS2D_MARKER
+#if !DOTWEEN_NOPHYSICS2D // PHYSICS2D_MARKER
                 return target.GetComponent<Rigidbody2D>() != null;
 #else
                 return false;
@@ -115,7 +122,7 @@ namespace DG.Tweening
 #endif
             public static bool HasRigidbody(Component target)
             {
-#if true // PHYSICS_MARKER
+#if !DOTWEEN_NOPHYSICS // PHYSICS_MARKER
                 return target.GetComponent<Rigidbody>() != null;
 #else
                 return false;
@@ -131,7 +138,7 @@ namespace DG.Tweening
             ){
                 TweenerCore<Vector3, Path, PathOptions> t = null;
                 bool rBodyFoundAndTweened = false;
-#if true // PHYSICS_MARKER
+#if !DOTWEEN_NOPHYSICS // PHYSICS_MARKER
                 if (tweenRigidbody) {
                     Rigidbody rBody = target.GetComponent<Rigidbody>();
                     if (rBody != null) {
@@ -142,7 +149,7 @@ namespace DG.Tweening
                     }
                 }
 #endif
-#if true // PHYSICS2D_MARKER
+#if !DOTWEEN_NOPHYSICS2D // PHYSICS2D_MARKER
                 if (!rBodyFoundAndTweened && tweenRigidbody) {
                     Rigidbody2D rBody2D = target.GetComponent<Rigidbody2D>();
                     if (rBody2D != null) {

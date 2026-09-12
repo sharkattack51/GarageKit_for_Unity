@@ -28,7 +28,7 @@ namespace Tayx.Graphy.Ram
         [SerializeField] private Shader ShaderFull = null;
         [SerializeField] private Shader ShaderLight = null;
 
-        [SerializeField] private bool m_isInitialized = false;
+        private bool m_isInitialized = false;
 
         #endregion
 
@@ -39,6 +39,7 @@ namespace Tayx.Graphy.Ram
         private G_RamMonitor m_ramMonitor = null;
 
         private int m_resolution = 150;
+        private GraphyManager.Mode m_graphyMode = GraphyManager.Mode.FULL;
 
         private G_GraphShader m_shaderGraphAllocated = null;
         private G_GraphShader m_shaderGraphReserved = null;
@@ -47,6 +48,7 @@ namespace Tayx.Graphy.Ram
         private float[] m_allocatedArray;
         private float[] m_reservedArray;
         private float[] m_monoArray;
+        private int m_writeIndex = 0;
 
         private float m_highestMemory = 0;
 
@@ -78,7 +80,161 @@ namespace Tayx.Graphy.Ram
                 return;
             }
 
-            switch( m_graphyManager.GraphyMode )
+            bool materialChanged = UpdateMaterials();
+            int resolution = m_graphyManager.RamGraphResolution;
+
+            if( m_shaderGraphAllocated.ShaderArrayValues == null || m_resolution != resolution )
+            {
+                m_resolution = resolution;
+                CreatePoints();
+            }
+            else if( materialChanged )
+            {
+                UpdateShaderParameters();
+                m_shaderGraphAllocated.UpdatePoints();
+                m_shaderGraphReserved.UpdatePoints();
+                m_shaderGraphMono.UpdatePoints();
+            }
+            else
+            {
+                UpdateColors();
+            }
+        }
+
+        public void UpdateColors()
+        {
+            if( m_shaderGraphAllocated == null
+                || m_shaderGraphReserved == null
+                || m_shaderGraphMono == null )
+            {
+                return;
+            }
+
+            m_shaderGraphAllocated.GoodColor = m_graphyManager.AllocatedRamColor;
+            m_shaderGraphAllocated.CautionColor = m_graphyManager.AllocatedRamColor;
+            m_shaderGraphAllocated.CriticalColor = m_graphyManager.AllocatedRamColor;
+
+            m_shaderGraphAllocated.UpdateColors();
+
+            m_shaderGraphReserved.GoodColor = m_graphyManager.ReservedRamColor;
+            m_shaderGraphReserved.CautionColor = m_graphyManager.ReservedRamColor;
+            m_shaderGraphReserved.CriticalColor = m_graphyManager.ReservedRamColor;
+
+            m_shaderGraphReserved.UpdateColors();
+
+            m_shaderGraphMono.GoodColor = m_graphyManager.MonoRamColor;
+            m_shaderGraphMono.CautionColor = m_graphyManager.MonoRamColor;
+            m_shaderGraphMono.CriticalColor = m_graphyManager.MonoRamColor;
+
+            m_shaderGraphMono.UpdateColors();
+        }
+
+        #endregion
+
+        #region Methods -> Protected Override
+
+        protected override void UpdateGraph()
+        {
+            // Since we no longer initialize by default OnEnable(), 
+            // we need to check here, and Init() if needed
+            if( !m_isInitialized )
+            {
+                Init();
+            }
+
+            float allocatedMemory = m_ramMonitor.AllocatedRam;
+            float reservedMemory = m_ramMonitor.ReservedRam;
+            float monoMemory = m_ramMonitor.MonoRam;
+
+            m_allocatedArray[ m_writeIndex ] = allocatedMemory;
+            m_reservedArray[ m_writeIndex ] = reservedMemory;
+            m_monoArray[ m_writeIndex ] = monoMemory;
+            m_writeIndex = ( m_writeIndex + 1 ) % m_resolution;
+
+            m_highestMemory = 0;
+
+            for( int i = 0; i < m_resolution; i++ )
+            {
+                if( m_highestMemory < m_reservedArray[ i ] )
+                {
+                    m_highestMemory = m_reservedArray[ i ];
+                }
+            }
+
+            for( int i = 0; i < m_resolution; i++ )
+            {
+                int readIdx = ( m_writeIndex + i ) % m_resolution;
+
+                m_shaderGraphAllocated.ShaderArrayValues[ i ] = m_allocatedArray[ readIdx ] / m_highestMemory;
+
+                m_shaderGraphReserved.ShaderArrayValues[ i ] = m_reservedArray[ readIdx ] / m_highestMemory;
+
+                m_shaderGraphMono.ShaderArrayValues[ i ] = m_monoArray[ readIdx ] / m_highestMemory;
+            }
+
+            m_shaderGraphAllocated.UpdatePoints();
+            m_shaderGraphReserved.UpdatePoints();
+            m_shaderGraphMono.UpdatePoints();
+        }
+
+        protected override void CreatePoints()
+        {
+            if( m_shaderGraphAllocated.ShaderArrayValues == null ||
+                m_shaderGraphAllocated.ShaderArrayValues.Length != m_resolution )
+            {
+                m_allocatedArray = new float[m_resolution];
+                m_reservedArray = new float[m_resolution];
+                m_monoArray = new float[m_resolution];
+                m_writeIndex = 0;
+
+                m_shaderGraphAllocated.ShaderArrayValues = new float[m_resolution];
+                m_shaderGraphReserved.ShaderArrayValues = new float[m_resolution];
+                m_shaderGraphMono.ShaderArrayValues = new float[m_resolution];
+            }
+
+            for( int i = 0; i < m_resolution; i++ )
+            {
+                m_shaderGraphAllocated.ShaderArrayValues[ i ] = 0;
+                m_shaderGraphReserved.ShaderArrayValues[ i ] = 0;
+                m_shaderGraphMono.ShaderArrayValues[ i ] = 0;
+            }
+
+            UpdateShaderParameters();
+        }
+
+        #endregion
+
+        #region Methods -> Private
+
+        private bool UpdateMaterials()
+        {
+            GraphyManager.Mode graphyMode = m_graphyManager.GraphyMode;
+
+            if( m_isInitialized
+                && m_graphyMode == graphyMode
+                && m_shaderGraphAllocated.Image.material != null
+                && m_shaderGraphReserved.Image.material != null
+                && m_shaderGraphMono.Image.material != null )
+            {
+                return false;
+            }
+
+            if( m_isInitialized && m_shaderGraphAllocated.Image.material != null )
+            {
+                Destroy( m_shaderGraphAllocated.Image.material );
+            }
+
+            if( m_isInitialized && m_shaderGraphReserved.Image.material != null )
+            {
+                Destroy( m_shaderGraphReserved.Image.material );
+            }
+
+            if( m_isInitialized && m_shaderGraphMono.Image.material != null )
+            {
+                Destroy( m_shaderGraphMono.Image.material );
+            }
+
+            switch( graphyMode )
             {
                 case GraphyManager.Mode.FULL:
                     m_shaderGraphAllocated.ArrayMaxSize = G_GraphShader.ArrayMaxSizeFull;
@@ -105,107 +261,14 @@ namespace Tayx.Graphy.Ram
             m_shaderGraphReserved.InitializeShader();
             m_shaderGraphMono.InitializeShader();
 
-            m_resolution = m_graphyManager.RamGraphResolution;
+            m_graphyMode = graphyMode;
 
-            CreatePoints();
+            return true;
         }
 
-        #endregion
-
-        #region Methods -> Protected Override
-
-        protected override void UpdateGraph()
+        private void UpdateShaderParameters()
         {
-            // Since we no longer initialize by default OnEnable(), 
-            // we need to check here, and Init() if needed
-            if( !m_isInitialized )
-            {
-                Init();
-            }
-
-            float allocatedMemory = m_ramMonitor.AllocatedRam;
-            float reservedMemory = m_ramMonitor.ReservedRam;
-            float monoMemory = m_ramMonitor.MonoRam;
-
-            m_highestMemory = 0;
-
-            for( int i = 0; i <= m_resolution - 1; i++ )
-            {
-                if( i >= m_resolution - 1 )
-                {
-                    m_allocatedArray[ i ] = allocatedMemory;
-                    m_reservedArray[ i ] = reservedMemory;
-                    m_monoArray[ i ] = monoMemory;
-                }
-                else
-                {
-                    m_allocatedArray[ i ] = m_allocatedArray[ i + 1 ];
-                    m_reservedArray[ i ] = m_reservedArray[ i + 1 ];
-                    m_monoArray[ i ] = m_monoArray[ i + 1 ];
-                }
-
-                if( m_highestMemory < m_reservedArray[ i ] )
-                {
-                    m_highestMemory = m_reservedArray[ i ];
-                }
-            }
-
-            for( int i = 0; i <= m_resolution - 1; i++ )
-            {
-                m_shaderGraphAllocated.ShaderArrayValues[ i ] = m_allocatedArray[ i ] / m_highestMemory;
-
-                m_shaderGraphReserved.ShaderArrayValues[ i ] = m_reservedArray[ i ] / m_highestMemory;
-
-                m_shaderGraphMono.ShaderArrayValues[ i ] = m_monoArray[ i ] / m_highestMemory;
-            }
-
-            m_shaderGraphAllocated.UpdatePoints();
-            m_shaderGraphReserved.UpdatePoints();
-            m_shaderGraphMono.UpdatePoints();
-        }
-
-        protected override void CreatePoints()
-        {
-            if( m_shaderGraphAllocated.ShaderArrayValues == null ||
-                m_shaderGraphAllocated.ShaderArrayValues.Length != m_resolution )
-            {
-                m_allocatedArray = new float[m_resolution];
-                m_reservedArray = new float[m_resolution];
-                m_monoArray = new float[m_resolution];
-
-                m_shaderGraphAllocated.ShaderArrayValues = new float[m_resolution];
-                m_shaderGraphReserved.ShaderArrayValues = new float[m_resolution];
-                m_shaderGraphMono.ShaderArrayValues = new float[m_resolution];
-            }
-
-            for( int i = 0; i < m_resolution; i++ )
-            {
-                m_shaderGraphAllocated.ShaderArrayValues[ i ] = 0;
-                m_shaderGraphReserved.ShaderArrayValues[ i ] = 0;
-                m_shaderGraphMono.ShaderArrayValues[ i ] = 0;
-            }
-
-            // Initialize the material values
-
-            // Colors
-
-            m_shaderGraphAllocated.GoodColor = m_graphyManager.AllocatedRamColor;
-            m_shaderGraphAllocated.CautionColor = m_graphyManager.AllocatedRamColor;
-            m_shaderGraphAllocated.CriticalColor = m_graphyManager.AllocatedRamColor;
-
-            m_shaderGraphAllocated.UpdateColors();
-
-            m_shaderGraphReserved.GoodColor = m_graphyManager.ReservedRamColor;
-            m_shaderGraphReserved.CautionColor = m_graphyManager.ReservedRamColor;
-            m_shaderGraphReserved.CriticalColor = m_graphyManager.ReservedRamColor;
-
-            m_shaderGraphReserved.UpdateColors();
-
-            m_shaderGraphMono.GoodColor = m_graphyManager.MonoRamColor;
-            m_shaderGraphMono.CautionColor = m_graphyManager.MonoRamColor;
-            m_shaderGraphMono.CriticalColor = m_graphyManager.MonoRamColor;
-
-            m_shaderGraphMono.UpdateColors();
+            UpdateColors();
 
             // Thresholds
 
@@ -235,10 +298,6 @@ namespace Tayx.Graphy.Ram
             m_shaderGraphReserved.UpdateAverage();
             m_shaderGraphMono.UpdateAverage();
         }
-
-        #endregion
-
-        #region Methods -> Private
 
         private void Init()
         {

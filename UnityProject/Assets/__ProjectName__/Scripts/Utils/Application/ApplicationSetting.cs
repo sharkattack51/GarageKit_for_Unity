@@ -129,7 +129,10 @@ namespace GarageKit
             if(rawData.ContainsKey(key))
                 return rawData[key];
             else
+            {
+                Debug.LogErrorFormat("ApplicationSetting :: key not found: {0}", key);
                 return defaultValue;
+            }
         }
 
         public bool GetBool(string key, bool defaultValue = false)
@@ -138,7 +141,10 @@ namespace GarageKit
             if(rawData.ContainsKey(key) && bool.TryParse(rawData[key], out result))
                 return result;
             else
+            {
+                Debug.LogErrorFormat("ApplicationSetting :: key not found or parse error: {0}", key);
                 return defaultValue;
+            }
         }
 
         public int GetInt(string key, int defaultValue = 0)
@@ -147,7 +153,10 @@ namespace GarageKit
             if(rawData.ContainsKey(key) && int.TryParse(rawData[key], out result))
                 return result;
             else
+            {
+                Debug.LogErrorFormat("ApplicationSetting :: key not found or parse error: {0}", key);
                 return defaultValue;
+            }
         }
 
         public float GetFloat(string key, float defaultValue = 0.0f)
@@ -156,7 +165,10 @@ namespace GarageKit
             if(rawData.ContainsKey(key) && float.TryParse(rawData[key], out result))
                 return result;
             else
+            {
+                Debug.LogErrorFormat("ApplicationSetting :: key not found or parse error: {0}", key);
                 return defaultValue;
+            }
         }
 
         public string[] GetStringArray(string key, string separator = ",")
@@ -164,7 +176,10 @@ namespace GarageKit
             if(rawData.ContainsKey(key))
                 return rawData[key].Split(new string[]{ separator }, StringSplitOptions.None);
             else
+            {
+                Debug.LogErrorFormat("ApplicationSetting :: key not found or parse error: {0}", key);
                 return new string[0];
+            }
         }
 
         public int[] GetIntArray(string key, string separator = ",", int defaultValue = 0)
@@ -179,12 +194,18 @@ namespace GarageKit
                     if(int.TryParse(str.Trim(), out result))
                         list.Add(result);
                     else
+                    {
+                        Debug.LogErrorFormat("ApplicationSetting :: parse error: {0}", key);
                         list.Add(defaultValue);
+                    }
                 }
                 return list.ToArray();
             }
             else
+            {
+                Debug.LogErrorFormat("ApplicationSetting :: key not found: {0}", key);
                 return new int[0];
+            }
         }
 
         public float[] GetFloatArray(string key, string separator = ",", float defaultValue = 0.0f)
@@ -199,12 +220,18 @@ namespace GarageKit
                     if(float.TryParse(str.Trim(), out result))
                         list.Add(result);
                     else
+                    {
+                        Debug.LogErrorFormat("ApplicationSetting :: parse error: {0}", key);
                         list.Add(defaultValue);
+                    }
                 }
                 return list.ToArray();
             }
             else
+            {
+                Debug.LogErrorFormat("ApplicationSetting :: key not found: {0}", key);
                 return new float[0];
+            }
         }
 
         public bool[] GetBoolArray(string key, string separator = ",", bool defaultValue = false)
@@ -219,12 +246,18 @@ namespace GarageKit
                     if(bool.TryParse(str.Trim(), out result))
                         list.Add(result);
                     else
+                    {
+                        Debug.LogErrorFormat("ApplicationSetting :: parse error: {0}", key);
                         list.Add(defaultValue);
+                    }
                 }
                 return list.ToArray();
             }
             else
+            {
+                Debug.LogErrorFormat("ApplicationSetting :: key not found: {0}", key);
                 return new bool[0];
+            }
         }
 
         public DateTime GetFormattedDateTime(string key, string format = "HH:mm:ss")
@@ -233,7 +266,10 @@ namespace GarageKit
             if(rawData.ContainsKey(key) && DateTime.TryParseExact(rawData[key], format, CultureInfo.CurrentCulture, DateTimeStyles.None, out result))
                 return result;
             else
+            {
+                Debug.LogErrorFormat("ApplicationSetting :: key not found or parse error: {0}", key);
                 return DateTime.Now;
+            }
         }
 
         public DateTime GetDateTime(string key)
@@ -242,7 +278,10 @@ namespace GarageKit
             if(rawData.ContainsKey(key) && DateTime.TryParse(rawData[key], out result))
                 return result;
             else
+            {
+                Debug.LogErrorFormat("ApplicationSetting :: key not found or parse error: {0}", key);
                 return DateTime.Now;
+            }
         }
 
         public Vector3 GetVector3(string key, string separator = ",", Vector3 defaultValue = default(Vector3))
@@ -295,6 +334,18 @@ namespace GarageKit
                 result = defaultValue;
 
             return result;
+        }
+
+        public T GetEnum<T>(string key, T defaultValue = default(T)) where T : struct
+        {
+            T result = default(T);
+            if(rawData.ContainsKey(key) && Enum.TryParse<T>(rawData[key], out result))
+                return result;
+            else
+            {
+                Debug.LogErrorFormat("ApplicationSetting :: key not found or parse error: {0}", key);
+                return defaultValue;
+            }
         }
 #endregion
     }

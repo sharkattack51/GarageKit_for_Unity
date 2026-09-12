@@ -71,6 +71,12 @@ namespace IngameDebugConsole
             normalizedPosition = SavedNormalizedPosition;
 		}
 
+        protected void OnApplicationFocus(bool focus)
+        {
+            if (!focus)
+                SavedNormalizedPosition = normalizedPosition;
+        }
+
         protected void OnDestroy()
         {
             SavedNormalizedPosition = normalizedPosition;

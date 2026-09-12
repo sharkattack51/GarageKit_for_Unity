@@ -5,7 +5,7 @@
     "name": "Cysharp, Inc.",
     "url": "https://cysharp.co.jp/en/"
   },
-  "version": "2.5.10",
+  "version": "2.5.11",
   "unity": "2018.4",
   "description": "Provides an efficient async/await integration to Unity.",
   "keywords": [
@@ -16,9 +16,13 @@
   ],
   "license": "MIT",
   "category": "Task",
-  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Cysharp/UniTask",
+    "revision": "2e993ff18f28c931602a07292df0b0804eebef99"
+  },
   "publishConfig": {
     "registry": "https://package.openupm.com"
   },
-  "_fingerprint": "15a4a7657f99294ab594ae60e20a35c8cb7eb647"
+  "_fingerprint": "182a3b1e0e1157cc5f052b9395eeba4e01a77ef6"
 }

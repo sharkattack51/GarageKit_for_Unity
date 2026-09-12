@@ -100,11 +100,14 @@ MonoBehaviour:
   m_keepAlive: 1
   m_background: 1
   m_backgroundColor: {r: 0, g: 0, b: 0, a: 0.33333334}
+  m_uiScale: 1
   m_enableHotkeys: 1
   m_toggleModeKeyCode: 103
+  m_toggleModeInputSystemKey: 21
   m_toggleModeCtrl: 1
   m_toggleModeAlt: 0
   m_toggleActiveKeyCode: 104
+  m_toggleActiveInputSystemKey: 22
   m_toggleActiveCtrl: 1
   m_toggleActiveAlt: 0
   m_graphModulePosition: 0

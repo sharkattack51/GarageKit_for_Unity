@@ -36,12 +36,12 @@ namespace Tayx.Graphy.Utils.NumString
         /// <summary>
         /// The lowest int value of the existing number buffer.
         /// </summary>
-        public static int MinValue => -(m_negativeBuffer.Length - 1);
+        public static int MinValue => -m_negativeBuffer.Length;
 
         /// <summary>
         /// The highest int value of the existing number buffer.
         /// </summary>
-        public static int MaxValue => m_positiveBuffer.Length;
+        public static int MaxValue => m_positiveBuffer.Length - 1;
 
         #endregion
 
@@ -58,6 +58,16 @@ namespace Tayx.Graphy.Utils.NumString
         /// </param>
         public static void Init( int minNegativeValue, int maxPositiveValue )
         {
+            if( minNegativeValue == int.MinValue )
+            {
+                throw new System.ArgumentOutOfRangeException( nameof( minNegativeValue ) );
+            }
+
+            if( maxPositiveValue == int.MaxValue )
+            {
+                throw new System.ArgumentOutOfRangeException( nameof( maxPositiveValue ) );
+            }
+
             if( MinValue > minNegativeValue && minNegativeValue <= 0 )
             {
                 int length = Mathf.Abs( minNegativeValue );
@@ -98,9 +108,14 @@ namespace Tayx.Graphy.Utils.NumString
         /// </returns>
         public static string ToStringNonAlloc( this int value )
         {
-            if( value < 0 && -value <= m_negativeBuffer.Length )
+            if( value < 0 && value != int.MinValue )
             {
-                return m_negativeBuffer[ -value - 1 ];
+                int index = -value - 1;
+
+                if( index < m_negativeBuffer.Length )
+                {
+                    return m_negativeBuffer[ index ];
+                }
             }
 
             if( value >= 0 && value < m_positiveBuffer.Length )

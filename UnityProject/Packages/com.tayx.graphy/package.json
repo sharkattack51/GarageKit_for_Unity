@@ -1,9 +1,9 @@
 {
   "name": "com.tayx.graphy",
-  "version": "3.0.5",
+  "version": "4.0.0",
   "displayName": "Graphy - Ultimate FPS Counter",
   "description": "Graphy is the ultimate, easy to use, feature packed FPS Counter, stats monitor and debugger for your Unity project.",
-  "unity": "2019.4",
+  "unity": "2022.3",
   "license": "MIT",
   "keywords": [
     "fps",
@@ -17,8 +17,13 @@
     "email": "martintayx@gmail.com",
     "url": "https://twitter.com/martinTayx"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tayx94/graphy",
+    "revision": "1068f3de2bc9f1e4a905150abd59f31e6dead679"
+  },
   "publishConfig": {
     "registry": "https://package.openupm.com"
   },
-  "_fingerprint": "7854954d7dba82f589b2eeefe7866f55ad21c3f9"
+  "_fingerprint": "15bba5bbfdb89f66e931a78d1b8eb6e24fd26fd7"
 }

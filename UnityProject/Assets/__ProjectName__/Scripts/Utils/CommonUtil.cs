@@ -131,20 +131,6 @@ namespace GarageKit
                 CopyDirectory(srcSubDirInfo.FullName, Path.Join(destDirInfo.FullName, srcSubDirInfo.Name));
         }
 
-        public static string GetUniqueFilePath(string filePath)
-        {
-            if(!File.Exists(filePath))
-                return filePath;
-
-            string dir = Path.GetDirectoryName(filePath) ?? ".";
-            string name = Path.GetFileNameWithoutExtension(filePath);
-            string ext = Path.GetExtension(filePath);
-
-            return Enumerable.Range(1, int.MaxValue)
-                .Select(i => Path.Combine(dir, $"{name} ({i}){ext}"))
-                .First(p => !File.Exists(p));
-        }
-
         public static async UniTask GCAsync()
         {
             await Resources.UnloadUnusedAssets();

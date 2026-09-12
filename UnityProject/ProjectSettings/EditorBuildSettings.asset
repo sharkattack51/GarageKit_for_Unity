@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/__ProjectName__/Scenes/Examples/MultipleSceneExample/MultipleSceneExample2.unity
     guid: 805d3355a941f3349b3177f34bf5bd23
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 27322938210324ec2a783ad36ff857c7,
+      type: 3}
+  m_UseUCBPForAssetBundles: 0

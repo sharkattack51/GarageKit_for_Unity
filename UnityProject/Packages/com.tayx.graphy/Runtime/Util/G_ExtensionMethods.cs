@@ -28,7 +28,7 @@ namespace Tayx.Graphy.Utils
         /// List of GameObjects.
         /// </param>
         /// <param name="active">
-        /// Wether to turn them on or off.
+        /// Whether to turn them on or off.
         /// </param>
         public static List<GameObject> SetAllActive( this List<GameObject> gameObjects, bool active )
         {

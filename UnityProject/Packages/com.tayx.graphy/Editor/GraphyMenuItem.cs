@@ -54,13 +54,5 @@ namespace Tayx.Graphy
                     new GUIContent( "Prefab Variant Created at \"Assets/Graphy - Ultimate Stats Monitor/Prefab\"!" ) );
             }
         }
-
-        [MenuItem( "Tools/Graphy/Import Graphy Customization Scene" )]
-        static void ImportGraphyCustomizationScene()
-        {
-            string customizationSceneGuid = AssetDatabase.FindAssets( "Graphy_CustomizationScene" )[ 0 ];
-
-            AssetDatabase.ImportPackage( AssetDatabase.GUIDToAssetPath( customizationSceneGuid ), true );
-        }
     }
 }

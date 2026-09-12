@@ -19,7 +19,7 @@ using Tayx.Graphy.Utils;
 
 namespace Tayx.Graphy.Audio
 {
-    public class G_AudioManager : MonoBehaviour, IMovable, IModifiableState
+    public class G_AudioManager : G_ModuleManager
     {
         #region Variables -> Serialized Private
 
@@ -32,19 +32,9 @@ namespace Tayx.Graphy.Audio
 
         #region Variables -> Private
 
-        private GraphyManager m_graphyManager = null;
-
         private G_AudioGraph m_audioGraph = null;
         private G_AudioMonitor m_audioMonitor = null;
         private G_AudioText m_audioText = null;
-
-        private RectTransform m_rectTransform = null;
-        private Vector2 m_origPosition = Vector2.zero;
-
-        private List<GameObject> m_childrenGameObjects = new List<GameObject>();
-
-        private GraphyManager.ModuleState m_previousModuleState = GraphyManager.ModuleState.FULL;
-        private GraphyManager.ModuleState m_currentModuleState = GraphyManager.ModuleState.FULL;
 
         #endregion
 
@@ -64,63 +54,97 @@ namespace Tayx.Graphy.Audio
 
         #region Methods -> Public
 
-        public void SetPosition( GraphyManager.ModulePosition newModulePosition, Vector2 offset )
+        public override void SetPosition( GraphyManager.ModulePosition newModulePosition, Vector2 offset )
         {
-            if ( newModulePosition == GraphyManager.ModulePosition.FREE )
-                return;
-            
-            m_rectTransform.anchoredPosition = m_origPosition;
-
-            float xSideOffset = Mathf.Abs( m_rectTransform.anchoredPosition.x ) + offset.x;
-            float ySideOffset = Mathf.Abs( m_rectTransform.anchoredPosition.y ) + offset.y;
-
             m_audioDbText.alignment = TextAnchor.UpperRight;
 
-            switch( newModulePosition )
+            base.SetPosition( newModulePosition, offset );
+        }
+
+        public override void UpdateParameters()
+        {
+            UpdateBackground();
+            UpdateGraphParameters();
+            UpdateMonitorParameters();
+            UpdateTextParameters();
+        }
+
+        public override void RefreshParameters()
+        {
+            UpdateParameters();
+        }
+
+        public void UpdateBackground()
+        {
+            foreach( var image in m_backgroundImages )
             {
-                case GraphyManager.ModulePosition.TOP_LEFT:
+                image.color = m_graphyManager.BackgroundColor;
+            }
 
-                    m_rectTransform.anchorMax = Vector2.up;
-                    m_rectTransform.anchorMin = Vector2.up;
-                    m_rectTransform.anchoredPosition = new Vector2( xSideOffset, -ySideOffset );
+            if( !m_graphyManager.Background )
+            {
+                m_backgroundImages.SetAllActive( false );
+                return;
+            }
 
+            switch( m_currentModuleState )
+            {
+                case GraphyManager.ModuleState.FULL:
+                    m_backgroundImages.SetOneActive( 0 );
                     break;
 
-                case GraphyManager.ModulePosition.TOP_RIGHT:
-
-                    m_rectTransform.anchorMax = Vector2.one;
-                    m_rectTransform.anchorMin = Vector2.one;
-                    m_rectTransform.anchoredPosition = new Vector2( -xSideOffset, -ySideOffset );
-
+                case GraphyManager.ModuleState.TEXT:
+                case GraphyManager.ModuleState.BASIC:
+                    m_backgroundImages.SetOneActive( 1 );
                     break;
 
-                case GraphyManager.ModulePosition.BOTTOM_LEFT:
-
-                    m_rectTransform.anchorMax = Vector2.zero;
-                    m_rectTransform.anchorMin = Vector2.zero;
-                    m_rectTransform.anchoredPosition = new Vector2( xSideOffset, ySideOffset );
-
-                    break;
-
-                case GraphyManager.ModulePosition.BOTTOM_RIGHT:
-
-                    m_rectTransform.anchorMax = Vector2.right;
-                    m_rectTransform.anchorMin = Vector2.right;
-                    m_rectTransform.anchoredPosition = new Vector2( -xSideOffset, ySideOffset );
-
+                default:
+                    m_backgroundImages.SetAllActive( false );
                     break;
             }
         }
 
-        public void SetState( GraphyManager.ModuleState state, bool silentUpdate = false )
+        public void UpdateGraphParameters()
         {
-            if( !silentUpdate )
-            {
-                m_previousModuleState = m_currentModuleState;
-            }
+            m_audioGraph.UpdateParameters();
+        }
 
-            m_currentModuleState = state;
+        public void UpdateGraphColors()
+        {
+            m_audioGraph.UpdateColors();
+        }
 
+        public void UpdateMonitorParameters()
+        {
+            m_audioMonitor.UpdateParameters();
+        }
+
+        public void UpdateAudioListener()
+        {
+            m_audioMonitor.UpdateListenerParameters();
+        }
+
+        public void UpdateFftWindow()
+        {
+            m_audioMonitor.UpdateFftWindow();
+        }
+
+        public void UpdateSpectrumSize()
+        {
+            m_audioMonitor.UpdateSpectrumSize();
+        }
+
+        public void UpdateTextParameters()
+        {
+            m_audioText.UpdateParameters();
+        }
+
+        #endregion
+
+        #region Methods -> Protected Override
+
+        protected override void ApplyModuleState( GraphyManager.ModuleState state )
+        {
             switch( state )
             {
                 case GraphyManager.ModuleState.FULL:
@@ -171,61 +195,17 @@ namespace Tayx.Graphy.Audio
             }
         }
 
-        public void RestorePreviousState()
-        {
-            SetState( m_previousModuleState );
-        }
-
-        public void UpdateParameters()
-        {
-            foreach( var image in m_backgroundImages )
-            {
-                image.color = m_graphyManager.BackgroundColor;
-            }
-
-            m_audioGraph.UpdateParameters();
-            m_audioMonitor.UpdateParameters();
-            m_audioText.UpdateParameters();
-
-            SetState( m_graphyManager.AudioModuleState );
-        }
-
-        public void RefreshParameters()
-        {
-            foreach( var image in m_backgroundImages )
-            {
-                image.color = m_graphyManager.BackgroundColor;
-            }
-
-            m_audioGraph.UpdateParameters();
-            m_audioMonitor.UpdateParameters();
-            m_audioText.UpdateParameters();
-
-            SetState( m_currentModuleState, true );
-        }
-
         #endregion
 
         #region Methods -> Private
 
         private void Init()
         {
-            m_graphyManager = transform.root.GetComponentInChildren<GraphyManager>();
-
-            m_rectTransform = GetComponent<RectTransform>();
-            m_origPosition = m_rectTransform.anchoredPosition;
+            InitBase();
 
             m_audioGraph = GetComponent<G_AudioGraph>();
             m_audioMonitor = GetComponent<G_AudioMonitor>();
             m_audioText = GetComponent<G_AudioText>();
-
-            foreach( Transform child in transform )
-            {
-                if( child.parent == transform )
-                {
-                    m_childrenGameObjects.Add( child.gameObject );
-                }
-            }
         }
 
         private void SetGraphActive( bool active )

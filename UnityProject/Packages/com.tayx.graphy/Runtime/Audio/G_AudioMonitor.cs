@@ -134,18 +134,39 @@ namespace Tayx.Graphy.Audio
 
         public void UpdateParameters()
         {
+            UpdateListenerParameters();
+            UpdateFftWindow();
+            UpdateSpectrumSize();
+        }
+
+        public void UpdateListenerParameters()
+        {
             m_findAudioListenerInCameraIfNull = m_graphyManager.FindAudioListenerInCameraIfNull;
 
             m_audioListener = m_graphyManager.AudioListener;
-            m_FFTWindow = m_graphyManager.FftWindow;
-            m_spectrumSize = m_graphyManager.SpectrumSize;
 
             if( m_audioListener == null
                 && m_findAudioListenerInCameraIfNull != GraphyManager.LookForAudioListener.NEVER )
             {
                 m_audioListener = FindAudioListener();
             }
+        }
 
+        public void UpdateFftWindow()
+        {
+            m_FFTWindow = m_graphyManager.FftWindow;
+        }
+
+        public void UpdateSpectrumSize()
+        {
+            int spectrumSize = m_graphyManager.SpectrumSize;
+
+            if( Spectrum != null && SpectrumHighestValues != null && m_spectrumSize == spectrumSize )
+            {
+                return;
+            }
+
+            m_spectrumSize = spectrumSize;
             Spectrum = new float[m_spectrumSize];
             SpectrumHighestValues = new float[m_spectrumSize];
         }
@@ -155,7 +176,7 @@ namespace Tayx.Graphy.Audio
         /// </summary>
         /// <param name="linear"></param>
         /// <returns></returns>
-        public float lin2dB( float linear )
+        public static float lin2dB( float linear )
         {
             return Mathf.Clamp( Mathf.Log10( linear ) * 20.0f, -160.0f, 0.0f );
         }
@@ -165,7 +186,7 @@ namespace Tayx.Graphy.Audio
         /// </summary>
         /// <param name="db"></param>
         /// <returns></returns>
-        public float dBNormalized( float db )
+        public static float dBNormalized( float db )
         {
             return (db + 160f) / 160f;
         }

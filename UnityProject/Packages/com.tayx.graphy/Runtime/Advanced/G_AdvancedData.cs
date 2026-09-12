@@ -14,7 +14,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-#if GRAPHY_XR
+#if GRAPHY_XR && !UNITY_TVOS && !UNITY_GAMECORE
 using UnityEngine.XR;
 #endif
 
@@ -47,8 +47,9 @@ namespace Tayx.Graphy.Advanced
         [SerializeField] private Text m_gameWindowResolutionText = null;
         [SerializeField] private Text m_gameVRResolutionText = null;
         
-#if GRAPHY_XR
+#if GRAPHY_XR && !UNITY_TVOS && !UNITY_GAMECORE
         private readonly List<XRDisplaySubsystem> m_displaySubsystems = new List<XRDisplaySubsystem>();
+        private XRDisplaySubsystem m_cachedDisplay = null;
 #endif
         
         [Range( 1, 60 )] [SerializeField] private float m_updateRate = 1f; // 1 update per sec.
@@ -57,10 +58,16 @@ namespace Tayx.Graphy.Advanced
 
         #region Variables -> Private
 
+        private const string m_notAvailable = "N/A";
+
         private GraphyManager m_graphyManager = null;
 
         private RectTransform m_rectTransform = null;
         private Vector2 m_origPosition = Vector2.zero;
+        private Vector3 m_origScale = Vector3.one;
+        private Vector2 m_unscaledPosition = Vector2.zero;
+        private float m_scale = 1f;
+        private bool m_isFreePosition = false;
 
         private float m_deltaTime = 0.0f;
 
@@ -105,42 +112,39 @@ namespace Tayx.Graphy.Advanced
                 // Update screen window resolution
                 m_sb.Length = 0;
 
+                Resolution currentResolution = Screen.currentResolution;
+
                 m_sb.Append( m_windowStrings[ 0 ] ).Append( Screen.width.ToStringNonAlloc() )
                     .Append( m_windowStrings[ 1 ] ).Append( Screen.height.ToStringNonAlloc() )
-                    .Append( m_windowStrings[ 2 ] ).Append(
-#if UNITY_2022_2_OR_NEWER
-                        ((int)Screen.currentResolution.refreshRateRatio.value).ToStringNonAlloc()
-#else
-                        Screen.currentResolution.refreshRate.ToStringNonAlloc()
-#endif
-                        )
+                    .Append( m_windowStrings[ 2 ] ).Append( GetRefreshRateString( currentResolution ) )
                     .Append( m_windowStrings[ 3 ] )
-                    .Append( m_windowStrings[ 4 ] ).Append( ((int) Screen.dpi).ToStringNonAlloc() )
+                    .Append( m_windowStrings[ 4 ] ).Append( GetPositiveValueString( Screen.dpi ) )
                     .Append( m_windowStrings[ 5 ] );
 
                 m_gameWindowResolutionText.text = m_sb.ToString();
 
-#if GRAPHY_XR
+#if GRAPHY_XR && !UNITY_TVOS && !UNITY_GAMECORE
                 // If XR enabled, update screen XR resolution
                 if( XRSettings.enabled )
                 {
                     m_sb.Length = 0;
 
-#if UNITY_2020_2_OR_NEWER
-                    SubsystemManager.GetSubsystems( m_displaySubsystems );
-#else
-                    SubsystemManager.GetInstances( m_displaySubsystems );
-#endif
+                    if( m_cachedDisplay == null || !m_cachedDisplay.running )
+                    {
+                        SubsystemManager.GetSubsystems( m_displaySubsystems );
+                        m_cachedDisplay = m_displaySubsystems.Count > 0 ? m_displaySubsystems[ 0 ] : null;
+                    }
+
                     float refreshRate = -1;
 
-                    if( m_displaySubsystems.Count > 0 )
+                    if( m_cachedDisplay != null )
                     {
-                        m_displaySubsystems[ 0 ].TryGetDisplayRefreshRate( out refreshRate );
+                        m_cachedDisplay.TryGetDisplayRefreshRate( out refreshRate );
                     }
 
                     m_sb.Append( m_vrStrings[ 0 ] ).Append( XRSettings.eyeTextureWidth.ToStringNonAlloc() )
                         .Append( m_vrStrings[ 1 ] ).Append( XRSettings.eyeTextureHeight.ToStringNonAlloc() )
-                        .Append( m_vrStrings[ 2 ] ).Append( Mathf.RoundToInt( refreshRate ).ToStringNonAlloc() )
+                        .Append( m_vrStrings[ 2 ] ).Append( GetPositiveValueString( refreshRate ) )
                         .Append( m_vrStrings[ 3 ] );
 
                     m_gameVRResolutionText.text = m_sb.ToString();
@@ -159,12 +163,15 @@ namespace Tayx.Graphy.Advanced
         public void SetPosition( GraphyManager.ModulePosition newModulePosition, Vector2 offset )
         {
             if ( newModulePosition == GraphyManager.ModulePosition.FREE )
+            {
+                m_isFreePosition = true;
                 return;
-            
-            m_rectTransform.anchoredPosition = m_origPosition;
+            }
 
-            float xSideOffset = Mathf.Abs( m_rectTransform.anchoredPosition.x ) + offset.x;
-            float ySideOffset = Mathf.Abs( m_rectTransform.anchoredPosition.y ) + offset.y;
+            m_isFreePosition = false;
+
+            float xSideOffset = Mathf.Abs( m_origPosition.x ) + offset.x;
+            float ySideOffset = Mathf.Abs( m_origPosition.y ) + offset.y;
 
             switch( newModulePosition )
             {
@@ -172,7 +179,8 @@ namespace Tayx.Graphy.Advanced
 
                     m_rectTransform.anchorMax = Vector2.up;
                     m_rectTransform.anchorMin = Vector2.up;
-                    m_rectTransform.anchoredPosition = new Vector2( xSideOffset, -ySideOffset );
+                    m_rectTransform.pivot = Vector2.up;
+                    m_unscaledPosition = new Vector2( xSideOffset, -ySideOffset );
 
                     break;
 
@@ -180,7 +188,8 @@ namespace Tayx.Graphy.Advanced
 
                     m_rectTransform.anchorMax = Vector2.one;
                     m_rectTransform.anchorMin = Vector2.one;
-                    m_rectTransform.anchoredPosition = new Vector2( -xSideOffset, -ySideOffset );
+                    m_rectTransform.pivot = Vector2.one;
+                    m_unscaledPosition = new Vector2( -xSideOffset, -ySideOffset );
 
                     break;
 
@@ -188,7 +197,8 @@ namespace Tayx.Graphy.Advanced
 
                     m_rectTransform.anchorMax = Vector2.zero;
                     m_rectTransform.anchorMin = Vector2.zero;
-                    m_rectTransform.anchoredPosition = new Vector2( xSideOffset, ySideOffset );
+                    m_rectTransform.pivot = Vector2.zero;
+                    m_unscaledPosition = new Vector2( xSideOffset, ySideOffset );
 
                     break;
 
@@ -196,10 +206,13 @@ namespace Tayx.Graphy.Advanced
 
                     m_rectTransform.anchorMax = Vector2.right;
                     m_rectTransform.anchorMin = Vector2.right;
-                    m_rectTransform.anchoredPosition = new Vector2( -xSideOffset, ySideOffset );
+                    m_rectTransform.pivot = Vector2.right;
+                    m_unscaledPosition = new Vector2( -xSideOffset, ySideOffset );
 
                     break;
             }
+
+            ApplyScale();
 
             switch( newModulePosition )
             {
@@ -261,31 +274,61 @@ namespace Tayx.Graphy.Advanced
             SetState( m_previousModuleState );
         }
 
+        public void SetScale( float scale )
+        {
+            m_scale = scale;
+            ApplyScale();
+        }
+
         public void UpdateParameters()
         {
-            foreach( var image in m_backgroundImages )
-            {
-                image.color = m_graphyManager.BackgroundColor;
-            }
-
-            SetPosition( m_graphyManager.AdvancedModulePosition, Vector2.zero );
-            SetState( m_graphyManager.AdvancedModuleState );
+            UpdateBackground();
         }
 
         public void RefreshParameters()
         {
+            UpdateBackground();
+        }
+
+        public void UpdateBackground()
+        {
             foreach( var image in m_backgroundImages )
             {
                 image.color = m_graphyManager.BackgroundColor;
             }
 
-            SetPosition( m_graphyManager.AdvancedModulePosition, Vector2.zero );
-            SetState( m_currentModuleState, true );
+            bool active = m_currentModuleState == GraphyManager.ModuleState.FULL
+                          || m_currentModuleState == GraphyManager.ModuleState.TEXT
+                          || m_currentModuleState == GraphyManager.ModuleState.BASIC;
+
+            m_backgroundImages.SetAllActive( active && m_graphyManager.Background );
         }
 
         #endregion
 
         #region Methods -> Private
+
+        private string GetRefreshRateString( Resolution resolution )
+        {
+            return GetPositiveValueString( (float) resolution.refreshRateRatio.value );
+        }
+
+        private string GetPositiveValueString( float value )
+        {
+            return float.IsNaN( value ) || float.IsInfinity( value ) || value <= 0
+                ? m_notAvailable
+                : Mathf.RoundToInt( value ).ToStringNonAlloc();
+        }
+
+        private void ApplyScale()
+        {
+            m_rectTransform.localScale = m_origScale * m_scale;
+
+            if( !m_isFreePosition )
+            {
+                m_rectTransform.anchoredPosition = m_unscaledPosition * m_scale;
+            }
+        }
 
         private void Init()
         {
@@ -296,6 +339,7 @@ namespace Tayx.Graphy.Advanced
             m_sb = new StringBuilder();
 
             m_rectTransform = GetComponent<RectTransform>();
+            m_origScale = m_rectTransform.localScale;
 
             m_processorTypeText.text
                 = "CPU: "
@@ -333,11 +377,7 @@ namespace Tayx.Graphy.Advanced
                   + "x"
                   + res.height
                   + "@"
-#if UNITY_2022_2_OR_NEWER
-                  + ((int)Screen.currentResolution.refreshRateRatio.value).ToStringNonAlloc()
-#else
-                  + res.refreshRate
-#endif
+                  + GetRefreshRateString( res )
                   + "Hz";
 
             m_operatingSystemText.text
@@ -388,6 +428,7 @@ namespace Tayx.Graphy.Advanced
             );
 
             m_origPosition = m_rectTransform.anchoredPosition;
+            m_unscaledPosition = m_origPosition;
 
             UpdateParameters();
         }

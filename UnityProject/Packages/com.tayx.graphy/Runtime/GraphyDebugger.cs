@@ -173,6 +173,8 @@ namespace Tayx.Graphy
         private G_RamMonitor m_ramMonitor = null;
         private G_AudioMonitor m_audioMonitor = null;
 
+        private static readonly System.Predicate<DebugPacket> m_isPacketNull = packet => packet == null;
+
         #endregion
 
         #region Methods -> Unity Callbacks
@@ -308,7 +310,7 @@ namespace Tayx.Graphy
         /// <returns></returns>
         public DebugPacket GetFirstDebugPacketWithId( int packetId )
         {
-            return m_debugPackets.First( x => x.Id == packetId );
+            return m_debugPackets.FirstOrDefault( x => x.Id == packetId );
         }
 
         /// <summary>
@@ -328,9 +330,14 @@ namespace Tayx.Graphy
         /// <returns></returns>
         public void RemoveFirstDebugPacketWithId( int packetId )
         {
-            if( m_debugPackets != null && GetFirstDebugPacketWithId( packetId ) != null )
+            if( m_debugPackets != null )
             {
-                m_debugPackets.Remove( GetFirstDebugPacketWithId( packetId ) );
+                var packet = GetFirstDebugPacketWithId( packetId );
+
+                if( packet != null )
+                {
+                    m_debugPackets.Remove( packet );
+                }
             }
         }
 
@@ -354,9 +361,11 @@ namespace Tayx.Graphy
         /// <param name="id"></param>
         public void AddCallbackToFirstDebugPacketWithId( System.Action callback, int id )
         {
-            if( GetFirstDebugPacketWithId( id ) != null )
+            var packet = GetFirstDebugPacketWithId( id );
+
+            if( packet != null )
             {
-                GetFirstDebugPacketWithId( id ).Callbacks.Add( callback );
+                packet.Callbacks.Add( callback );
             }
         }
 
@@ -367,9 +376,11 @@ namespace Tayx.Graphy
         /// <param name="id"></param>
         public void AddCallbackToAllDebugPacketWithId( System.Action callback, int id )
         {
-            if( GetAllDebugPacketsWithId( id ) != null )
+            var packets = GetAllDebugPacketsWithId( id );
+
+            if( packets != null )
             {
-                foreach( var debugPacket in GetAllDebugPacketsWithId( id ) )
+                foreach( var debugPacket in packets )
                 {
                     if( callback != null )
                     {
@@ -450,7 +461,7 @@ namespace Tayx.Graphy
                 }
             }
 
-            m_debugPackets.RemoveAll( ( packet ) => packet == null );
+            m_debugPackets.RemoveAll( m_isPacketNull );
         }
 
         /// <summary>
@@ -500,9 +511,9 @@ namespace Tayx.Graphy
                 case DebugVariable.Ram_Allocated:
                     return m_ramMonitor != null ? m_ramMonitor.AllocatedRam : 0;
                 case DebugVariable.Ram_Reserved:
-                    return m_ramMonitor != null ? m_ramMonitor.AllocatedRam : 0;
+                    return m_ramMonitor != null ? m_ramMonitor.ReservedRam : 0;
                 case DebugVariable.Ram_Mono:
-                    return m_ramMonitor != null ? m_ramMonitor.AllocatedRam : 0;
+                    return m_ramMonitor != null ? m_ramMonitor.MonoRam : 0;
 
                 case DebugVariable.Audio_DB:
                     return m_audioMonitor != null ? m_audioMonitor.MaxDB : 0;

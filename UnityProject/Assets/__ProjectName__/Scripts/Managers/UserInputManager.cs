@@ -1,7 +1,14 @@
-﻿using System.Collections;
+﻿#define USE_INPUTSYSTEM
+
+using System.Collections;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
+
+using Cysharp.Threading.Tasks;
+
+#if USE_INPUTSYSTEM
+using Input = GarageKit.LegacyInputBridge.Input;
+#endif
 
 /*
  * Manage all user input

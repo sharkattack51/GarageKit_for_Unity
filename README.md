@@ -12,6 +12,8 @@ https://sharkattack51.github.io/garagekit_doc
 
 ## Require Modules
 
+- URP
+- InputSystem
 - TextMesh Pro
 
 #### from AssetStore

@@ -21,7 +21,7 @@ using Tayx.Graphy.Utils;
 
 namespace Tayx.Graphy.Fps
 {
-    public class G_FpsManager : MonoBehaviour, IMovable, IModifiableState
+    public class G_FpsManager : G_ModuleManager
     {
         #region Variables -> Serialized Private
 
@@ -35,19 +35,8 @@ namespace Tayx.Graphy.Fps
 
         #region Variables -> Private
 
-        private GraphyManager m_graphyManager = null;
-
         private G_FpsGraph m_fpsGraph = null;
-        private G_FpsMonitor m_fpsMonitor = null;
         private G_FpsText m_fpsText = null;
-
-        private RectTransform m_rectTransform = null;
-        private Vector2 m_origPosition = Vector2.zero;
-
-        private List<GameObject> m_childrenGameObjects = new List<GameObject>();
-
-        private GraphyManager.ModuleState m_previousModuleState = GraphyManager.ModuleState.FULL;
-        private GraphyManager.ModuleState m_currentModuleState = GraphyManager.ModuleState.FULL;
 
         #endregion
 
@@ -67,64 +56,72 @@ namespace Tayx.Graphy.Fps
 
         #region Methods -> Public
 
-        public void SetPosition( GraphyManager.ModulePosition newModulePosition, Vector2 offset )
+        public override void UpdateParameters()
         {
-            if ( newModulePosition == GraphyManager.ModulePosition.FREE )
-                return;
-            
-            m_rectTransform.anchoredPosition = m_origPosition;
+            UpdateBackground();
+            UpdateGraphParameters();
+            UpdateTextParameters();
+        }
 
-            float xSideOffset = Mathf.Abs( m_rectTransform.anchoredPosition.x ) + offset.x;
-            float ySideOffset = Mathf.Abs( m_rectTransform.anchoredPosition.y ) + offset.y;
+        public override void RefreshParameters()
+        {
+            UpdateParameters();
+        }
 
-            switch( newModulePosition )
+        public void UpdateBackground()
+        {
+            foreach( var image in m_backgroundImages )
             {
-                case GraphyManager.ModulePosition.TOP_LEFT:
+                image.color = m_graphyManager.BackgroundColor;
+            }
 
-                    m_rectTransform.anchorMax = Vector2.up;
-                    m_rectTransform.anchorMin = Vector2.up;
-                    m_rectTransform.anchoredPosition = new Vector2( xSideOffset, -ySideOffset );
+            if( !m_graphyManager.Background )
+            {
+                m_backgroundImages.SetAllActive( false );
+                return;
+            }
 
+            switch( m_currentModuleState )
+            {
+                case GraphyManager.ModuleState.FULL:
+                    m_backgroundImages.SetOneActive( 0 );
                     break;
 
-                case GraphyManager.ModulePosition.TOP_RIGHT:
-
-                    m_rectTransform.anchorMax = Vector2.one;
-                    m_rectTransform.anchorMin = Vector2.one;
-                    m_rectTransform.anchoredPosition = new Vector2( -xSideOffset, -ySideOffset );
-
+                case GraphyManager.ModuleState.TEXT:
+                    m_backgroundImages.SetOneActive( 1 );
                     break;
 
-                case GraphyManager.ModulePosition.BOTTOM_LEFT:
-
-                    m_rectTransform.anchorMax = Vector2.zero;
-                    m_rectTransform.anchorMin = Vector2.zero;
-                    m_rectTransform.anchoredPosition = new Vector2( xSideOffset, ySideOffset );
-
+                case GraphyManager.ModuleState.BASIC:
+                    m_backgroundImages.SetOneActive( 2 );
                     break;
 
-                case GraphyManager.ModulePosition.BOTTOM_RIGHT:
-
-                    m_rectTransform.anchorMax = Vector2.right;
-                    m_rectTransform.anchorMin = Vector2.right;
-                    m_rectTransform.anchoredPosition = new Vector2( -xSideOffset, ySideOffset );
-
-                    break;
-
-                case GraphyManager.ModulePosition.FREE:
+                default:
+                    m_backgroundImages.SetAllActive( false );
                     break;
             }
         }
 
-        public void SetState( GraphyManager.ModuleState state, bool silentUpdate = false )
+        public void UpdateGraphParameters()
         {
-            if( !silentUpdate )
-            {
-                m_previousModuleState = m_currentModuleState;
-            }
+            m_fpsGraph.UpdateParameters();
+        }
 
-            m_currentModuleState = state;
+        public void UpdateGraphColors()
+        {
+            m_fpsGraph.UpdateColors();
+        }
 
+        public void UpdateTextParameters()
+        {
+            m_fpsText.UpdateParameters();
+        }
+
+        #endregion
+
+        #region Methods -> Protected Override
+
+        protected override void ApplyModuleState( GraphyManager.ModuleState state )
+        {
             switch( state )
             {
                 case GraphyManager.ModuleState.FULL:
@@ -190,61 +187,16 @@ namespace Tayx.Graphy.Fps
             }
         }
 
-        public void RestorePreviousState()
-        {
-            SetState( m_previousModuleState );
-        }
-
-        public void UpdateParameters()
-        {
-            foreach( var image in m_backgroundImages )
-            {
-                image.color = m_graphyManager.BackgroundColor;
-            }
-
-            m_fpsGraph.UpdateParameters();
-            m_fpsMonitor.UpdateParameters();
-            m_fpsText.UpdateParameters();
-
-            SetState( m_graphyManager.FpsModuleState );
-        }
-
-        public void RefreshParameters()
-        {
-            foreach( var image in m_backgroundImages )
-            {
-                image.color = m_graphyManager.BackgroundColor;
-            }
-
-            m_fpsGraph.UpdateParameters();
-            m_fpsMonitor.UpdateParameters();
-            m_fpsText.UpdateParameters();
-
-            SetState( m_currentModuleState, true );
-        }
-
         #endregion
 
         #region Methods -> Private
 
         private void Init()
         {
-            m_graphyManager = transform.root.GetComponentInChildren<GraphyManager>();
-
-            m_rectTransform = GetComponent<RectTransform>();
-            m_origPosition = m_rectTransform.anchoredPosition;
+            InitBase();
 
             m_fpsGraph = GetComponent<G_FpsGraph>();
-            m_fpsMonitor = GetComponent<G_FpsMonitor>();
             m_fpsText = GetComponent<G_FpsText>();
-
-            foreach( Transform child in transform )
-            {
-                if( child.parent == transform )
-                {
-                    m_childrenGameObjects.Add( child.gameObject );
-                }
-            }
         }
 
         private void SetGraphActive( bool active )
