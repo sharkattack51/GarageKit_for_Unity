@@ -32,6 +32,7 @@ namespace GarageKit
 
         private UdpClient udpClient = null;
         private bool receivedOne = false;
+        private readonly object receiveLock = new object();
 
 
         void Awake()
@@ -47,16 +48,31 @@ namespace GarageKit
 
         void Update()
         {
-            // 受信イベントをメインスレッドで実行
-            while(receivedDataStrStack.Count > 0 && receivedDataBytesStack.Count > 0)
-            {
-                if(OnReceived != null)
-                    OnReceived(receivedDataStrStack[0]);
-                if(OnReceivedBytes != null)
-                    OnReceivedBytes(receivedDataBytesStack[0]);
+            List<string> strStackToProcess = null;
+            List<byte[]> bytesStackToProcess = null;
 
-                receivedDataStrStack.RemoveAt(0);
-                receivedDataBytesStack.RemoveAt(0);
+            lock(receiveLock)
+            {
+                // 別スレッド(ReceiveData)との競合回避
+                if(receivedDataStrStack.Count > 0)
+                {
+                    strStackToProcess = receivedDataStrStack;
+                    bytesStackToProcess = receivedDataBytesStack;
+                    receivedDataStrStack = new List<string>();
+                    receivedDataBytesStack = new List<byte[]>();
+                }
+            }
+
+            // 受信イベントをメインスレッドで実行
+            if(strStackToProcess != null)
+            {
+                for(int i = 0; i < strStackToProcess.Count; i++)
+                {
+                    if(OnReceived != null)
+                        OnReceived(strStackToProcess[i]);
+                    if(OnReceivedBytes != null)
+                        OnReceivedBytes(bytesStackToProcess[i]);
+                }
             }
         }
 
@@ -94,11 +110,16 @@ namespace GarageKit
             try
             {
                 byte[] bytes = cli.EndReceive(result, ref ipEndPoint);
-                receivedDataStrStack.Add(Encoding.UTF8.GetString(bytes));
-                receivedDataBytesStack.Add(bytes);
+                string str = Encoding.UTF8.GetString(bytes);
 
-                latestReceivedDataStr = receivedDataStrStack[receivedDataStrStack.Count - 1];
-                latestReceivedDataBytes = receivedDataBytesStack[receivedDataBytesStack.Count - 1];
+                lock(receiveLock)
+                {
+                    receivedDataStrStack.Add(str);
+                    receivedDataBytesStack.Add(bytes);
+
+                    latestReceivedDataStr = str;
+                    latestReceivedDataBytes = bytes;
+                }
             }
             catch
             {
